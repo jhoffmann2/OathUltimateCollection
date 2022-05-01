@@ -1,0 +1,121 @@
+﻿{
+  "save": {
+    "chronicleStateString": "020004000110Empire and Exile1F00000123450403FFFFFFFFFFFF0724FFFFFFFFFFFFFFFFFFFF0B19FFFFFFFFFFFFFFFFFFFF000000",
+    "curChronicleName": "Empire and Exile",
+    "curDispossessedDeckCardCount": 0,
+    "curDispossessedDeckCards": [],
+    "curFavorValues": {
+      "Arcane": 1,
+      "Beast": 1,
+      "Discord": 0,
+      "Hearth": 1,
+      "Nomad": 1,
+      "Order": 1
+    },
+    "curGameCount": 1,
+    "curGameNumPlayers": 7,
+    "curMapNormalCards": [
+      [
+        ["Longbows", false],
+        ["NONE", false],
+        ["NONE", false]
+      ],
+      [
+        ["NONE", false],
+        ["NONE", false],
+        ["NONE", false]
+      ],
+      [
+        ["Taming Charm", false],
+        ["NONE", false],
+        ["NONE", false]
+      ],
+      [
+        ["NONE", false],
+        ["NONE", false],
+        ["NONE", false]
+      ],
+      [
+        ["NONE", false],
+        ["NONE", false],
+        ["NONE", false]
+      ],
+      [
+        ["Elders", false],
+        ["NONE", false],
+        ["NONE", false]
+      ],
+      [
+        ["NONE", false],
+        ["NONE", false],
+        ["NONE", false]
+      ],
+      [
+        ["NONE", false],
+        ["NONE", false],
+        ["NONE", false]
+      ]
+    ],
+    "curMapSites": [
+      ["Plains", false],
+      ["NONE", true],
+      ["Mountain", false],
+      ["NONE", true],
+      ["NONE", true],
+      ["Rocky Coast", false],
+      ["NONE", true],
+      ["NONE", true]
+    ],
+    "curOath": "Supremacy",
+    "curPlayerStatus": {
+      "Blue": ["Exile", true],
+      "Brown": ["Exile", false],
+      "Purple": ["Chancellor", true],
+      "Red": ["Exile", false],
+      "White": ["Exile", false],
+      "Yellow": ["Exile", false]
+    },
+    "curPreviousPlayersActive": {
+      "Blue": true,
+      "Brown": true,
+      "Clock": false,
+      "Purple": true,
+      "Red": true,
+      "White": true,
+      "Yellow": true
+    },
+    "curPreviousPlayerStatus": {
+      "Blue": "Exile",
+      "Brown": "Exile",
+      "Purple": "Chancellor",
+      "Red": "Exile",
+      "White": "Exile",
+      "Yellow": "Exile"
+    },
+    "curRelicDeckCardCount": 0,
+    "curRelicDeckCards": [],
+    "curStartPlayerStatus": {
+      "Blue": "Exile",
+      "Brown": "Exile",
+      "Purple": "Chancellor",
+      "Red": "Exile",
+      "White": "Exile",
+      "Yellow": "Exile"
+    },
+    "curSuitOrder": [
+      "Discord",
+      "Hearth",
+      "Nomad",
+      "Arcane",
+      "Order",
+      "Beast"
+    ],
+    "curWorldDeckCardCount": 0,
+    "curWorldDeckCards": [],
+    "ingameStateString": "",
+    "isClockworkPrinceEnabled": false,
+    "isDispossessedSpawned": false,
+    "isGameInProgress": false,
+    "isManualControlEnabled": false
+  }
+}
