@@ -5,6 +5,8 @@
 --
 
 function onLoad(save_state)
+    print("Global.lua :: OnLoad()")
+    
     -- If the mod was just loaded and no one else is seated, start as Blue so the menu and map appear correctly oriented.
     if ((false == Player["Purple"].seated)  and
             (false == Player["Red"].seated)     and
