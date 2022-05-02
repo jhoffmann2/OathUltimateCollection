@@ -1,0 +1,1789 @@
+﻿<!-- Note that brown is used instead of black in the GUI since Tabletop Simulator reserves black for the game master role. -->
+
+
+<Panel
+        id="panel_select_players"
+        offsetXY="0 0"
+        active="false"
+        rectAlignment="MiddleCenter"
+        width="1136"
+        height="360"
+        image="menu_select_players"
+        allowDragging="true"
+        returnToOriginalPositionWhenReleased="false"
+        onDrag="panelSelectPlayersDrag"
+>
+
+    <Button
+            id="select_color_purple"
+            offsetXY="-426 2"
+            width="156"
+            height="204"
+            onClick="toggleColor(Purple)"
+            colors="#00000000|#97979720|#B4B4B420|#00000000"
+    ></Button>
+
+    <!-- The Chancellor is always active. -->
+    <Image
+            id="mark_color_purple"
+            active="true"
+            offsetXY="-426 2"
+            width="156"
+            height="204"
+            image="pawn_selection"
+            raycastTarget="false"
+    ></Image>
+
+    <Button
+            id="select_color_brown"
+            offsetXY="-250 2"
+            width="156"
+            height="204"
+            onClick="toggleColor(Brown)"
+            colors="#00000000|#97979720|#B4B4B420|#00000000"
+    ></Button>
+
+    <Text
+            id="status_brown"
+            offsetXY="-250 72"
+            width="600"
+            height="160"
+            fontSize="28"
+            fontStyle="Bold"
+            color="#FFFFFFFF"
+    ></Text>
+
+    <Image
+            id="mark_color_brown"
+            active="false"
+            offsetXY="-250 2"
+            width="156"
+            height="204"
+            image="pawn_selection"
+            raycastTarget="false"
+    ></Image>
+
+    <Button
+            id="select_color_yellow"
+            offsetXY="-82 2"
+            width="156"
+            height="204"
+            onClick="toggleColor(Yellow)"
+            colors="#00000000|#97979720|#B4B4B420|#00000000"
+    ></Button>
+
+    <Text
+            id="status_yellow"
+            offsetXY="-82 72"
+            width="600"
+            height="160"
+            fontSize="28"
+            fontStyle="Bold"
+            color="#FFFFFFFF"
+    ></Text>
+
+    <Image
+            id="mark_color_yellow"
+            active="false"
+            offsetXY="-82 2"
+            width="156"
+            height="204"
+            image="pawn_selection"
+            raycastTarget="false"
+    ></Image>
+
+    <Button
+            id="select_color_white"
+            offsetXY="70 2"
+            width="156"
+            height="204"
+            onClick="toggleColor(White)"
+            colors="#00000000|#97979720|#B4B4B420|#00000000"
+    ></Button>
+
+    <Text
+            id="status_white"
+            offsetXY="70 72"
+            width="600"
+            height="160"
+            fontSize="28"
+            fontStyle="Bold"
+            color="#FFFFFFFF"
+    ></Text>
+
+    <Image
+            id="mark_color_white"
+            active="false"
+            offsetXY="70 2"
+            width="156"
+            height="204"
+            image="pawn_selection"
+            raycastTarget="false"
+    ></Image>
+
+    <Button
+            id="select_color_blue"
+            offsetXY="249 2"
+            width="156"
+            height="204"
+            onClick="toggleColor(Blue)"
+            colors="#00000000|#97979720|#B4B4B420|#00000000"
+    ></Button>
+
+    <Text
+            id="status_blue"
+            offsetXY="249 72"
+            width="600"
+            height="160"
+            fontSize="28"
+            fontStyle="Bold"
+            color="#FFFFFFFF"
+    ></Text>
+
+    <Image
+            id="mark_color_blue"
+            active="false"
+            offsetXY="249 2"
+            width="156"
+            height="204"
+            image="pawn_selection"
+            raycastTarget="false"
+    ></Image>
+
+    <Button
+            id="select_color_red"
+            offsetXY="432 2"
+            width="156"
+            height="204"
+            onClick="toggleColor(Red)"
+            colors="#00000000|#97979720|#B4B4B420|#00000000"
+    ></Button>
+
+    <Text
+            id="status_red"
+            offsetXY="432 72"
+            width="600"
+            height="160"
+            fontSize="28"
+            fontStyle="Bold"
+            color="#FFFFFFFF"
+    ></Text>
+
+    <Image
+            id="mark_color_red"
+            active="false"
+            offsetXY="432 2"
+            width="156"
+            height="204"
+            image="pawn_selection"
+            raycastTarget="false"
+    ></Image>
+
+    <Text
+            id="previous_winner_label"
+            offsetXY="-420 -138"
+            width="230"
+            height="54"
+            fontSize="28"
+            color="#FFFFFFFF"
+    >Previous winner:
+    </Text>
+
+    <Text
+            id="previous_winner_value"
+            offsetXY="-26 -138"
+            width="520"
+            height="108"
+            fontSize="28"
+            alignment="MiddleLeft"
+            color="#FFFFFFFF"
+    ></Text>
+
+    <Button
+            id="confirm_select_players"
+            active="true"
+            offsetXY="340 -138"
+            width="134"
+            height="54"
+            onClick="selectOath"
+            fontSize="32"
+            colors="#444444FF|#606060FF|#747474FF|#00000000"
+            textColor="#FFFFFF"
+    >Confirm
+    </Button>
+
+    <Button
+            id="cancel_select_players"
+            active="true"
+            offsetXY="488 -138"
+            width="134"
+            height="54"
+            onClick="cancelSelectPlayers"
+            fontSize="32"
+            colors="#444444FF|#606060FF|#747474FF|#00000000"
+            textColor="#FFFFFF"
+    >Cancel
+    </Button>
+
+</Panel>
+
+
+<Panel
+id="panel_select_oath"
+offsetXY="0 0"
+active="false"
+rectAlignment="MiddleCenter"
+width="1136"
+height="360"
+image="menu_change_oath"
+allowDragging="true"
+returnToOriginalPositionWhenReleased="false"
+onDrag="panelSelectOathDrag"
+>
+
+<Button
+        id="select_oath_0"
+        offsetXY="-332 -59"
+        width="115"
+        height="115"
+        onClick="changeOath(0)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="select_oath_1"
+        offsetXY="-110 -59"
+        width="115"
+        height="115"
+        onClick="changeOath(1)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="select_oath_2"
+        offsetXY="109 -59"
+        width="115"
+        height="115"
+        onClick="changeOath(2)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="select_oath_3"
+        offsetXY="327 -59"
+        width="115"
+        height="115"
+        onClick="changeOath(3)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Image
+        id="mark_oath"
+        active="true"
+        offsetXY="-360 10"
+        width="125"
+        height="126"
+        image="oath_selection"
+        raycastTarget="false"
+></Image>
+
+<Button
+        id="confirm_select_oath"
+        active="true"
+        offsetXY="488 -70"
+        width="134"
+        height="54"
+        onClick="confirmSelectOath"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Play
+</Button>
+
+<Button
+        id="cancel_select_oath"
+        active="true"
+        offsetXY="488 -138"
+        width="134"
+        height="54"
+        onClick="cancelSelectOath"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Cancel
+</Button>
+
+</Panel>
+
+
+<Panel
+id="panel_select_winner"
+offsetXY="0 0"
+active="false"
+rectAlignment="MiddleCenter"
+width="1136"
+height="360"
+image="menu_select_winner"
+allowDragging="true"
+returnToOriginalPositionWhenReleased="false"
+onDrag="panelSelectWinnerDrag"
+>
+
+<Button
+        id="winner_purple"
+        offsetXY="-426 2"
+        width="156"
+        height="204"
+        onClick="selectWinner(Purple)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="winner_brown"
+        offsetXY="-250 2"
+        width="156"
+        height="204"
+        onClick="selectWinner(Brown)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="winner_yellow"
+        offsetXY="-82 2"
+        width="156"
+        height="204"
+        onClick="selectWinner(Yellow)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="winner_white"
+        offsetXY="70 2"
+        width="156"
+        height="204"
+        onClick="selectWinner(White)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="winner_blue"
+        offsetXY="249 2"
+        width="156"
+        height="204"
+        onClick="selectWinner(Blue)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="winner_red"
+        offsetXY="432 2"
+        width="156"
+        height="204"
+        onClick="selectWinner(Red)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="cancel_select_winner"
+        active="true"
+        offsetXY="488 -138"
+        width="134"
+        height="54"
+        onClick="cancelSelectWinner"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Cancel
+</Button>
+
+</Panel>
+
+
+<Panel
+id="panel_confirm_winner"
+offsetXY="0 0"
+active="false"
+rectAlignment="MiddleCenter"
+width="1136"
+height="360"
+image="menu_confirm_winner"
+allowDragging="true"
+returnToOriginalPositionWhenReleased="false"
+onDrag="panelConfirmWinnerDrag"
+>
+
+<Image
+        id="winner_selection"
+        active="true"
+        offsetXY="0 0"
+        width="156"
+        height="204"
+        image="pawn_selection"
+        raycastTarget="false"
+></Image>
+
+<Button
+        id="confirm_confirm_winner"
+        active="true"
+        offsetXY="340 -138"
+        width="134"
+        height="54"
+        onClick="confirmSelectWinner"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Confirm
+</Button>
+
+<Button
+        id="cancel_confirm_winner"
+        active="true"
+        offsetXY="488 -138"
+        width="134"
+        height="54"
+        onClick="cancelConfirmWinner"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Cancel
+</Button>
+
+</Panel>
+
+
+<Panel
+id="panel_move_winner_relics"
+offsetXY="0 0"
+active="false"
+rectAlignment="LowerRight"
+width="1136"
+height="210"
+image="menu_move_winner_relics"
+allowDragging="true"
+returnToOriginalPositionWhenReleased="false"
+onDrag="panelMoveWinnerRelicsDrag"
+>
+
+<Button
+        id="done_moving_winner_relics"
+        active="true"
+        offsetXY="0 -66"
+        width="134"
+        height="54"
+        onClick="confirmDoneMovingWinnerRelics"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Done
+</Button>
+
+</Panel>
+
+
+<Panel
+id="panel_chronicle_info"
+offsetXY="0 0"
+active="false"
+rectAlignment="MiddleCenter"
+width="1136"
+height="600"
+image="menu_chronicle_info"
+allowDragging="true"
+returnToOriginalPositionWhenReleased="false"
+onDrag="panelChronicleInfoDrag"
+>
+
+<Text
+        id="chronicle_info_text"
+        offsetXY="200 0"
+        width="680"
+        height="410"
+        fontSize="32"
+        fontStyle="Bold"
+        rectAlignment="MiddleCenter"
+        color="#FFFFFFFF"
+></Text>
+
+<Button
+        id="chronicle_info_done"
+        active="true"
+        offsetXY="0 -250"
+        width="134"
+        height="54"
+        onClick="closeChronicleInfo(done)"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Done
+</Button>
+
+<Button
+        id="chronicle_info_cancel"
+        active="true"
+        offsetXY="474 -250"
+        width="134"
+        height="54"
+        onClick="closeChronicleInfo(cancel)"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Cancel
+</Button>
+
+</Panel>
+
+
+<Panel
+id="panel_chronicle_info_small"
+offsetXY="0 0"
+active="false"
+rectAlignment="MiddleRight"
+width="516"
+height="600"
+image="menu_chronicle_info_small"
+allowDragging="true"
+returnToOriginalPositionWhenReleased="false"
+onDrag="panelChronicleInfoSmallDrag"
+>
+
+<Text
+        id="chronicle_info_small_text"
+        offsetXY="0 0"
+        width="500"
+        height="410"
+        fontSize="32"
+        fontStyle="Bold"
+        rectAlignment="MiddleCenter"
+        color="#FFFFFFFF"
+></Text>
+
+<Button
+        id="chronicle_info_small_done"
+        active="true"
+        offsetXY="0 -250"
+        width="134"
+        height="54"
+        onClick="closeChronicleInfo(done)"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Done
+</Button>
+
+</Panel>
+
+
+<Panel
+id="panel_use_vision_check"
+offsetXY="0 0"
+active="false"
+rectAlignment="MiddleCenter"
+width="1136"
+height="360"
+image="menu_use_vision_check"
+allowDragging="true"
+returnToOriginalPositionWhenReleased="false"
+onDrag="panelUseVisionCheckDrag"
+>
+
+<Button
+        id="use_vision_check_no"
+        active="true"
+        offsetXY="-74 -138"
+        width="134"
+        height="54"
+        onClick="visionCheckResult(no)"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>No
+</Button>
+
+<Button
+        id="use_vision_check_yes"
+        active="true"
+        offsetXY="80 -138"
+        width="134"
+        height="54"
+        onClick="visionCheckResult(yes)"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Yes
+</Button>
+
+</Panel>
+
+
+<Panel
+id="panel_bandit_crown_check"
+offsetXY="0 0"
+active="false"
+rectAlignment="LowerCenter"
+width="1136"
+height="360"
+image="menu_bandit_crown_check"
+allowDragging="true"
+returnToOriginalPositionWhenReleased="false"
+onDrag="panelBanditCrownCheckDrag"
+>
+
+<Button
+        id="select_color_purple"
+        offsetXY="-426 2"
+        width="156"
+        height="204"
+        onClick="banditCrownResult(Purple)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="select_color_brown"
+        offsetXY="-250 2"
+        width="156"
+        height="204"
+        onClick="banditCrownResult(Brown)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="select_color_yellow"
+        offsetXY="-82 2"
+        width="156"
+        height="204"
+        onClick="banditCrownResult(Yellow)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="select_color_white"
+        offsetXY="70 2"
+        width="156"
+        height="204"
+        onClick="banditCrownResult(White)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="select_color_blue"
+        offsetXY="249 2"
+        width="156"
+        height="204"
+        onClick="banditCrownResult(Blue)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="select_color_red"
+        offsetXY="432 2"
+        width="156"
+        height="204"
+        onClick="banditCrownResult(Red)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Image
+        id="bandit_crown_image"
+        active="false"
+        offsetXY="-450 70"
+        width="110"
+        height="110"
+        image="bandit_crown_image"
+        raycastTarget="false"
+></Image>
+
+<Button
+        id="bandit_crown_check_no_one"
+        active="true"
+        offsetXY="-74 -138"
+        width="134"
+        height="54"
+        onClick="banditCrownResult(no_one)"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>No One
+</Button>
+
+<Button
+        id="bandit_crown_check_confirm"
+        active="false"
+        offsetXY="80 -138"
+        width="134"
+        height="54"
+        onClick="banditCrownResult(confirm)"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Confirm
+</Button>
+
+</Panel>
+
+
+<Panel
+id="panel_succession_check"
+offsetXY="0 0"
+active="false"
+rectAlignment="MiddleCenter"
+width="1136"
+height="360"
+image="menu_succession_check"
+allowDragging="true"
+returnToOriginalPositionWhenReleased="false"
+onDrag="panelSuccessionCheckDrag"
+>
+
+<Button
+        id="succession_check_no"
+        active="true"
+        offsetXY="-74 -138"
+        width="134"
+        height="54"
+        onClick="successionCheckResult(no)"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>No
+</Button>
+
+<Button
+        id="succession_check_yes"
+        active="true"
+        offsetXY="80 -138"
+        width="134"
+        height="54"
+        onClick="successionCheckResult(yes)"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Yes
+</Button>
+
+</Panel>
+
+
+<Panel
+id="panel_choose_vision"
+offsetXY="0 0"
+active="false"
+rectAlignment="MiddleCenter"
+width="1136"
+height="360"
+image="menu_choose_vision"
+allowDragging="true"
+returnToOriginalPositionWhenReleased="false"
+onDrag="panelChooseVisionDrag"
+>
+
+<Button
+        id="select_vision_0"
+        offsetXY="-332 -59"
+        width="115"
+        height="115"
+        onClick="changeChronicleVision(0)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="select_vision_1"
+        offsetXY="-110 -59"
+        width="115"
+        height="115"
+        onClick="changeChronicleVision(1)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="select_vision_2"
+        offsetXY="109 -59"
+        width="115"
+        height="115"
+        onClick="changeChronicleVision(2)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="select_vision_3"
+        offsetXY="327 -59"
+        width="115"
+        height="115"
+        onClick="changeChronicleVision(3)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Image
+        id="mark_vision"
+        active="false"
+        offsetXY="-360 10"
+        width="125"
+        height="126"
+        image="oath_selection"
+        raycastTarget="false"
+></Image>
+
+<Button
+        id="confirm_select_vision"
+        active="true"
+        offsetXY="488 -70"
+        width="134"
+        height="54"
+        onClick="confirmSelectVision"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Confirm
+</Button>
+
+</Panel>
+
+
+<Panel
+id="panel_offer_citizenship"
+offsetXY="0 0"
+active="false"
+rectAlignment="MiddleCenter"
+width="1136"
+height="400"
+image="menu_offer_citizenship"
+allowDragging="true"
+returnToOriginalPositionWhenReleased="false"
+onDrag="panelOfferCitizenshipDrag"
+>
+
+<Button
+        id="select_color_Brown"
+        offsetXY="-356 -16"
+        width="156"
+        height="204"
+        onClick="toggleCitizenshipColor(Brown)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Image
+        id="mark_color_grant_Brown"
+        active="true"
+        offsetXY="-356 -16"
+        width="156"
+        height="204"
+        image="pawn_selection"
+        raycastTarget="false"
+></Image>
+
+<Image
+        id="banned_citizen_Brown"
+        active="true"
+        offsetXY="-356 -16"
+        width="124"
+        height="126"
+        image="citizen_banned"
+        raycastTarget="false"
+></Image>
+
+<Button
+        id="select_color_Yellow"
+        offsetXY="-178 -16"
+        width="156"
+        height="204"
+        onClick="toggleCitizenshipColor(Yellow)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Image
+        id="mark_color_grant_Yellow"
+        active="true"
+        offsetXY="-178 -16"
+        width="156"
+        height="204"
+        image="pawn_selection"
+        raycastTarget="false"
+></Image>
+
+<Image
+        id="banned_citizen_Yellow"
+        active="true"
+        offsetXY="-178 -16"
+        width="124"
+        height="126"
+        image="citizen_banned"
+        raycastTarget="false"
+></Image>
+
+<Button
+        id="select_color_White"
+        offsetXY="0 -16"
+        width="156"
+        height="204"
+        onClick="toggleCitizenshipColor(White)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Image
+        id="mark_color_grant_White"
+        active="true"
+        offsetXY="0 -16"
+        width="156"
+        height="204"
+        image="pawn_selection"
+        raycastTarget="false"
+></Image>
+
+<Image
+        id="banned_citizen_White"
+        active="true"
+        offsetXY="0 -16"
+        width="124"
+        height="126"
+        image="citizen_banned"
+        raycastTarget="false"
+></Image>
+
+<Button
+        id="select_color_Blue"
+        offsetXY="178 -16"
+        width="156"
+        height="204"
+        onClick="toggleCitizenshipColor(Blue)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Image
+        id="mark_color_grant_Blue"
+        active="true"
+        offsetXY="178 -16"
+        width="156"
+        height="204"
+        image="pawn_selection"
+        raycastTarget="false"
+></Image>
+
+<Image
+        id="banned_citizen_Blue"
+        active="true"
+        offsetXY="178 -16"
+        width="124"
+        height="126"
+        image="citizen_banned"
+        raycastTarget="false"
+></Image>
+
+<Button
+        id="select_color_Red"
+        offsetXY="356 -16"
+        width="156"
+        height="204"
+        onClick="toggleCitizenshipColor(Red)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Image
+        id="mark_color_grant_Red"
+        active="true"
+        offsetXY="356 -16"
+        width="156"
+        height="204"
+        image="pawn_selection"
+        raycastTarget="false"
+></Image>
+
+<Image
+        id="banned_citizen_Red"
+        active="true"
+        offsetXY="356 -16"
+        width="124"
+        height="126"
+        image="citizen_banned"
+        raycastTarget="false"
+></Image>
+
+<Button
+        id="offer_citizenship_done"
+        active="true"
+        offsetXY="340 -160"
+        width="134"
+        height="54"
+        onClick="grantCitizenship(Done)"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Done
+</Button>
+
+<Button
+        id="offer_citizenship_skip"
+        active="true"
+        offsetXY="488 -160"
+        width="134"
+        height="54"
+        onClick="grantCitizenship(Skip)"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Skip
+</Button>
+
+<Button
+        id="offer_citizenship_confirm"
+        active="false"
+        offsetXY="-100 -160"
+        width="134"
+        height="54"
+        onClick="grantCitizenship(Confirm)"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Confirm
+</Button>
+
+<Button
+        id="offer_citizenship_back"
+        active="false"
+        offsetXY="100 -160"
+        width="134"
+        height="54"
+        onClick="grantCitizenship(Back)"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Back
+</Button>
+
+</Panel>
+
+
+<Panel
+id="panel_choose_oath_except"
+offsetXY="0 0"
+active="false"
+rectAlignment="MiddleCenter"
+width="1136"
+height="360"
+image="menu_choose_oath_except"
+allowDragging="true"
+returnToOriginalPositionWhenReleased="false"
+onDrag="panelChooseOathExceptDrag"
+>
+
+<Button
+        id="select_chronicle_oath_0"
+        offsetXY="-332 -59"
+        width="115"
+        height="115"
+        onClick="changeChronicleOath(0)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="select_chronicle_oath_1"
+        offsetXY="-110 -59"
+        width="115"
+        height="115"
+        onClick="changeChronicleOath(1)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="select_chronicle_oath_2"
+        offsetXY="109 -59"
+        width="115"
+        height="115"
+        onClick="changeChronicleOath(2)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="select_chronicle_oath_3"
+        offsetXY="327 -59"
+        width="115"
+        height="115"
+        onClick="changeChronicleOath(3)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Image
+        id="mark_chronicle_oath"
+        active="false"
+        offsetXY="-360 10"
+        width="125"
+        height="126"
+        image="oath_selection"
+        raycastTarget="false"
+></Image>
+
+<Image
+        id="banned_chronicle_oath"
+        active="true"
+        offsetXY="-360 10"
+        width="125"
+        height="126"
+        image="oath_banned"
+        raycastTarget="false"
+></Image>
+
+<Button
+        id="confirm_select_chronicle_oath"
+        active="true"
+        offsetXY="488 -70"
+        width="134"
+        height="54"
+        onClick="confirmSelectChronicleOath"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Confirm
+</Button>
+
+</Panel>
+
+
+<Panel
+id="panel_build_repair"
+offsetXY="0 0"
+active="false"
+rectAlignment="MiddleRight"
+width="524"
+height="700"
+image="menu_build_repair"
+allowDragging="true"
+returnToOriginalPositionWhenReleased="false"
+onDrag="panelBuildRepairDrag"
+>
+
+<Image
+        id="mark_build_repair"
+        active="false"
+        offsetXY="40 67"
+        width="220"
+        height="44"
+        image="build_repair_selection"
+        raycastTarget="false"
+></Image>
+
+<Button
+        id="build_repair_1"
+        active="false"
+        offsetXY="40 67"
+        width="220"
+        height="36"
+        onClick="selectBuildRepair(1)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+        textColor="#FFFFFFFF"
+        fontSize="24"
+        textAlignment="MiddleLeft"
+></Button>
+
+<Button
+        id="build_repair_2"
+        active="false"
+        offsetXY="40 28"
+        width="220"
+        height="36"
+        onClick="selectBuildRepair(2)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+        textColor="#FFFFFFFF"
+        fontSize="24"
+        textAlignment="MiddleLeft"
+></Button>
+
+<Button
+        id="build_repair_3"
+        active="false"
+        offsetXY="40 -38"
+        width="220"
+        height="36"
+        onClick="selectBuildRepair(3)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+        textColor="#FFFFFFFF"
+        fontSize="24"
+        textAlignment="MiddleLeft"
+></Button>
+
+<Button
+        id="build_repair_4"
+        active="false"
+        offsetXY="40 -76"
+        width="220"
+        height="36"
+        onClick="selectBuildRepair(4)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+        textColor="#FFFFFFFF"
+        fontSize="24"
+        textAlignment="MiddleLeft"
+></Button>
+
+<Button
+        id="build_repair_5"
+        active="false"
+        offsetXY="40 -114"
+        width="220"
+        height="36"
+        onClick="selectBuildRepair(5)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+        textColor="#FFFFFFFF"
+        fontSize="24"
+        textAlignment="MiddleLeft"
+></Button>
+
+<Button
+        id="build_repair_6"
+        active="false"
+        offsetXY="40 -184"
+        width="220"
+        height="36"
+        onClick="selectBuildRepair(6)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+        textColor="#FFFFFFFF"
+        fontSize="24"
+        textAlignment="MiddleLeft"
+></Button>
+
+<Button
+        id="build_repair_7"
+        active="false"
+        offsetXY="40 -222"
+        width="220"
+        height="36"
+        onClick="selectBuildRepair(7)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+        textColor="#FFFFFFFF"
+        fontSize="24"
+        textAlignment="MiddleLeft"
+></Button>
+
+<Button
+        id="build_repair_8"
+        active="false"
+        offsetXY="40 -260"
+        width="220"
+        height="36"
+        onClick="selectBuildRepair(8)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+        textColor="#FFFFFFFF"
+        fontSize="24"
+        textAlignment="MiddleLeft"
+></Button>
+
+<Button
+        id="skip_build_repair"
+        active="true"
+        offsetXY="-184 -310"
+        width="134"
+        height="54"
+        onClick="confirmBuildRepair(false)"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Skip
+</Button>
+
+<Button
+        id="confirm_build_repair"
+        active="true"
+        offsetXY="184 -310"
+        width="134"
+        height="54"
+        onClick="confirmBuildRepair(true)"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Confirm
+</Button>
+
+</Panel>
+
+
+<Panel
+id="panel_build_repair_cards"
+offsetXY="0 0"
+active="false"
+rectAlignment="MiddleRight"
+width="524"
+height="700"
+image="menu_build_repair_cards"
+allowDragging="true"
+returnToOriginalPositionWhenReleased="false"
+onDrag="panelBuildRepairCardsDrag"
+>
+
+<Image
+        id="mark_build_repair_card"
+        active="false"
+        offsetXY="-20 -28"
+        width="380"
+        height="44"
+        image="build_repair_card_selection"
+        raycastTarget="false"
+></Image>
+
+<Button
+        id="build_repair_cards_1"
+        active="false"
+        offsetXY="-20 -28"
+        width="380"
+        height="36"
+        onClick="selectBuildRepairCard(1)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+        textColor="#FFFFFFFF"
+        fontSize="24"
+        textAlignment="MiddleLeft"
+></Button>
+
+<Button
+        id="build_repair_cards_2"
+        active="false"
+        offsetXY="-20 -76"
+        width="380"
+        height="36"
+        onClick="selectBuildRepairCard(2)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+        textColor="#FFFFFFFF"
+        fontSize="24"
+        textAlignment="MiddleLeft"
+></Button>
+
+<Button
+        id="build_repair_cards_3"
+        active="false"
+        offsetXY="-20 -124"
+        width="380"
+        height="36"
+        onClick="selectBuildRepairCard(3)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+        textColor="#FFFFFFFF"
+        fontSize="24"
+        textAlignment="MiddleLeft"
+></Button>
+
+<Button
+        id="cancel_build_repair_cards"
+        active="true"
+        offsetXY="184 -240"
+        width="134"
+        height="54"
+        onClick="cancelBuildRepairCards"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Cancel
+</Button>
+
+<Button
+        id="confirm_build_repair"
+        active="true"
+        offsetXY="184 -310"
+        width="134"
+        height="54"
+        onClick="confirmBuildRepairCards"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Confirm
+</Button>
+
+</Panel>
+
+
+<Panel
+id="panel_choose_edifice"
+offsetXY="0 0"
+active="false"
+rectAlignment="MiddleCenter"
+width="1000"
+height="700"
+image="menu_choose_edifice"
+allowDragging="true"
+returnToOriginalPositionWhenReleased="false"
+onDrag="panelChooseEdificeDrag"
+>
+
+<HorizontalScrollView
+        offsetXY="-164 -80"
+        horizontal="true"
+        vertical="true"
+        noscrollbars="true"
+        width="326"
+        height="512"
+        allowDragging="false"
+        raycastTarget="false"
+>
+    <Image
+            id="sheet_edifices"
+            active="true"
+            offsetXY="0 0"
+            width="981"
+            height="1024"
+            image="sheet_edifices"
+            allowDragging="false"
+            raycastTarget="false"
+    ></Image>
+</HorizontalScrollView>
+
+<HorizontalScrollView
+        offsetXY="164 -80"
+        horizontal="true"
+        vertical="true"
+        noscrollbars="true"
+        width="326"
+        height="512"
+        allowDragging="false"
+        raycastTarget="false"
+>
+    <Image
+            id="sheet_ruins"
+            active="true"
+            offsetXY="0 0"
+            width="981"
+            height="1024"
+            image="sheet_ruins"
+            allowDragging="false"
+            raycastTarget="false"
+    ></Image>
+</HorizontalScrollView>
+
+<Button
+        id="edifice_cancel"
+        active="true"
+        offsetXY="414 -240"
+        width="134"
+        height="54"
+        onClick="edificeCancel"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Cancel
+</Button>
+
+<Button
+        id="edifice_confirm"
+        active="true"
+        offsetXY="414 -310"
+        width="134"
+        height="54"
+        onClick="edificeConfirm"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Confirm
+</Button>
+
+</Panel>
+
+
+<Panel
+id="panel_select_suit"
+offsetXY="0 0"
+active="false"
+rectAlignment="MiddleCenter"
+width="1136"
+height="360"
+image="menu_select_suit"
+allowDragging="true"
+returnToOriginalPositionWhenReleased="false"
+onDrag="panelSelectSuitDrag"
+>
+
+<Image
+        id="ban_suit_arcane"
+        active="false"
+        offsetXY="-413 -4"
+        width="125"
+        height="126"
+        image="suit_banned"
+        raycastTarget="false"
+></Image>
+
+<Image
+        id="ban_suit_order"
+        active="false"
+        offsetXY="-253 -4"
+        width="125"
+        height="126"
+        image="suit_banned"
+        raycastTarget="false"
+></Image>
+
+<Image
+        id="ban_suit_hearth"
+        active="false"
+        offsetXY="-90 -4"
+        width="125"
+        height="126"
+        image="suit_banned"
+        raycastTarget="false"
+></Image>
+
+<Image
+        id="ban_suit_beast"
+        active="false"
+        offsetXY="72 -4"
+        width="125"
+        height="126"
+        image="suit_banned"
+        raycastTarget="false"
+></Image>
+
+<Image
+        id="ban_suit_discord"
+        active="false"
+        offsetXY="232 -4"
+        width="125"
+        height="126"
+        image="suit_banned"
+        raycastTarget="false"
+></Image>
+
+<Image
+        id="ban_suit_nomad"
+        active="false"
+        offsetXY="403 -4"
+        width="125"
+        height="126"
+        image="suit_banned"
+        raycastTarget="false"
+></Image>
+
+<Button
+        id="select_suit_arcane"
+        active="false"
+        offsetXY="-413 -4"
+        width="140"
+        height="180"
+        onClick="selectSuit(Arcane)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="select_suit_order"
+        active="false"
+        offsetXY="-253 -4"
+        width="140"
+        height="180"
+        onClick="selectSuit(Order)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="select_suit_hearth"
+        active="false"
+        offsetXY="-90 -4"
+        width="140"
+        height="180"
+        onClick="selectSuit(Hearth)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="select_suit_beast"
+        active="false"
+        offsetXY="72 -4"
+        width="140"
+        height="180"
+        onClick="selectSuit(Beast)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="select_suit_discord"
+        active="false"
+        offsetXY="232 -4"
+        width="140"
+        height="180"
+        onClick="selectSuit(Discord)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Button
+        id="select_suit_nomad"
+        active="false"
+        offsetXY="403 -4"
+        width="140"
+        height="180"
+        onClick="selectSuit(Nomad)"
+        colors="#00000000|#97979720|#B4B4B420|#00000000"
+></Button>
+
+<Image
+        id="mark_suit"
+        active="false"
+        offsetXY="0 0"
+        width="156"
+        height="180"
+        image="suit_selection"
+        raycastTarget="false"
+></Image>
+
+<Button
+        id="confirm_select_suit"
+        active="true"
+        offsetXY="80 -138"
+        width="134"
+        height="54"
+        onClick="confirmSelectSuit"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Confirm
+</Button>
+
+</Panel>
+
+
+<Panel
+id="panel_text"
+offsetXY="0 0"
+active="false"
+rectAlignment="MiddleCenter"
+width="1136"
+height="700"
+image="menu_text"
+allowDragging="true"
+returnToOriginalPositionWhenReleased="false"
+onDrag="panelTextDrag"
+>
+
+<Text
+        id="panel_text_description"
+        offsetXY="223 270"
+        width="600"
+        height="160"
+        fontSize="40"
+        fontStyle="Bold"
+        color="#000000FF"
+></Text>
+
+<InputField
+        id="panel_text_data"
+        lineType="MultiLineNewLine"
+        offsetXY="230 -80"
+        width="670"
+        height="530"
+        fontSize="24"
+        colors="#00000040|#00000040|#00000040|#00000040"
+        textColor="#FFFFFFFF"
+        onEndEdit="panelTextEndEdit"
+></InputField>
+
+<Button
+        id="ok_panel_text"
+        active="false"
+        offsetXY="-340 -290"
+        width="134"
+        height="54"
+        onClick="closePanelText(ok)"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFFFF"
+>OK
+</Button>
+
+<Button
+        id="cancel_panel_text"
+        active="false"
+        offsetXY="-420 -290"
+        width="134"
+        height="54"
+        onClick="closePanelText(cancel)"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFFFF"
+>Cancel
+</Button>
+
+<Button
+        id="confirm_panel_text"
+        active="false"
+        offsetXY="-260 -290"
+        width="134"
+        height="54"
+        onClick="closePanelText(confirm)"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFFFF"
+>Import
+</Button>
+
+</Panel>
+
+
+<Panel
+id="panel_erase_chronicle_check"
+offsetXY="0 0"
+active="false"
+rectAlignment="MiddleCenter"
+width="1136"
+height="360"
+image="erase_chronicle_check"
+allowDragging="true"
+returnToOriginalPositionWhenReleased="false"
+onDrag="panelEraseChronicleCheckDrag"
+>
+
+<Button
+        id="erase_chronicle_check_no"
+        active="true"
+        offsetXY="-74 -138"
+        width="134"
+        height="54"
+        onClick="eraseChronicleCheckResult(no)"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>No
+</Button>
+
+<Button
+        id="erase_chronicle_check_yes"
+        active="true"
+        offsetXY="80 -138"
+        width="134"
+        height="54"
+        onClick="eraseChronicleCheckResult(yes)"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Yes
+</Button>
+
+</Panel>
+
+
+<Panel
+id="panel_manual_setup_check"
+offsetXY="0 0"
+active="false"
+rectAlignment="MiddleCenter"
+width="1136"
+height="360"
+image="manual_setup_check"
+allowDragging="true"
+returnToOriginalPositionWhenReleased="false"
+onDrag="panelManualSetupCheckDrag"
+>
+
+<Button
+        id="manual_setup_check_no"
+        active="true"
+        offsetXY="-74 -138"
+        width="134"
+        height="54"
+        onClick="manualSetupCheckResult(no)"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>No
+</Button>
+
+<Button
+        id="manual_setup_check_yes"
+        active="true"
+        offsetXY="80 -138"
+        width="134"
+        height="54"
+        onClick="manualSetupCheckResult(yes)"
+        fontSize="32"
+        colors="#444444FF|#606060FF|#747474FF|#00000000"
+        textColor="#FFFFFF"
+>Yes
+</Button>
+
+</Panel>
