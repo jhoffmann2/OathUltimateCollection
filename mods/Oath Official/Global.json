@@ -117,5 +117,131 @@
     "isDispossessedSpawned": false,
     "isGameInProgress": false,
     "isManualControlEnabled": false
-  }
+  },
+  "CustomUIAssets": [
+    {
+      "Name": "pawn_selection",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1010437031292726380/08EF67E43D97D8A3DCE4CFB1E84750E2D0708105/"
+    },
+    {
+      "Name": "menu_select_winner",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1010437031292723708/0E76A60E5F733511EBAD6672BCD54766E2933EAE/"
+    },
+    {
+      "Name": "menu_use_vision_check",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1010437031292724533/70F38529665BEB2C71DF9045AF735DCECFD7CB20/"
+    },
+    {
+      "Name": "menu_select_players",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1010437031292722972/525BA0D1FE3A9DA1704AAF207652623C81208118/"
+    },
+    {
+      "Name": "menu_confirm_winner",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1010437031292722375/5D8CB52F8058D1804CB4C5F1EF9D0D0DE99287BD/"
+    },
+    {
+      "Name": "oath_selection",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1010437031292725743/E207FB52241F11FE2AF6A2410680E2D5490C8668/"
+    },
+    {
+      "Name": "oath_banned",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1010437031292725121/18009ADB7EEDE507F41A84A51CBAF3282E82FA10/"
+    },
+    {
+      "Name": "menu_change_oath",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1010437031292720034/1CA76DF03054934AE433997BC7F1A71EE9EF7AB2/"
+    },
+    {
+      "Name": "menu_choose_oath_except",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1010437031292720873/3D0D30241D2EC89C5147405F09336F88AB8FA858/"
+    },
+    {
+      "Name": "build_repair_selection",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1009311451906883209/04710CE19F0BBAB5DF0C1FDE63B45FE344267D38/"
+    },
+    {
+      "Name": "menu_build_repair",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1009311451909192957/E5CB605457E61D131E996AE240319CBD4BD912ED/"
+    },
+    {
+      "Name": "menu_build_repair_cards",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1009311451906883406/3F8BC902B1F6466522BAD9CA5D53B630F7D7588F/"
+    },
+    {
+      "Name": "build_repair_card_selection",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1009311451909052052/9048930DC42FC9CE558ADA1A65EF43F7DB34513C/"
+    },
+    {
+      "Name": "suit_banned",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1009311636233228349/C14BFDB21379723087B19475078FB873D7F85907/"
+    },
+    {
+      "Name": "menu_select_suit",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1009311636233229253/7CB163C332ED348AF3FD662269976F97F0EC9BC6/"
+    },
+    {
+      "Name": "menu_text",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1009311636236924506/E3DFB65F0B86DFD6408B49C719287429B4B8E89F/"
+    },
+    {
+      "Name": "erase_chronicle_check",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1009311636237275550/480F8D0551C281841907D1F7401CD3CB48C2C346/"
+    },
+    {
+      "Name": "suit_selection",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1009311636238839923/E1D81E66E68E83BD1FECAEAC6FFB0AE90352AF33/"
+    },
+    {
+      "Name": "menu_succession_check",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1009311817863316092/E9137AAAD1AC9331E5845CB952536A384D76D8DC/"
+    },
+    {
+      "Name": "sheet_ruins",
+      "URL": "http://tts.ledergames.com/Oath/cards/3_2_0/edificeBack.jpg"
+    },
+    {
+      "Name": "sheet_edifices",
+      "URL": "http://tts.ledergames.com/Oath/cards/3_2_0/edificeFront.jpg"
+    },
+    {
+      "Name": "menu_offer_citizenship",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1466436074498869466/F80C48895E2A655EBA08260B1BBA50FECD12A182/"
+    },
+    {
+      "Name": "citizen_banned",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1466436239397606254/6825C10E1569014F1D397DF38E0B41AF3AC6EBC5/"
+    },
+    {
+      "Name": "menu_choose_edifice",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1473193471869638410/8D494A7C7A81D99DC86CDB6A31B1992398C33B1D/"
+    },
+    {
+      "Name": "menu_move_winner_relics",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1490082761318119790/FEBB2E6B0162140F65FD7CBAAC37F3147110CDA7/"
+    },
+    {
+      "Name": "menu_choose_vision",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1625193482297975330/8FD3BCC0758BCC9F3DD846B4488D16289B416AE7/"
+    },
+    {
+      "Name": "menu_chronicle_info",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1755822033566508501/2B40516F4D4F6CB0BC23700AE99DEAAEF2668729/"
+    },
+    {
+      "Name": "menu_chronicle_info_small",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1755822033566659831/DAF067DC4746A517446C3BD56761981225611DA3/"
+    },
+    {
+      "Name": "menu_bandit_crown_check",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1718668129398309324/F45B1AAC0C305516CC85E96962B4E35A99BE5275/"
+    },
+    {
+      "Name": "bandit_crown_image",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1718668129398405056/69E0EBE9A20047102045E26C2E8D21666C1DDD6F/"
+    },
+    {
+      "Name": "manual_setup_check",
+      "URL": "http://cloud-3.steamusercontent.com/ugc/1696150763619123295/F7CB9D421A8D2E01D703F510237591E408590997/"
+    }
+  ]
 }
