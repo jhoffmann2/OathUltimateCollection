@@ -1,3 +1,6 @@
 [submodule "tts-types"]
 	path = tts-types
 	url = git@github.com:Benjamin-Dobell/tts-types.git
+[submodule "file-server"]
+	path = file-server
+	url = git@github.com:jveverka/file-server.git
