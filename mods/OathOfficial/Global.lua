@@ -4,9 +4,7 @@
 -- Created and maintained by AgentElrond.  Latest update:  2021
 --
 
-
 function onLoad(save_state)
-
     -- If the mod was just loaded and no one else is seated, start as Blue so the menu and map appear correctly oriented.
     if ((false == Player["Purple"].seated) and
             (false == Player["Red"].seated) and
@@ -41,7 +39,8 @@ function onLoad(save_state)
 
     shared.NUM_TOTAL_DENIZENS = 198
 
-    local tokenPosition = nil
+    ---@type nil | tts__VectorShape
+    local tokenPosition
 
     math.randomseed(os.time())
     -- Throw away a few numbers per the Lua documentation.  The first number may not be random.
@@ -226,10 +225,10 @@ function onLoad(save_state)
                                   ["Devotion"] = nil,
                                   ["Protection"] = nil,
                                   ["Conspiracy"] = nil }
-    shared.oathReminderTokenHidePositions = { ["Supremacy"] = { -39.18, (-2.0), 24.68 },
-                                              ["People"] = { -39.18, (-2.5), 24.68 },
-                                              ["Devotion"] = { -39.18, (-3.0), 24.68 },
-                                              ["Protection"] = { -39.18, (-3.5), 24.68 },
+    shared.oathReminderTokenHidePositions = { ["Supremacy"] = { -39.18, 1000, 24.68 },
+                                              ["People"] = { -39.18, 1001, 24.68 },
+                                              ["Devotion"] = { -39.18, 1002, 24.68 },
+                                              ["Protection"] = { -39.18, 1003, 24.68 },
                                               ["Conspiracy"] = nil }
 
     shared.reliquaryGuid = "8c433b"
@@ -241,15 +240,15 @@ function onLoad(save_state)
     shared.peoplesFavorGuid = "e34fed"
     shared.peoplesFavor = nil
     shared.peoplesFavorShowPosition = { -42.20, 0.97, 35.14 }
-    shared.peoplesFavorHidePosition = { 0.22, (-3.5), 22.37 }
+    shared.peoplesFavorHidePosition = { 0.22, 1000, 22.37 }
     shared.darkestSecretGuid = "651030"
     shared.darkestSecret = nil
     shared.darkestSecretShowPosition = { -50.60, 0.97, 35.14 }
-    shared.darkestSecretHidePosition = { -6.27, (-3.5), 22.38 }
+    shared.darkestSecretHidePosition = { -6.27, 1000, 22.38 }
     shared.chancellorSpecialStartPosition = { -32.98, 0.96, 28.22 }
     shared.grandScepterStartPosition = { -32.81, 0.97, 23.04 }
     shared.oathkeeperTokenStartPosition = { -41.19, 0.96, 19.28 }
-    shared.oathkeeperTokenHidePosition = { -41.19, (-3.5), 19.28 }
+    shared.oathkeeperTokenHidePosition = { -41.19, 1000, 19.28 }
 
     shared.playerBoardGuids = { ["Purple"] = "4fe3a3",
                                 ["Red"] = "26f71b",
@@ -504,7 +503,7 @@ function onLoad(save_state)
                                    ["White"] = { shared.initState.curPlayerStatus["White"][1], shared.initState.curPlayerStatus["White"][2] } }
 
         shared.curFavorValues = {}
-        for curSuitName, curSuitCode in pairs(shared.suitCodes) do
+        for curSuitName, _ in pairs(shared.suitCodes) do
             if (nil ~= shared.initState.curFavorValues) then
                 shared.curFavorValues[curSuitName] = shared.initState.curFavorValues[curSuitName]
             else
@@ -860,7 +859,7 @@ function onLoad(save_state)
         end
     end
 
-    for loopOathName, loopOathCode in pairs(shared.oathCodes) do
+    for loopOathName, _ in pairs(shared.oathCodes) do
         if (nil ~= shared.oathReminderTokenGuids[loopOathName]) then
             shared.oathReminderTokens[loopOathName] = getObjectFromGUID(shared.oathReminderTokenGuids[loopOathName])
 
@@ -917,7 +916,7 @@ function onLoad(save_state)
         printToAll("Error finding Darkest Secret.", { 1, 0, 0 })
     end
 
-    for i, curColor in ipairs(shared.playerColors) do
+    for _, curColor in ipairs(shared.playerColors) do
         shared.playerBoards[curColor] = getObjectFromGUID(shared.playerBoardGuids[curColor])
         if (nil == shared.playerBoards[curColor]) then
             printToAll("Error finding player board.", { 1, 0, 0 })
@@ -946,7 +945,7 @@ function onLoad(save_state)
         end
     end
 
-    for curSuitName, curSuitCode in pairs(shared.suitCodes) do
+    for curSuitName, _ in pairs(shared.suitCodes) do
         shared.suitFavorZones[curSuitName] = getObjectFromGUID(shared.suitFavorZoneGuids[curSuitName])
         if (nil == shared.suitFavorZones[curSuitName]) then
             printToAll("Error loading zone.", { 1, 0, 0 })
@@ -961,7 +960,7 @@ function onLoad(save_state)
 
     -- Force hand zones to the correct height, since a TTS bug means that hand zones will keep lowering with load/save cycles.
 
-    for i, curColor in ipairs(shared.playerColors) do
+    for _, curColor in ipairs(shared.playerColors) do
         local handTransform = Player[curColor].getHandTransform()
         handTransform.position.y = 1.05
         Player[curColor].setHandTransform(handTransform)
@@ -980,7 +979,7 @@ function onLoad(save_state)
 end
 
 function cardFAQRequestCallback(webRequestInfo)
-    local asciiJSON = nil
+    local asciiJSON
 
     if (true == webRequestInfo.is_done) then
         asciiJSON = webRequestInfo.text
@@ -997,7 +996,7 @@ function cardFAQRequestCallback(webRequestInfo)
             printToAll("Downloaded card FAQ data for " .. #shared.cardFAQTable .. " cards.", { 0, 0.8, 0 })
         end
 
-        -- Make sure card data is available before continuning.
+        -- Make sure card data is available before continuing.
         Wait.condition(updateCardsWithFAQ, function()
             return (true == shared.dataIsAvailable)
         end)
@@ -1098,7 +1097,7 @@ function onSave()
                                       ["White"] = { shared.curPlayerStatus["White"][1], shared.curPlayerStatus["White"][2] } }
 
     saveDataTable.curFavorValues = {}
-    for curSuitName, curSuitCode in pairs(shared.suitCodes) do
+    for curSuitName, _ in pairs(shared.suitCodes) do
         saveDataTable.curFavorValues[curSuitName] = shared.curFavorValues[curSuitName]
     end
 
@@ -1146,7 +1145,24 @@ function onSave()
     return JSON.encode(saveDataTable)
 end
 
-function onObjectDrop(playerColor, droppedObject)
+function onDestroy()
+    -- clean table
+    cleanTable()
+
+    -- Hide pieces for all players.
+    for i, curColor in ipairs(shared.playerColors) do
+        resetSupplyCylinder(curColor)
+        hidePieces(curColor)
+    end
+
+    -- Hide general pieces.
+    hideGeneralPieces()
+    
+    -- turn off all buttons
+    configGeneralButtons(shared.BUTTONS_NONE)
+end
+
+function onObjectDrop(_, droppedObject)
     -- For performance reasons, only scan if a favor token is dropped.
     if ("Favor" == string.sub(droppedObject.getName(), 1, 5)) then
         -- Reset the name in case it is not in a suit favor zone.  If it is in a zone, this will be overwritten.
@@ -1163,14 +1179,14 @@ function rescanFavorZone(scanZone, suitName)
     local newFavorValue = 0
 
     -- Count favor in the zone.
-    for i, curObject in ipairs(scriptZoneObjects) do
+    for _, curObject in ipairs(scriptZoneObjects) do
         if ("Favor" == string.sub(curObject.getName(), 1, 5)) then
             newFavorValue = (newFavorValue + 1)
         end
     end
 
     -- Update names for favor in the zone.
-    for i, curObject in ipairs(scriptZoneObjects) do
+    for _, curObject in ipairs(scriptZoneObjects) do
         if ("Favor" == string.sub(curObject.getName(), 1, 5)) then
             curObject.setName("Favor (" .. newFavorValue .. " " .. suitName .. ")")
         end
@@ -1181,16 +1197,16 @@ end
 
 -- This function is called once data is available from data.ttslua.
 function updateCardsWithFAQ()
-    local curQ = nil
-    local curA = nil
-    local curCardName = nil
+    local curQ
+    local curA
+    local curCardName
     local curFAQText = ""
 
-    for i, curEntry in ipairs(shared.cardFAQTable) do
+    for _, curEntry in ipairs(shared.cardFAQTable) do
         curCardName = curEntry.card
         curFAQText = ""
 
-        for i, curFAQ in ipairs(curEntry.faq) do
+        for _, curFAQ in ipairs(curEntry.faq) do
             curQ = curFAQ.q
             curA = curFAQ.a
 
@@ -1271,7 +1287,7 @@ function initDefaultGameState()
                                ["White"] = { "Exile", true } }
 
     shared.curFavorValues = {}
-    for curSuitName, curSuitCode in pairs(shared.suitCodes) do
+    for curSuitName, _ in pairs(shared.suitCodes) do
         shared.curFavorValues[curSuitName] = 0
     end
 
@@ -1379,10 +1395,8 @@ function initDefaultGameState()
 end
 
 function onChat(message, chatPlayer)
-    local saveString = nil
-    local oathCode = nil
-    local spawnCardName = nil
-    local displayString = nil
+    local spawnCardName
+    local displayString
 
     if ("!help" == string.sub(message, 1, 5)) then
         -- Note that the chat font is not necessarily fixed-width, so alignment is done manually.
@@ -1432,26 +1446,26 @@ function onChat(message, chatPlayer)
                 showStats()
             elseif ("!show_world_deck" == string.sub(message, 1, 16)) then
                 displayString = "World deck:\n"
-                for i, curCard in ipairs(shared.curWorldDeckCards) do
+                for _, curCard in ipairs(shared.curWorldDeckCards) do
                     displayString = displayString .. "\n" .. curCard
                 end
                 showDataString(displayString)
             elseif ("!show_relic_deck" == string.sub(message, 1, 16)) then
                 displayString = "Relic deck:\n"
-                for i, curCard in ipairs(shared.curRelicDeckCards) do
+                for _, curCard in ipairs(shared.curRelicDeckCards) do
                     displayString = displayString .. "\n" .. curCard
                 end
                 showDataString(displayString)
             elseif ("!show_dispossessed" == string.sub(message, 1, 18)) then
                 displayString = "Dispossessed cards:\n"
-                for i, curCard in ipairs(shared.curDispossessedDeckCards) do
+                for _, curCard in ipairs(shared.curDispossessedDeckCards) do
                     displayString = displayString .. "\n" .. curCard
                 end
                 showDataString(displayString)
             elseif ("!show_pieces" == string.sub(message, 1, 12)) then
                 -- Undocumented command that shows game pieces.
 
-                for i, curColor in ipairs(shared.playerColors) do
+                for _, curColor in ipairs(shared.playerColors) do
                     showPieces(curColor)
                 end
 
@@ -1459,7 +1473,7 @@ function onChat(message, chatPlayer)
             elseif ("!hide_pieces" == string.sub(message, 1, 12)) then
                 -- Undocumented command that hides game pieces.
 
-                for i, curColor in ipairs(shared.playerColors) do
+                for _, curColor in ipairs(shared.playerColors) do
                     hidePieces(curColor)
                 end
 
@@ -1570,10 +1584,9 @@ end
 function spawnManualFullDecksAfterDelay(chatPlayer)
     -- Note that since this is a bag, getData() is needed rather than getObjects().
     local bagObjects = shared.manualFullDecksBag.getData().ContainedObjects
-    local spawnParams = {}
 
     if (nil ~= bagObjects) then
-        for i, curObjectData in ipairs(bagObjects) do
+        for _, curObjectData in ipairs(bagObjects) do
             -- Spawn each item underneath the table so it can be moved up instead of flashing white.
             shared.loadExpectedSpawnCount = (shared.loadExpectedSpawnCount + 1)
             spawnObjectData({ data = curObjectData,
@@ -1614,9 +1627,9 @@ end
 function spawnAllDecksAfterDelayB()
     local spawnStatus = shared.STATUS_SUCCESS
     local spawnParams = {}
-    local deckJSON = nil
-    local curCardName = nil
-    local curCardInfo = nil
+    local deckJSON
+    local curCardName
+    local curCardInfo
 
     deckJSON = {
         Name = "Deck",
@@ -1688,7 +1701,7 @@ function spawnAllDecksAfterDelayB()
     if (shared.STATUS_SUCCESS == spawnStatus) then
         -- Spawn the deck underneath the table so it can be moved up instead of flashing white.
         spawnParams.json = JSON.encode(deckJSON)
-        spawnParams.position = { shared.manualWorldDenizensPosition[1], (-3.5), shared.manualWorldDenizensPosition[3] }
+        spawnParams.position = { shared.manualWorldDenizensPosition[1], 1000, shared.manualWorldDenizensPosition[3] }
         spawnParams.rotation = { deckJSON.Transform.rotX, deckJSON.Transform.rotY, deckJSON.Transform.rotZ }
         spawnParams.callback_function = function(spawnedObject)
             handleSpawnedObject(spawnedObject,
@@ -1735,7 +1748,7 @@ function spawnAllDecksAfterDelayB()
     if (shared.STATUS_SUCCESS == spawnStatus) then
         -- Spawn the deck underneath the table so it can be moved up instead of flashing white.
         spawnParams.json = JSON.encode(deckJSON)
-        spawnParams.position = { shared.manualVisionsPosition[1], (-3.5), shared.manualVisionsPosition[3] }
+        spawnParams.position = { shared.manualVisionsPosition[1], 1000, shared.manualVisionsPosition[3] }
         spawnParams.rotation = { deckJSON.Transform.rotX, deckJSON.Transform.rotY, deckJSON.Transform.rotZ }
         spawnParams.callback_function = function(spawnedObject)
             handleSpawnedObject(spawnedObject,
@@ -1782,7 +1795,7 @@ function spawnAllDecksAfterDelayB()
     if (shared.STATUS_SUCCESS == spawnStatus) then
         -- Spawn the deck underneath the table so it can be moved up instead of flashing white.
         spawnParams.json = JSON.encode(deckJSON)
-        spawnParams.position = { shared.manualArchivePositions["Arcane"][1], (-3.5), shared.manualArchivePositions["Arcane"][3] }
+        spawnParams.position = { shared.manualArchivePositions["Arcane"][1], 1000, shared.manualArchivePositions["Arcane"][3] }
         spawnParams.rotation = { deckJSON.Transform.rotX, deckJSON.Transform.rotY, deckJSON.Transform.rotZ }
         spawnParams.callback_function = function(spawnedObject)
             handleSpawnedObject(spawnedObject,
@@ -1825,7 +1838,7 @@ function spawnAllDecksAfterDelayB()
     if (shared.STATUS_SUCCESS == spawnStatus) then
         -- Spawn the deck underneath the table so it can be moved up instead of flashing white.
         spawnParams.json = JSON.encode(deckJSON)
-        spawnParams.position = { shared.manualArchivePositions["Discord"][1], (-3.5), shared.manualArchivePositions["Discord"][3] }
+        spawnParams.position = { shared.manualArchivePositions["Discord"][1], 1000, shared.manualArchivePositions["Discord"][3] }
         spawnParams.rotation = { deckJSON.Transform.rotX, deckJSON.Transform.rotY, deckJSON.Transform.rotZ }
         spawnParams.callback_function = function(spawnedObject)
             handleSpawnedObject(spawnedObject,
@@ -1868,7 +1881,7 @@ function spawnAllDecksAfterDelayB()
     if (shared.STATUS_SUCCESS == spawnStatus) then
         -- Spawn the deck underneath the table so it can be moved up instead of flashing white.
         spawnParams.json = JSON.encode(deckJSON)
-        spawnParams.position = { shared.manualArchivePositions["Order"][1], (-3.5), shared.manualArchivePositions["Order"][3] }
+        spawnParams.position = { shared.manualArchivePositions["Order"][1], 1000, shared.manualArchivePositions["Order"][3] }
         spawnParams.rotation = { deckJSON.Transform.rotX, deckJSON.Transform.rotY, deckJSON.Transform.rotZ }
         spawnParams.callback_function = function(spawnedObject)
             handleSpawnedObject(spawnedObject,
@@ -1911,7 +1924,7 @@ function spawnAllDecksAfterDelayB()
     if (shared.STATUS_SUCCESS == spawnStatus) then
         -- Spawn the deck underneath the table so it can be moved up instead of flashing white.
         spawnParams.json = JSON.encode(deckJSON)
-        spawnParams.position = { shared.manualArchivePositions["Hearth"][1], (-3.5), shared.manualArchivePositions["Hearth"][3] }
+        spawnParams.position = { shared.manualArchivePositions["Hearth"][1], 1000, shared.manualArchivePositions["Hearth"][3] }
         spawnParams.rotation = { deckJSON.Transform.rotX, deckJSON.Transform.rotY, deckJSON.Transform.rotZ }
         spawnParams.callback_function = function(spawnedObject)
             handleSpawnedObject(spawnedObject,
@@ -1954,7 +1967,7 @@ function spawnAllDecksAfterDelayB()
     if (shared.STATUS_SUCCESS == spawnStatus) then
         -- Spawn the deck underneath the table so it can be moved up instead of flashing white.
         spawnParams.json = JSON.encode(deckJSON)
-        spawnParams.position = { shared.manualArchivePositions["Nomad"][1], (-3.5), shared.manualArchivePositions["Nomad"][3] }
+        spawnParams.position = { shared.manualArchivePositions["Nomad"][1], 1000, shared.manualArchivePositions["Nomad"][3] }
         spawnParams.rotation = { deckJSON.Transform.rotX, deckJSON.Transform.rotY, deckJSON.Transform.rotZ }
         spawnParams.callback_function = function(spawnedObject)
             handleSpawnedObject(spawnedObject,
@@ -1997,7 +2010,7 @@ function spawnAllDecksAfterDelayB()
     if (shared.STATUS_SUCCESS == spawnStatus) then
         -- Spawn the deck underneath the table so it can be moved up instead of flashing white.
         spawnParams.json = JSON.encode(deckJSON)
-        spawnParams.position = { shared.manualArchivePositions["Beast"][1], (-3.5), shared.manualArchivePositions["Beast"][3] }
+        spawnParams.position = { shared.manualArchivePositions["Beast"][1], 1000, shared.manualArchivePositions["Beast"][3] }
         spawnParams.rotation = { deckJSON.Transform.rotX, deckJSON.Transform.rotY, deckJSON.Transform.rotZ }
         spawnParams.callback_function = function(spawnedObject)
             handleSpawnedObject(spawnedObject,
@@ -2044,7 +2057,7 @@ function spawnAllDecksAfterDelayB()
     if (shared.STATUS_SUCCESS == spawnStatus) then
         -- Spawn the deck underneath the table so it can be moved up instead of flashing white.
         spawnParams.json = JSON.encode(deckJSON)
-        spawnParams.position = { shared.manualEdificesRuinsPosition[1], (-3.5), shared.manualEdificesRuinsPosition[3] }
+        spawnParams.position = { shared.manualEdificesRuinsPosition[1], 1000, shared.manualEdificesRuinsPosition[3] }
         spawnParams.rotation = { deckJSON.Transform.rotX, deckJSON.Transform.rotY, deckJSON.Transform.rotZ }
         spawnParams.callback_function = function(spawnedObject)
             handleSpawnedObject(spawnedObject,
@@ -2091,7 +2104,7 @@ function spawnAllDecksAfterDelayB()
     if (shared.STATUS_SUCCESS == spawnStatus) then
         -- Spawn the deck underneath the table so it can be moved up instead of flashing white.
         spawnParams.json = JSON.encode(deckJSON)
-        spawnParams.position = { shared.manualSitesPosition[1], (-3.5), shared.manualSitesPosition[3] }
+        spawnParams.position = { shared.manualSitesPosition[1], 1000, shared.manualSitesPosition[3] }
         spawnParams.rotation = { deckJSON.Transform.rotX, deckJSON.Transform.rotY, deckJSON.Transform.rotZ }
         spawnParams.callback_function = function(spawnedObject)
             handleSpawnedObject(spawnedObject,
@@ -2138,7 +2151,7 @@ function spawnAllDecksAfterDelayB()
     if (shared.STATUS_SUCCESS == spawnStatus) then
         -- Spawn the deck underneath the table so it can be moved up instead of flashing white.
         spawnParams.json = JSON.encode(deckJSON)
-        spawnParams.position = { shared.manualRelicsPosition[1], (-3.5), shared.manualRelicsPosition[3] }
+        spawnParams.position = { shared.manualRelicsPosition[1], 1000, shared.manualRelicsPosition[3] }
         spawnParams.rotation = { deckJSON.Transform.rotX, deckJSON.Transform.rotY, deckJSON.Transform.rotZ }
         spawnParams.callback_function = function(spawnedObject)
             handleSpawnedObject(spawnedObject,
@@ -2162,8 +2175,8 @@ function spawnAllDecksDone()
 end
 
 function showStats()
-    local displayString = nil
-    local cardSuit = nil
+    local displayString
+    local cardSuit
     local worldDeckSuitCounts = { ["Discord"] = 0,
                                   ["Arcane"] = 0,
                                   ["Order"] = 0,
@@ -2235,7 +2248,7 @@ function runPilgrimageCommand(player)
     local removeSiteIndex = 0
     local numAvailableSites = 0
     local siteUsed = false
-    local siteName = nil
+    local siteName
 
     -- Make a list of unused sites.
     for siteCode = 0, (shared.NUM_TOTAL_SITES - 1) do
@@ -2327,8 +2340,8 @@ function cancelConfirmWinner(player, value, id)
 end
 
 function confirmSelectWinner(player, value, id)
-    local allObjects = nil
-    local cardRotation = nil
+    local allObjects
+    local cardRotation
 
     if (true == player.host) then
         Global.UI.setAttribute("panel_confirm_winner", "active", false)
@@ -2409,7 +2422,7 @@ function confirmSelectWinner(player, value, id)
 end
 
 function banditCrownResult(player, value, id)
-    local banditCrownPosition = nil
+    local banditCrownPosition
 
     if ((true == player.host) or (player.color == shared.winningColor)) then
         if ("confirm" == value) then
@@ -2454,9 +2467,9 @@ end
 function confirmDoneMovingWinnerRelics(player, value, id)
     local familyWagonFound = false
     local piedPiperFound = false
-    local allObjects = nil
-    local curObjectName = nil
-    local cardRotation = nil
+    local allObjects
+    local curObjectName
+    local cardRotation
 
     if ((true == player.host) or (player.color == shared.winningColor)) then
         Global.UI.setAttribute("panel_move_winner_relics", "active", false)
@@ -2631,7 +2644,7 @@ function panelChooseOathExceptDrag()
 end
 
 function configGeneralButtons(buttonConfig)
-    local dispossessedButtonLabel = nil
+    local dispossessedButtonLabel
 
     shared.gameDataObject.clearButtons()
     shared.spawnDispossessedButtonIndex = 0
@@ -2784,7 +2797,7 @@ end
 
 -- Creates player buttons.
 function createPlayerButtons()
-    local buttonTable = nil
+    local buttonTable
     local numButtonsCreated = 0
     local nextTableIndex = 1
 
@@ -2909,9 +2922,9 @@ function panelManualSetupCheckDrag()
 end
 
 function closePanelText(player, value, id)
-    local newChronicleNameLength = nil
-    local cleanedStringV1 = nil
-    local cleanedStringV2 = nil
+    local newChronicleNameLength
+    local cleanedStringV1
+    local cleanedStringV2
 
     if (true == player.host) then
         Global.UI.setAttribute("panel_text", "active", false)
@@ -3037,6 +3050,7 @@ end
 
 function randomSetupButtonClicked(buttonObject, playerColor, altClick)
     if (true == Player[playerColor].host) then
+        print("random setup2")
         shared.pendingEraseType = "randomSetup"
         Global.UI.setAttribute("panel_manual_setup_check", "active", false)
         Global.UI.setAttribute("panel_erase_chronicle_check", "active", true)
@@ -3157,10 +3171,10 @@ function spawnDispossessedButtonClicked(buttonObject, playerColor, altClick)
 end
 
 function removeDispossessedBag()
-    local dispossessedBag = nil
-    local bagObjects = nil
-    local cardName = nil
-    local cardInfo = nil
+    local dispossessedBag
+    local bagObjects
+    local cardName
+    local cardInfo
 
     if (true == shared.isDispossessedSpawned) then
         if (nil ~= shared.dispossessedBagGuid) then
@@ -3239,13 +3253,13 @@ function addCardToContainerJSON(containerJSON, cardName)
     local spawnStatus = shared.STATUS_SUCCESS
     local cardInfo = shared.cardsTable[cardName]
     local cardType = cardInfo.cardtype
-    local cardDescription = nil
+    local cardDescription
     local ttsCardID = cardInfo.ttscardid
     local cardDeckID = string.sub(ttsCardID, 1, -3)
     local isCardSideways = false
     local shouldHideWhenFaceDown = true
-    local cardJSON = nil
-    local cardTTSDeckInfo = nil
+    local cardJSON
+    local cardTTSDeckInfo
 
     -- Edifice / ruin cards should not hide the tooltip even when facedown.
     if ("EdificeRuin" == cardType) then
@@ -3458,7 +3472,7 @@ function flipButtonClickedRed(buttonObject, playerColor, altClick)
 end
 
 function commonSetup()
-    local convertedColor = nil
+    local convertedColor
 
     configGeneralButtons(shared.BUTTONS_NONE)
 
@@ -3550,8 +3564,8 @@ end
 
 function areHandsEmpty()
     local retValue = true
-    local allHandZones = nil
-    local handZoneObjects = nil
+    local allHandZones
+    local handZoneObjects
 
     allHandZones = Hands.getHands()
 
@@ -3687,11 +3701,11 @@ function cancelSelectOath(player, value, id)
 end
 
 function randomizeChronicle()
-    local availableSites = nil
+    local availableSites
     local numAvailableSites = 0
     local removeSiteIndex = 0
-    local availableDenizens = nil
-    local availableDenizenIndex = nil
+    local availableDenizens
+    local availableDenizenIndex
     local numAvailableDenizens = 0
     local removeDenizenIndex = 0
 
@@ -3768,10 +3782,10 @@ end
 
 -- If a game is in progress, scans the table and updates state variables.
 function scanTable(alwaysScan)
-    local scriptZoneObjects = nil
-    local cardName = nil
-    local cardInfo = nil
-    local siteInfo = nil
+    local scriptZoneObjects
+    local cardName
+    local cardInfo
+    local siteInfo
     local cardRotation = 0
 
     -- Only scan the table if a game is in progress, or if the caller requested a scan always be performed.  Otherwise assume the table is up to date.
@@ -3909,7 +3923,7 @@ function scanTable(alwaysScan)
 end
 
 function scanPlayerAdvisers()
-    local testRotation = nil
+    local testRotation
 
     for i, curColor in ipairs(shared.playerColors) do
         shared.numPlayerAdvisers[curColor] = 0
@@ -3973,21 +3987,21 @@ end
 -- IMPORTANT:  The game end process (winner, suit choice and reordering, exile/citizen status update, new oath)
 --             must be finished BEFORE this function is called.
 function generateSaveString()
-    local basicDataString = nil
-    local mapDataString = nil
-    local basicDataString = nil
-    local worldDeckDataString = nil
-    local dispossessedDataString = nil
-    local relicDeckDataString = nil
-    local previousGameInfoString = nil
-    local saveString = nil
-    local scriptZoneObjects = nil
-    local siteInfo = nil
-    local cardInfo = nil
+    local basicDataString
+    local mapDataString
+    local basicDataString
+    local worldDeckDataString
+    local dispossessedDataString
+    local relicDeckDataString
+    local previousGameInfoString
+    local saveString
+    local scriptZoneObjects
+    local siteInfo
+    local cardInfo
     local cardRotation = 0
     -- Site, normal, normal, normal card save IDs respectively.
     local curSiteSaveIDs = { nil, nil, nil, nil }
-    local deckCardID = nil
+    local deckCardID
 
     -- Set the global save status.
     shared.saveStatus = shared.STATUS_SUCCESS
@@ -4278,12 +4292,12 @@ end
 
 -- This function is used to clean up the table by deleting object(s), moving object(s) to default locations if needed, etc.
 function cleanTable()
-    local allObjects = nil
-    local curObjectName = nil
-    local curObjectDescription = nil
-    local curObjectColor = nil
-    local curObjectPosition = nil
-    local curMarker = nil
+    local allObjects
+    local curObjectName
+    local curObjectDescription
+    local curObjectColor
+    local curObjectPosition
+    local curMarker
 
     --
     -- Delete all decks and cards.  Move all pawns and warbands back to their starting locations and supply bags, respectively.
@@ -4311,7 +4325,7 @@ function cleanTable()
                 curObjectPosition = curObject.getPosition()
                 -- Set the warband's rotation to match the starting pawn rotation, and put the warband back in the matching bag.
                 curObject.setRotation({ 0.0, shared.pawnStartYRotations[curObjectColor], 0.0 })
-                curObject.setPosition({ curObjectPosition[1], (-3.5), curObjectPosition[3] })
+                curObject.setPosition({ curObjectPosition[1], 1000, curObjectPosition[3] })
                 shared.playerWarbandBags[curObjectColor].putObject(curObject)
             elseif ("Pawn" == curObjectName) then
                 if ("Black" == curObjectDescription) then
@@ -4364,7 +4378,7 @@ function cleanTable()
 end
 
 function showDice()
-    local curDie = nil
+    local curDie
 
     for dieIndex = 1, #shared.diceGuids do
         curDie = getObjectFromGUID(shared.diceGuids[dieIndex])
@@ -4385,12 +4399,12 @@ function showDice()
 end
 
 function hideDice()
-    local curDie = nil
+    local curDie
 
     for dieIndex = 1, #shared.diceGuids do
         curDie = getObjectFromGUID(shared.diceGuids[dieIndex])
         if (nil ~= curDie) then
-            curDie.setPosition({ shared.dicePositions[dieIndex][1], (-3.5), shared.dicePositions[dieIndex][3] })
+            curDie.setPosition({ shared.dicePositions[dieIndex][1], 1000, shared.dicePositions[dieIndex][3] })
             if (#shared.diceGuids == dieIndex) then
                 curDie.setRotation({ 270, 0, 0 })
             else
@@ -4516,8 +4530,8 @@ function continueSetupLoadedState(setupGameAfter)
 end
 
 function finishSetupLoadedState(setupGameAfter)
-    local convertedColor = nil
-    local statusString = nil
+    local convertedColor
+    local statusString
 
     shared.loadWaitID = nil
 
@@ -4629,13 +4643,13 @@ function spawnSingleCard(cardName, spawnFacedown, spawnPosition, cardRotY, spawn
     -- Create a copy of the spawn position to avoid problems with the data changing elsewhere.
     local spawnPositionLocal = { spawnPosition[1], spawnPosition[2], spawnPosition[3] }
     local spawnParams = {}
-    local cardJSON = nil
+    local cardJSON
     local cardDeckID = 0
     local cardInfo = shared.cardsTable[cardName]
-    local cardDescription = nil
+    local cardDescription
     local ttsCardID = 0
-    local cardType = nil
-    local cardTTSDeckInfo = nil
+    local cardType
+    local cardTTSDeckInfo
     local cardScaleX = 0
     local cardScaleZ = 0
     local internalCardRotZ = 0.0
@@ -4741,7 +4755,7 @@ function spawnSingleCard(cardName, spawnFacedown, spawnPosition, cardRotY, spawn
         -- Spawn the card underneath the table so it can be mvoed up instead of flashing white.
         if (shared.STATUS_SUCCESS == spawnStatus) then
             spawnParams.json = JSON.encode(cardJSON)
-            spawnParams.position = { spawnPositionLocal[1], (-3.5), spawnPositionLocal[3] }
+            spawnParams.position = { spawnPositionLocal[1], 1000, spawnPositionLocal[3] }
             spawnParams.rotation = { 0, cardRotY, internalCardRotZ }
             spawnParams.callback_function = function(spawnedObject)
                 handleSpawnedObject(spawnedObject,
@@ -4792,15 +4806,15 @@ function handleSpawnedObject(spawnedObject, finalPosition, shouldUnlock, spawnFa
 end
 
 function setupGame()
-    local availableSites = nil
+    local availableSites
     local numAvailableSites = 0
-    local curSiteName = nil
-    local siteCardName = nil
-    local siteCardInfo = nil
-    local normalCardName = nil
-    local normalCardInfo = nil
+    local curSiteName
+    local siteCardName
+    local siteCardInfo
+    local normalCardName
+    local normalCardInfo
     local cardSpawnPosition = {}
-    local newSiteIndex = nil
+    local newSiteIndex
     local deckOffset = 0
     local siteRelicCount = 0
     local emptySpaceFound = false
@@ -5059,7 +5073,7 @@ function setupGame()
             local cradleDiscards = {}
             local provincesDiscards = {}
             local hinterlandDiscards = {}
-            local curColor = nil
+            local curColor
 
             table.insert(cradleDiscards, shared.curWorldDeckCards[shared.curWorldDeckCardCount - deckOffset])
             deckOffset = (deckOffset + 1)
@@ -5281,7 +5295,7 @@ function hideGeneralPieces()
 end
 
 function showPieces(playerColor)
-    local oldPosition = nil
+    local oldPosition
 
     if ("Purple" == playerColor) then
         oldPosition = shared.reliquary.getPosition()
@@ -5317,36 +5331,36 @@ function showPieces(playerColor)
 end
 
 function hidePieces(playerColor)
-    local oldPosition = nil
+    local oldPosition
 
     if ("Purple" == playerColor) then
         oldPosition = shared.reliquary.getPosition()
-        shared.reliquary.setPosition({ oldPosition[1], (-3.5), oldPosition[3] })
+        shared.reliquary.setPosition({ oldPosition[1], 1000, oldPosition[3] })
         shared.reliquary.locked = true
         shared.reliquary.interactable = false
         shared.reliquary.tooltip = false
     end
 
     oldPosition = shared.playerBoards[playerColor].getPosition()
-    shared.playerBoards[playerColor].setPosition({ oldPosition[1], (-3.5), oldPosition[3] })
+    shared.playerBoards[playerColor].setPosition({ oldPosition[1], 1000, oldPosition[3] })
     shared.playerBoards[playerColor].locked = true
     shared.playerBoards[playerColor].interactable = false
     shared.playerBoards[playerColor].tooltip = false
 
     oldPosition = shared.playerPawns[playerColor].getPosition()
-    shared.playerPawns[playerColor].setPosition({ oldPosition[1], (-3.5), oldPosition[3] })
+    shared.playerPawns[playerColor].setPosition({ oldPosition[1], 1000, oldPosition[3] })
     shared.playerPawns[playerColor].locked = true
     shared.playerPawns[playerColor].interactable = false
     shared.playerPawns[playerColor].tooltip = false
 
     oldPosition = shared.playerSupplyMarkers[playerColor].getPosition()
-    shared.playerSupplyMarkers[playerColor].setPosition({ oldPosition[1], (-3.5), oldPosition[3] })
+    shared.playerSupplyMarkers[playerColor].setPosition({ oldPosition[1], 1000, oldPosition[3] })
     shared.playerSupplyMarkers[playerColor].locked = true
     shared.playerSupplyMarkers[playerColor].interactable = false
     shared.playerSupplyMarkers[playerColor].tooltip = false
 
     oldPosition = shared.playerWarbandBags[playerColor].getPosition()
-    shared.playerWarbandBags[playerColor].setPosition({ oldPosition[1], (-3.5), oldPosition[3] })
+    shared.playerWarbandBags[playerColor].setPosition({ oldPosition[1], 1000, oldPosition[3] })
     shared.playerWarbandBags[playerColor].locked = true
     shared.playerWarbandBags[playerColor].interactable = false
     shared.playerWarbandBags[playerColor].tooltip = false
@@ -5359,10 +5373,10 @@ function generateRandomWorldDeck(cardsForWorldDeck, cardsForWorldDeckCount, numC
                                shared.normalCardsBySaveID[213],
                                shared.normalCardsBySaveID[214] }
     local numVisionsAvailable = 5
-    local copyCardName = nil
+    local copyCardName
     local sourceSubset = {}
     local numSubsetCardsAvailable = 0
-    local chosenIndex = nil
+    local chosenIndex
     local cardValid = true
 
     -- If no card options were provided, determine which cards are options to add to the world deck.
@@ -5488,11 +5502,11 @@ function generateRandomWorldDeck(cardsForWorldDeck, cardsForWorldDeckCount, numC
 end
 
 function generateRandomRelicDeck()
-    local copyCardName = nil
+    local copyCardName
     local cardsForRelicDeck = {}
     local cardsForRelicDeckCount = 0
     local numCardsToChoose = 0
-    local chosenIndex = nil
+    local chosenIndex
 
     -- Determine which cards are options to add to the relic deck.
     for cardSaveID = 218, 237 do
@@ -5522,8 +5536,8 @@ function generateRandomRelicDeck()
 end
 
 function spawnFavor()
-    local newFavorToken = nil
-    local newSecretToken = nil
+    local newFavorToken
+    local newSecretToken
     local favorYOffset = 0.18
     local supplyFavor = 36
     local curFavorCount = 0
@@ -5580,13 +5594,13 @@ end
 function spawnWorldDeck(removedFromUnderneathCount)
     local spawnStatus = shared.STATUS_SUCCESS
     local spawnParams = {}
-    local deckJSON = nil
-    local cardJSON = nil
-    local curCardName = nil
-    local curCardDescription = nil
-    local curCardInfo = nil
-    local curCardDeckID = nil
-    local curCardTTSDeckInfo = nil
+    local deckJSON
+    local cardJSON
+    local curCardName
+    local curCardDescription
+    local curCardInfo
+    local curCardDeckID
+    local curCardTTSDeckInfo
     local isCardSideways = false
 
     deckJSON = {
@@ -5722,7 +5736,7 @@ function spawnWorldDeck(removedFromUnderneathCount)
     if (shared.STATUS_SUCCESS == spawnStatus) then
         -- Spawn the deck underneath the table so it can be moved up instead of flashing white.
         spawnParams.json = JSON.encode(deckJSON)
-        spawnParams.position = { shared.worldDeckSpawnPosition[1], (-3.5), shared.worldDeckSpawnPosition[3] }
+        spawnParams.position = { shared.worldDeckSpawnPosition[1], 1000, shared.worldDeckSpawnPosition[3] }
         spawnParams.rotation = { 0, 90, 180 }
         spawnParams.callback_function = function(spawnedObject)
             handleSpawnedObject(spawnedObject,
@@ -5740,13 +5754,13 @@ end
 function spawnDiscardDeck(cardsBottomToTop, spawnPosition)
     local spawnStatus = shared.STATUS_SUCCESS
     local spawnParams = {}
-    local deckJSON = nil
-    local cardJSON = nil
-    local curCardName = nil
-    local curCardDescription = nil
-    local curCardInfo = nil
-    local curCardDeckID = nil
-    local curCardTTSDeckInfo = nil
+    local deckJSON
+    local cardJSON
+    local curCardName
+    local curCardDescription
+    local curCardInfo
+    local curCardDeckID
+    local curCardTTSDeckInfo
     local isCardSideways = false
 
     deckJSON = {
@@ -5882,7 +5896,7 @@ function spawnDiscardDeck(cardsBottomToTop, spawnPosition)
     if (shared.STATUS_SUCCESS == spawnStatus) then
         -- Spawn the deck underneath the table so it can be moved up instead of flashing white.
         spawnParams.json = JSON.encode(deckJSON)
-        spawnParams.position = { spawnPosition[1], (-3.5), spawnPosition[3] }
+        spawnParams.position = { spawnPosition[1], 1000, spawnPosition[3] }
         spawnParams.rotation = { 0.0, 90.0, 180.0 }
         spawnParams.callback_function = function(spawnedObject)
             -- The Y position is somewhat higher than the final resting position so that discard piles of a few cards can be spawned for tutorial setup.
@@ -5901,13 +5915,13 @@ end
 function spawnRelicDeck()
     local spawnStatus = shared.STATUS_SUCCESS
     local spawnParams = {}
-    local deckJSON = nil
-    local cardJSON = nil
-    local curCardName = nil
-    local curCardDescription = nil
-    local curCardInfo = nil
-    local curCardDeckID = nil
-    local curCardTTSDeckInfo = nil
+    local deckJSON
+    local cardJSON
+    local curCardName
+    local curCardDescription
+    local curCardInfo
+    local curCardDeckID
+    local curCardTTSDeckInfo
 
     if (shared.curRelicDeckCardCount >= 1) then
         deckJSON = {
@@ -6037,7 +6051,7 @@ function spawnRelicDeck()
         if (shared.STATUS_SUCCESS == spawnStatus) then
             -- Spawn the deck underneath the table so it can be moved up instead of flashing white.
             spawnParams.json = JSON.encode(deckJSON)
-            spawnParams.position = { shared.relicDeckSpawnPosition[1], (-3.5), shared.relicDeckSpawnPosition[3] }
+            spawnParams.position = { shared.relicDeckSpawnPosition[1], 1000, shared.relicDeckSpawnPosition[3] }
             spawnParams.rotation = { 0, 180, 180 }
             spawnParams.scale = { 0.96, 1.00, 0.96 }
             spawnParams.callback_function = function(spawnedObject)
@@ -6059,9 +6073,9 @@ function spawnRelicDeck()
 end
 
 function loadFromSaveString(saveDataString, setupGameAfter)
-    local oathMajorVersion = nil
-    local oathMinorVersion = nil
-    local oathPatchVersion = nil
+    local oathMajorVersion
+    local oathMinorVersion
+    local oathPatchVersion
 
     -- Set the global load status.
     shared.loadStatus = shared.STATUS_SUCCESS
@@ -6171,22 +6185,22 @@ function loadFromSaveString(saveDataString, setupGameAfter)
 end
 
 function loadFromSaveString_1_6_0(saveDataString)
-    local parseGameCountHex = nil
-    local parseChronicleNameLengthHex = nil
-    local parseChronicleNameLength = nil
-    local statusByteHex = nil
-    local statusByte = nil
-    local parseOathCodeHex = nil
-    local parseOathCode = nil
-    local parseSuitCodeHex = nil
-    local parseSuitCode = nil
-    local parseCodeHex = nil
-    local parseCode = nil
-    local cardCountHex = nil
-    local oathCodeFound = nil
-    local suitCodeFound = nil
-    local nextParseIndex = nil
-    local cardInfo = nil
+    local parseGameCountHex
+    local parseChronicleNameLengthHex
+    local parseChronicleNameLength
+    local statusByteHex
+    local statusByte
+    local parseOathCodeHex
+    local parseOathCode
+    local parseSuitCodeHex
+    local parseSuitCode
+    local parseCodeHex
+    local parseCode
+    local cardCountHex
+    local oathCodeFound
+    local suitCodeFound
+    local nextParseIndex
+    local cardInfo
 
     --
     -- Parse the save data string.  Bytes 1-6 contained the version and have already been parsed.
@@ -6515,9 +6529,9 @@ function loadFromSaveString_1_6_0(saveDataString)
 end
 
 function loadFromSaveString_3_1_0(saveDataString)
-    local parseCodeHex = nil
-    local parseCode = nil
-    local cardCountHex = nil
+    local parseCodeHex
+    local parseCode
+    local cardCountHex
     local nextParseIndex = startParseIndex
     local cardFound = false
     local missingRelicCount = 0
@@ -6773,9 +6787,9 @@ end
 
 function loadFromSaveString_3_3_1(saveDataString)
     local nextParseIndex = startParseIndex
-    local parseSteamNameLength = nil
-    local hexValue = nil
-    local byteValue = nil
+    local parseSteamNameLength
+    local hexValue
+    local byteValue
 
     -- Parse the first part of the save string using the previous format.
     nextParseIndex = loadFromSaveString_3_1_0(saveDataString)
@@ -6957,7 +6971,7 @@ function parsePreviousWinningColorByte(statusByte)
 end
 
 function updatePlayerBoardRotation(updateColor)
-    local boardRotation = nil
+    local boardRotation
 
     if ("Purple" ~= updateColor) then
         boardRotation = shared.playerBoards[updateColor].getRotation()
@@ -6970,7 +6984,7 @@ function updatePlayerBoardRotation(updateColor)
 end
 
 function updateRotationFromPlayerBoard(playerColor)
-    local boardRotation = nil
+    local boardRotation
     local translatedPlayerColor = playerColor
 
     if ("Brown" == playerColor) then
@@ -7060,7 +7074,7 @@ function confirmSelectVision(player, value, id)
 end
 
 function changeChronicleOath(player, value, id)
-    local clickedOath = nil
+    local clickedOath
 
     if (true == player.host) then
         clickedOath = shared.oathNamesFromCode[tonumber(value)]
@@ -7153,7 +7167,7 @@ function handleChronicleAfterVow(player)
 end
 
 function grantCitizenship(player, value, id)
-    local convertedColor = nil
+    local convertedColor
 
     if ((true == player.host) or (player.color == shared.winningColor)) then
         if ("Done" == value) then
@@ -7253,12 +7267,12 @@ function isEdificeAvailable(edificeName)
 end
 
 function handleChronicleAfterOfferCitizenship(player)
-    local curObjectName = nil
-    local curObjectDescription = nil
-    local convertedObjectColor = nil
+    local curObjectName
+    local curObjectDescription
+    local convertedObjectColor
     local doesWinnerCountBanditCrown = false
-    local cardName = nil
-    local cardInfo = nil
+    local cardName
+    local cardInfo
     local isCardFlipped = false
     local siteHasEdificeOrRuin = false
     local siteHasWarband = false
@@ -7443,8 +7457,8 @@ function selectBuildRepair(player, value, id)
 end
 
 function confirmBuildRepair(player, value, id)
-    local cardName = nil
-    local ruinName = nil
+    local cardName
+    local ruinName
 
     if ((true == player.host) or (player.color == shared.winningColor)) then
         if ("true" == value) then
@@ -7522,13 +7536,13 @@ function cancelBuildRepairCards(player, value, id)
 end
 
 function confirmBuildRepairCards(player, value, id)
-    local cardName = nil
-    local cardInfo = nil
-    local cardSuit = nil
-    local edificeName = nil
-    local ruinName = nil
-    local edificeIndex = nil
-    local edificeFullName = nil
+    local cardName
+    local cardInfo
+    local cardSuit
+    local edificeName
+    local ruinName
+    local edificeIndex
+    local edificeFullName
     local edificeAvailable = false
     local siteEdificeCardCount = 0
 
@@ -7623,11 +7637,11 @@ function edificeCancel(player, value, id)
 end
 
 function edificeConfirm(player, value, id)
-    local oldCardName = nil
-    local newCardName = nil
-    local newCardSuit = nil
-    local edificeIndex = nil
-    local edificeName = nil
+    local oldCardName
+    local newCardName
+    local newCardSuit
+    local edificeIndex
+    local edificeName
 
     if ((true == player.host) or (player.color == shared.winningColor)) then
         oldCardName = shared.curMapNormalCards[shared.selectedBuildRepairIndex][shared.selectedBuildRepairCardIndex][1]
@@ -7662,14 +7676,14 @@ end
 function handleChronicleAfterBuildRepair(player)
     local setAsideSites = {}
     local setAsideNormalCards = {}
-    local curObjectName = nil
-    local curObjectDescription = nil
-    local convertedObjectColor = nil
-    local scriptZoneObjects = nil
-    local adviserSuitCounts = nil
-    local cardName = nil
-    local cardInfo = nil
-    local cardSuit = nil
+    local curObjectName
+    local curObjectDescription
+    local convertedObjectColor
+    local scriptZoneObjects
+    local adviserSuitCounts
+    local cardName
+    local cardInfo
+    local cardSuit
     local isCardFlipped = false
     local hasRuin = false
     local siteFound = false
@@ -7678,7 +7692,7 @@ function handleChronicleAfterBuildRepair(player)
     local removeSiteIndex = 0
     local numAvailableSites = 0
     local siteUsed = false
-    local siteName = nil
+    local siteName
     local wasEdificeFlipped = false
     local forestTempleExists = false
 
@@ -8347,8 +8361,8 @@ function confirmSelectSuit(player, value, id)
 end
 
 function calculateArchiveContents()
-    local cardName = nil
-    local cardInfo = nil
+    local cardName
+    local cardInfo
     local cardFound = false
     local mapDenizens = {}
 
@@ -8439,8 +8453,8 @@ function calculateArchiveContents()
 end
 
 function calculateMostDispossessedSuit()
-    local returnSuit = nil
-    local cardInfo = nil
+    local returnSuit
+    local cardInfo
     local maxSuitCount = 0
     local dispossessedSuitOptions = {}
     local dispossessedSuitCounts = { ["Discord"] = 0,
@@ -8491,21 +8505,21 @@ function calculateMostDispossessedSuit()
 end
 
 function handleChronicleAfterSelectSuit()
-    local newSuitOrderString = nil
+    local newSuitOrderString
     local discardCount = 0
     local dispossessOptions = {}
-    local dispossessIndex = nil
+    local dispossessIndex
     local worldDeckOptions = {}
-    local cardName = nil
-    local cardInfo = nil
+    local cardName
+    local cardInfo
     local cardFound = false
-    local curCardInfo = nil
-    local siteName = nil
-    local siteInfo = nil
+    local curCardInfo
+    local siteName
+    local siteInfo
     local siteRelicCount = 0
     local emptySpaceFound = false
-    local scriptZoneObjects = nil
-    local curObjectName = nil
+    local scriptZoneObjects
+    local curObjectName
     local mapRelics = {}
     local saveRelicsBeforeShuffle = {}
     local deckRelicsAvailable = {}
