@@ -59,9 +59,6 @@ function onLoad(save_state)
     shared.belowTableSecretGuid = "8314e8"
     shared.mapGuids = { "fb146b", "8f599d", "7cf920" }
 
-    -- The game object contains unchanging game data such as card names.
-    shared.gameDataObjectGuid = "85bbc5"
-
     shared.siteCardSpawnPositions = { { -21.38, 1.07, 7.30 },
                                       { -21.39, 1.07, 2.67 },
                                       { -4.73, 1.07, 7.34 },
@@ -818,18 +815,6 @@ function onLoad(save_state)
         shared.mapPart.interactable = false
         shared.mapPart.tooltip = false
     end
-
-    shared.gameDataObject = getObjectFromGUID(shared.gameDataObjectGuid)
-    if (shared.gameDataObject ~= nil) then
-        shared.gameDataObject.locked = true
-        shared.gameDataObject.interactable = false
-        shared.gameDataObject.tooltip = false
-        --local tempPosition = gameDataObject.getPosition()
-        --printToAll("Previous Y position " .. tempPosition.y, {1,1,1})
-        --tempPosition.y = 3.05
-        --gameDataObject.setPosition(tempPosition)
-    end
-
 
     -- Get scripting zones.
 
@@ -2646,7 +2631,7 @@ end
 function configGeneralButtons(buttonConfig)
     local dispossessedButtonLabel
 
-    shared.gameDataObject.clearButtons()
+    self.clearButtons()
     shared.spawnDispossessedButtonIndex = 0
 
     for i, curColor in ipairs(shared.playerColors) do
@@ -2656,7 +2641,7 @@ function configGeneralButtons(buttonConfig)
     if (shared.BUTTONS_NONE == buttonConfig) then
         -- Nothing needs done.
     elseif (shared.BUTTONS_NOT_IN_GAME == buttonConfig) then
-        shared.gameDataObject.createButton({
+        self.createButton({
             label = "Setup",
             click_function = "setupButtonClicked",
             function_owner = self,
@@ -2669,7 +2654,7 @@ function configGeneralButtons(buttonConfig)
             color = { 1, 1, 1, 1 }
         })
 
-        shared.gameDataObject.createButton({
+        self.createButton({
             label = "Random\nSetup",
             click_function = "randomSetupButtonClicked",
             function_owner = self,
@@ -2682,7 +2667,7 @@ function configGeneralButtons(buttonConfig)
             color = { 1, 1, 1, 1 }
         })
 
-        shared.gameDataObject.createButton({
+        self.createButton({
             label = "Tutorial Setup (4-player)",
             click_function = "tutorialSetupButtonClicked",
             function_owner = self,
@@ -2695,7 +2680,7 @@ function configGeneralButtons(buttonConfig)
             color = { 1, 1, 1, 1 }
         })
 
-        shared.gameDataObject.createButton({
+        self.createButton({
             label = "Import\nChronicle",
             click_function = "importChronicleButtonClicked",
             function_owner = self,
@@ -2708,7 +2693,7 @@ function configGeneralButtons(buttonConfig)
             color = { 1, 1, 1, 1 }
         })
 
-        shared.gameDataObject.createButton({
+        self.createButton({
             label = "Export\nChronicle",
             click_function = "exportChronicleButtonClicked",
             function_owner = self,
@@ -2721,7 +2706,7 @@ function configGeneralButtons(buttonConfig)
             color = { 1, 1, 1, 1 }
         })
 
-        shared.gameDataObject.createButton({
+        self.createButton({
             label = "Manual\nSetup",
             click_function = "manualSetupButtonClicked",
             function_owner = self,
@@ -2735,7 +2720,7 @@ function configGeneralButtons(buttonConfig)
         })
 
         -- TODO IMPLEMENT
-        --gameDataObject.createButton({
+        --self.createButton({
         --  label="Edit\nChronicle",
         --  click_function="editChronicleButtonClicked",
         --  function_owner=self,
@@ -2749,7 +2734,7 @@ function configGeneralButtons(buttonConfig)
         --})
     elseif (shared.BUTTONS_IN_GAME == buttonConfig) then
         if (false == shared.isManualControlEnabled) then
-            shared.gameDataObject.createButton({
+            self.createButton({
                 label = "Declare\nWinner",
                 click_function = "declareWinnerButtonClicked",
                 function_owner = self,
@@ -2773,7 +2758,7 @@ function configGeneralButtons(buttonConfig)
                 dispossessedButtonLabel = "Spawn\nDispossessed"
             end
 
-            shared.gameDataObject.createButton({
+            self.createButton({
                 label = dispossessedButtonLabel,
                 click_function = "spawnDispossessedButtonClicked",
                 function_owner = self,
@@ -2787,7 +2772,7 @@ function configGeneralButtons(buttonConfig)
             })
 
             -- With N buttons, the last button index is always (N - 1).
-            shared.spawnDispossessedButtonIndex = ((#(shared.gameDataObject.getButtons())) - 1)
+            shared.spawnDispossessedButtonIndex = ((#(self.getButtons())) - 1)
         end
     else
         -- This should never happen.
@@ -2806,7 +2791,7 @@ function createPlayerButtons()
         if (true == shared.curPlayerStatus[curColor][2]) then
             if ("Purple" ~= curColor) then
                 if ("Exile" == shared.curPlayerStatus[curColor][1]) then
-                    shared.gameDataObject.createButton({
+                    self.createButton({
                         label = "Citizen",
                         click_function = "flipButtonClicked" .. curColor,
                         function_owner = self,
@@ -2821,7 +2806,7 @@ function createPlayerButtons()
 
                     numButtonsCreated = (numButtonsCreated + 1)
                 else
-                    shared.gameDataObject.createButton({
+                    self.createButton({
                         label = "Exile",
                         click_function = "flipButtonClicked" .. curColor,
                         function_owner = self,
@@ -2841,7 +2826,7 @@ function createPlayerButtons()
     end
 
     -- Get indices of all player buttons.
-    buttonTable = shared.gameDataObject.getButtons()
+    buttonTable = self.getButtons()
 
     nextTableIndex = ((#buttonTable - numButtonsCreated) + 1)
     for i, curColor in ipairs(shared.playerColors) do
@@ -3050,7 +3035,6 @@ end
 
 function randomSetupButtonClicked(buttonObject, playerColor, altClick)
     if (true == Player[playerColor].host) then
-        print("random setup2")
         shared.pendingEraseType = "randomSetup"
         Global.UI.setAttribute("panel_manual_setup_check", "active", false)
         Global.UI.setAttribute("panel_erase_chronicle_check", "active", true)
@@ -3099,7 +3083,7 @@ function spawnDispossessedButtonClicked(buttonObject, playerColor, altClick)
     if (true == Player[playerColor].host) then
         if (false == shared.isDispossessedSpawned) then
             if (0 ~= shared.spawnDispossessedButtonIndex) then
-                shared.gameDataObject.editButton({ index = shared.spawnDispossessedButtonIndex, label = "Remove\nDispossessed" })
+                self.editButton({ index = shared.spawnDispossessedButtonIndex, label = "Remove\nDispossessed" })
             end
 
             -- Create a copy of the dispossessed cards.
@@ -3179,7 +3163,7 @@ function removeDispossessedBag()
     if (true == shared.isDispossessedSpawned) then
         if (nil ~= shared.dispossessedBagGuid) then
             if (0 ~= shared.spawnDispossessedButtonIndex) then
-                shared.gameDataObject.editButton({ index = shared.spawnDispossessedButtonIndex, label = "Spawn\nDispossessed" })
+                self.editButton({ index = shared.spawnDispossessedButtonIndex, label = "Spawn\nDispossessed" })
             end
 
             dispossessedBag = getObjectFromGUID(shared.dispossessedBagGuid)
@@ -3376,18 +3360,22 @@ function flipButtonClickedBrown(buttonObject, playerColor, altClick)
         shared.curPlayerStatus[buttonPlayerColor][1] = "Citizen"
         updatePlayerBoardRotation(buttonPlayerColor)
 
-        shared.gameDataObject.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Exile" })
+        self.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Exile" })
 
         -- Note special case:  TTS "Brown" is Oath "Black".
         printToAll("[000000]Black[-] is now a Citizen.", { 1, 1, 1 })
+
+        InvokeEvent('OnPlayerCitizened', buttonPlayerColor)
     else
         shared.curPlayerStatus[buttonPlayerColor][1] = "Exile"
         updatePlayerBoardRotation(buttonPlayerColor)
 
-        shared.gameDataObject.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Citizen" })
+        self.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Citizen" })
 
         -- Note special case:  TTS "Brown" is Oath "Black".
         printToAll("[000000]Black[-] is now an Exile.", { 1, 1, 1 })
+        
+        InvokeEvent('OnPlayerExiled', buttonPlayerColor)
     end
 end
 
@@ -3398,16 +3386,20 @@ function flipButtonClickedYellow(buttonObject, playerColor, altClick)
         shared.curPlayerStatus[buttonPlayerColor][1] = "Citizen"
         updatePlayerBoardRotation(buttonPlayerColor)
 
-        shared.gameDataObject.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Exile" })
+        self.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Exile" })
 
         printToAll("[" .. Color.fromString(buttonPlayerColor):toHex(false) .. "]" .. buttonPlayerColor .. "[-] is now a Citizen.", { 1, 1, 1 })
+
+        InvokeEvent('OnPlayerCitizened', buttonPlayerColor)
     else
         shared.curPlayerStatus[buttonPlayerColor][1] = "Exile"
         updatePlayerBoardRotation(buttonPlayerColor)
 
-        shared.gameDataObject.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Citizen" })
+        self.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Citizen" })
 
         printToAll("[" .. Color.fromString(buttonPlayerColor):toHex(false) .. "]" .. buttonPlayerColor .. "[-] is now a Exile.", { 1, 1, 1 })
+
+        InvokeEvent('OnPlayerExiled', buttonPlayerColor)
     end
 end
 
@@ -3418,16 +3410,20 @@ function flipButtonClickedWhite(buttonObject, playerColor, altClick)
         shared.curPlayerStatus[buttonPlayerColor][1] = "Citizen"
         updatePlayerBoardRotation(buttonPlayerColor)
 
-        shared.gameDataObject.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Exile" })
+        self.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Exile" })
 
         printToAll("[" .. Color.fromString(buttonPlayerColor):toHex(false) .. "]" .. buttonPlayerColor .. "[-] is now a Citizen.", { 1, 1, 1 })
+
+        InvokeEvent('OnPlayerCitizened', buttonPlayerColor)
     else
         shared.curPlayerStatus[buttonPlayerColor][1] = "Exile"
         updatePlayerBoardRotation(buttonPlayerColor)
 
-        shared.gameDataObject.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Citizen" })
+        self.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Citizen" })
 
         printToAll("[" .. Color.fromString(buttonPlayerColor):toHex(false) .. "]" .. buttonPlayerColor .. "[-] is now a Exile.", { 1, 1, 1 })
+
+        InvokeEvent('OnPlayerExiled', buttonPlayerColor)
     end
 end
 
@@ -3438,16 +3434,20 @@ function flipButtonClickedBlue(buttonObject, playerColor, altClick)
         shared.curPlayerStatus[buttonPlayerColor][1] = "Citizen"
         updatePlayerBoardRotation(buttonPlayerColor)
 
-        shared.gameDataObject.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Exile" })
+        self.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Exile" })
 
         printToAll("[" .. Color.fromString(buttonPlayerColor):toHex(false) .. "]" .. buttonPlayerColor .. "[-] is now a Citizen.", { 1, 1, 1 })
+
+        InvokeEvent('OnPlayerCitizened', buttonPlayerColor)
     else
         shared.curPlayerStatus[buttonPlayerColor][1] = "Exile"
         updatePlayerBoardRotation(buttonPlayerColor)
 
-        shared.gameDataObject.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Citizen" })
+        self.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Citizen" })
 
         printToAll("[" .. Color.fromString(buttonPlayerColor):toHex(false) .. "]" .. buttonPlayerColor .. "[-] is now a Exile.", { 1, 1, 1 })
+
+        InvokeEvent('OnPlayerExiled', buttonPlayerColor)
     end
 end
 
@@ -3458,16 +3458,20 @@ function flipButtonClickedRed(buttonObject, playerColor, altClick)
         shared.curPlayerStatus[buttonPlayerColor][1] = "Citizen"
         updatePlayerBoardRotation(buttonPlayerColor)
 
-        shared.gameDataObject.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Exile" })
+        self.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Exile" })
 
         printToAll("[" .. Color.fromString(buttonPlayerColor):toHex(false) .. "]" .. buttonPlayerColor .. "[-] is now a Citizen.", { 1, 1, 1 })
+
+        InvokeEvent('OnPlayerCitizened', buttonPlayerColor)
     else
         shared.curPlayerStatus[buttonPlayerColor][1] = "Exile"
         updatePlayerBoardRotation(buttonPlayerColor)
 
-        shared.gameDataObject.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Citizen" })
+        self.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Citizen" })
 
         printToAll("[" .. Color.fromString(buttonPlayerColor):toHex(false) .. "]" .. buttonPlayerColor .. "[-] is now a Exile.", { 1, 1, 1 })
+
+        InvokeEvent('OnPlayerExiled', buttonPlayerColor)
     end
 end
 

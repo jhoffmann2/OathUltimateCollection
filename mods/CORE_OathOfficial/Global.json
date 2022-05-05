@@ -1,4 +1,16 @@
 ﻿{
+  "Transform": {
+    "posX": -29.9392757,
+    "posY": -3.5,
+    "posZ": 21.59,
+    "rotX": 3.039708E-07,
+    "rotY": 3.276154E-09,
+    "rotZ": 7.7912226E-08,
+    "scaleX": 1.0,
+    "scaleY": 1.0,
+    "scaleZ": 1.0
+  },
+  "Locked": true,
   "save": {
     "chronicleStateString": "020004000110Empire and Exile1F00000123450403FFFFFFFFFFFF0724FFFFFFFFFFFFFFFFFFFF0B19FFFFFFFFFFFFFFFFFFFF000000",
     "curChronicleName": "Empire and Exile",
@@ -358,4 +370,5 @@
       "url": "http://cloud-3.steamusercontent.com/ugc/1696150763619123295/F7CB9D421A8D2E01D703F510237591E408590997/"
     }
   ]
+
 }
