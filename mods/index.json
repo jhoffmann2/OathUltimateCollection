@@ -1,0 +1,30 @@
+﻿{
+  "Oath Official": {
+    "type": "toggle",
+    "hidden": true,
+    "value": true,
+    "mod": "CORE_OathOfficial"
+  },
+  "Smart Warbands": {
+    "type": "toggle",
+    "value": true,
+    "mod": "SmartWarbands",
+    "tooltip": "quality of life mod that will make managing warbands easier in situations like offering citizenship"
+  },
+  "Deck": {
+    "type": "radio",
+    "value": "CORE_Cards",
+    "options": [
+      {
+        "name": "Official",
+        "mod": "CORE_Cards",
+        "tooltip": "play with all the cards found in the official base game!"
+      },
+      {
+        "name": "Your custom deck here",
+        "mod":"None",
+        "tooltip": "This option will not work. it's just a placeholder for now"
+      }
+    ]
+  }
+}
