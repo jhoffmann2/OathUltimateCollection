@@ -1,5 +1,4 @@
-﻿local loadingFinished = false
-
+﻿
 warbandAssetInfo = {
     White = {
         bagColorTint = { 1, 1, 1, 1 },
@@ -69,17 +68,12 @@ warbandAssetInfo = {
     } }
 
 function onLoad()
-    Wait.frames(onInit, 1)
-end
-
-function onInit()
     globalData = Shared(Global)
     playerWarbandBags = globalData.playerWarbandBags
     curPlayerStatus = globalData.curPlayerStatus
-
+    
     -- Todo
     --playerOwnershipZones = globalData.playerOwnershipZones
-    loadingFinished = true
 end
 
 function Callback.OnPlayerCitizened(color)
@@ -150,16 +144,15 @@ function resetWarbandBag()
     owner.setColorTint(warbandAssetInfo[shared.warbandColor].bagColorTint)
 end
 
-function onShow()
-    resetWarbandBag()
+function Callback.OnPlayerPiecesShown(color)
+    if(color == shared.color) then
+        resetWarbandBag()
+    end
 end
 
 function onUpdate()
 
     -- only update if we've finished initalizing all our state
-    if not loadingFinished then
-        return
-    end
 
     local curPlayerStatus = globalData.curPlayerStatus[shared.color]
     shared.playerFaction = curPlayerStatus[1] -- Chancellor, Exile, or Citizen

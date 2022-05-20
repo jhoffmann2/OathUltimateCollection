@@ -5332,6 +5332,8 @@ function showPieces(playerColor)
     shared.playerWarbandBags[playerColor].locked = true
     shared.playerWarbandBags[playerColor].interactable = true
     shared.playerWarbandBags[playerColor].tooltip = true
+    
+    InvokeEvent('OnPlayerPiecesShown', playerColor)
 end
 
 function hidePieces(playerColor)
