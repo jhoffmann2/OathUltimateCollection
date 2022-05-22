@@ -32,21 +32,23 @@ function ProxyObject(object)
   ---@param tag string
   ---@return boolean
   function mt.addTag(tag,...)
-    if mt.ttsObject.addTag(tag,...) then
-      --print(type(mt.self) .. '.addTag("' .. tag .. '")')
+    local hadTag = mt.ttsObject.hasTag(tag)
+    local result = mt.ttsObject.addTag(tag,...)
+    
+    if not hadTag then
       InvokeEvent('OnObjectTagged', mt.self, tag)
-      return true
     end
-    return false
+    return result
   end
 
   function mt.removeTag(tag,...)
-    if mt.ttsObject.removeTag(tag,...) then
-      print(type(mt.self) .. '.removeTag("' .. tag .. '")')
+    local hadTag = mt.ttsObject.hasTag(tag)
+    local result = mt.ttsObject.removeTag(tag,...)
+
+    if hadTag then
       InvokeEvent('OnObjectUntagged', mt.self, tag)
-      return true
     end
-    return false
+    return result
   end
 
   function mt.setState(...)
