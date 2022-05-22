@@ -1,146 +1,203 @@
 ﻿local _rawtableinsert = table.insert
 function table.insert(...)
-    local table = nil
-    local pos = nil
-    local val = nil
-    if select('#', ...) == 2 then
-        table = select(1, ...)
-        pos = #table + 1
-        val = select(2, ...)
-    else
-        table = select(1, ...)
-        pos = select(2, ...)
-        val = select(3, ...)
-    end
+  local table = nil
+  local pos = nil
+  local val = nil
+  if select('#', ...) == 2 then
+    table = select(1, ...)
+    pos = #table + 1
+    val = select(2, ...)
+  else
+    table = select(1, ...)
+    pos = select(2, ...)
+    val = select(3, ...)
+  end
 
-    -- shift everything over
-    for i = #table, pos, -1 do
-        table[i+1] = table[i]
-    end
+  -- shift everything over
+  for i = #table, pos, -1 do
+    table[i + 1] = table[i]
+  end
 
-    table[pos] = val
+  table[pos] = val
 end
 
 local function _dump(o)
-    if type(o) == 'table' then
-        local s = '{ '
-        for k,v in pairs(o) do
-            if type(k) ~= 'number' then k = '"'..k..'"' end
-            s = s .. '['..k..'] = ' .. _dump(v) .. ','
-        end
-        return s .. '} '
-    else
-        return tostring(o)
+  if type(o) == 'table' then
+    local s = '{ '
+    for k, v in pairs(o) do
+      if type(k) ~= 'number' then
+        k = '"' .. k .. '"'
+      end
+      s = s .. '[' .. k .. '] = ' .. _dump(v) .. ','
     end
+    return s .. '} '
+  else
+    return tostring(o)
+  end
 end
 
 local function _shallowCopy(original)
-    local copy = {}
-    for key, value in pairs(original) do
-        copy[key] = value
-    end
-    return copy
+  local copy = {}
+  for key, value in pairs(original) do
+    copy[key] = value
+  end
+  return copy
 end
 
 function Shared(obj, layers)
 
-    if layers == nil then
-        layers = {}
+  -- if obj is a ProxyObject, remove the proxy
+  if (type(obj) == 'ProxyObject') then
+    obj = obj.ttsObject
+  end
+
+  if layers == nil then
+    layers = {}
+  end
+
+  local mt = {
+    __type = 'SharedData'
+  }
+
+  function mt.__index(t, k)
+    local allLayers = _shallowCopy(layers)
+    table.insert(allLayers, k)
+
+    local v = obj.getVar(allLayers[1])
+    for i, layer in ipairs(allLayers) do
+      if i ~= 1 then
+        -- first element is handled above
+        v = v[layer]
+      end
     end
 
-    local mt = {
-        __index = function (t,k)
-            local allLayers = _shallowCopy(layers)
-            table.insert(allLayers, k)
+    if (type(v) == "userdata") then
+      return ProxyObject(v)
+    end
 
-            local v = obj.getVar(allLayers[1])
-            for i, layer in ipairs(allLayers) do
-                if i ~= 1 then -- first element is handled above
-                    v = v[layer]
-                end
-            end
+    if (type(v) == "table") then
+      return Shared(obj, allLayers)
+    end
 
-            if(type(v) == "table") then
-                return Shared(obj, allLayers)
-            end
+    return v
+  end
 
-            return v
-        end,
+  function mt.__newindex(t, k, v)
+    if (type(v) == 'ProxyObject') then
+      v = v.ttsObject
+    end
+    if #layers > 0 then
 
-        __newindex = function (t,k,v)
-            if #layers > 0 then
-
-                local base = obj.getTable(layers[1])
-                local parent = base
-                for i, layer in ipairs(layers) do
-                    if i ~= 1 then -- first element is handled above
-                        parent = parent[layer]
-                    end
-                end
-                parent[k] = v
-
-                if(type(base) == 'table') then
-                    obj.setTable(layers[1], base)
-                else
-                    obj.setVar(layers[1], base)
-                end
-            else
-                if(type(v) == 'table') then
-                    obj.setTable(k, v)
-                else
-                    obj.setVar(k, v)
-                end
-            end
-
-        end,
-
-        __pairs = function(t)
-            local tbl = obj.getTable(layers[1])
-            for i, layer in ipairs(layers) do
-                if i ~= 1 then -- first element is handled above
-                    tbl = tbl[layer]
-                end
-            end
-
-            return pairs(tbl)
-        end,
-
-        __ipairs = function(t)
-            local tbl = obj.getTable(layers[1])
-            for i, layer in ipairs(layers) do
-                if i ~= 1 then -- first element is handled above
-                    tbl = tbl[layer]
-                end
-            end
-
-            return ipairs(tbl)
-        end,
-
-        __len = function(t)
-
-            local tbl = obj.getTable(layers[1])
-            for i, layer in ipairs(layers) do
-                if i ~= 1 then -- first element is handled above
-                    tbl = tbl[layer]
-                end
-            end
-
-            return #tbl
-        end,
-
-        __call = function(t)
-            local tbl = obj.getTable(layers[1])
-            for i, layer in ipairs(layers) do
-                if i ~= 1 then -- first element is handled above
-                    tbl = tbl[layer]
-                end
-            end
-
-            return tbl
+      local base = obj.getTable(layers[1])
+      local parent = base
+      for i, layer in ipairs(layers) do
+        if i ~= 1 then
+          -- first element is handled above
+          parent = parent[layer]
         end
+      end
+      parent[k] = v
+
+      if (type(base) == 'table') then
+        obj.setTable(layers[1], base)
+      else
+        obj.setVar(layers[1], base)
+      end
+    else
+
+      if (type(v) == 'table') then
+        obj.setTable(k, v)
+      else
+        obj.setVar(k, v)
+      end
+    end
+
+  end
+
+  local function itr(t, i)
+    i = i + 1
+    local v = t[i]
+    if v then
+      if (type(v) == "userdata") then
+        return i, ProxyObject(v)
+      end
+      return i, v
+    end
+  end
+
+  local function _next(t, k_in)
+    local k, v = next(t, k_in)
+    if (type(v) == "userdata") then
+      return k, ProxyObject(v)
+    end
+    return k, v
+  end
+
+  function mt.__pairs(t)
+    local tbl = obj.getTable(layers[1])
+    for i, layer in ipairs(layers) do
+      if i ~= 1 then
+        -- first element is handled above
+        tbl = tbl[layer]
+      end
+    end
+
+    return _next, tbl, nil
+  end
+
+  function mt.__ipairs(t)
+    local tbl = obj.getTable(layers[1])
+    for i, layer in ipairs(layers) do
+      if i ~= 1 then
+        -- first element is handled above
+        tbl = tbl[layer]
+      end
+    end
+
+    return itr, tbl, 0
+  end
+
+  function mt.__len(t)
+    local tbl = obj.getTable(layers[1])
+    for i, layer in ipairs(layers) do
+      if i ~= 1 then
+        -- first element is handled above
+        tbl = tbl[layer]
+      end
+    end
+
+    return #tbl
+  end
+
+  function mt.__call(t)
+    local tbl = obj.getTable(layers[1])
+    for i, layer in ipairs(layers) do
+      if i ~= 1 then
+        -- first element is handled above
+        tbl = tbl[layer]
+      end
+    end
+
+    return tbl
+  end
+
+  -- return a table that can be passed through events and be decompressed on the other side
+  function mt.__compress(t)
+    return {
+      __type = 'CompressedInstance',
+      __compressed_type = 'SharedData',
+      __decompress = {
+        func = 'Shared',
+        params = { obj, layers }
+      },
     }
-    return setmetatable({}, mt)
+  end
+
+  return setmetatable({}, mt)
 end
 
-owner = [[##OWNER##]]
+if owner == nil then
+  owner = [[##OWNER##]]
+end
+
 shared = Shared(owner)
