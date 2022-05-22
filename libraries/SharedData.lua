@@ -197,7 +197,9 @@ function Shared(obj, layers)
 end
 
 if owner == nil then
+  ---@class owner:tts__Object
   owner = [[##OWNER##]]
 end
 
+---@class shared:tts__Self
 shared = Shared(owner)

@@ -213,9 +213,6 @@ function getObjectFromGUID(guid)
   return ProxyObject(_getObjectFromGUID(guid))
 end
 
--- redefine owner because SharedData may have been included before this
-owner = [[##OWNER##]]
-
 local _getObjects = getObjects
 ---@return ProxyObject[]
 function getObjects()
@@ -273,3 +270,9 @@ local _spawnObjectJSON = spawnObjectJSON
 function spawnObjectJSON(parameters)
   return ProxyObject(_spawnObjectJSON(parameters))
 end
+
+-- redefine owner because SharedData may have been included before this
+owner = [[##OWNER##]]
+
+--TODO: find a way to wrap self without breaking UI
+--self = ProxyObject(self)

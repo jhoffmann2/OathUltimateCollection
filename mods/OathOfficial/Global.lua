@@ -1546,7 +1546,7 @@ end
 
 function spawnManualFullDecks(chatPlayer)
   -- Reveal the side board.
-  shared.sideBoard.setPosition(Vector(shared.sideBoardPosition))
+  shared.sideBoard.setPosition(shared.sideBoardPosition())
   shared.sideBoard.setScale({ 15.00, 1.00, 15.00 })
 
   -- Move the camera to look at the side board.
@@ -2791,11 +2791,12 @@ function createPlayerButtons()
     if (true == shared.curPlayerStatus[curColor][2]) then
       if ("Purple" ~= curColor) then
         if ("Exile" == shared.curPlayerStatus[curColor][1]) then
+          print('button button button button')
           self.createButton({
             label = "Citizen",
             click_function = "flipButtonClicked" .. curColor,
             function_owner = self,
-            position = Vector(shared.playerButtonPositions[curColor]),
+            position = shared.playerButtonPositions[curColor](),
             scale = { 2.0, 2.0, 2.0 },
             rotation = { 0.0, shared.handCardYRotations[curColor], 0.0 },
             width = 700,
@@ -2810,7 +2811,7 @@ function createPlayerButtons()
             label = "Exile",
             click_function = "flipButtonClicked" .. curColor,
             function_owner = self,
-            position = Vector(shared.playerButtonPositions[curColor]),
+            position = shared.playerButtonPositions[curColor](),
             scale = { 2.0, 2.0, 2.0 },
             rotation = { 0.0, shared.handCardYRotations[curColor], 0.0 },
             width = 700,
