@@ -2791,7 +2791,6 @@ function createPlayerButtons()
     if (true == shared.curPlayerStatus[curColor][2]) then
       if ("Purple" ~= curColor) then
         if ("Exile" == shared.curPlayerStatus[curColor][1]) then
-          print('button button button button')
           self.createButton({
             label = "Citizen",
             click_function = "flipButtonClicked" .. curColor,

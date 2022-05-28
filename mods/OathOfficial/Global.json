@@ -10,8 +10,36 @@
     "scaleY": 1.0,
     "scaleZ": 1.0
   },
-  "Locked": true,
-  "save": {
+  "Lighting": {
+    "LightIntensity": 0.272001028,
+    "LightColor": {
+      "r": 1.0,
+      "g": 1.0,
+      "b": 1.0
+    },
+    "AmbientIntensity": 1.379999,
+    "AmbientType": 1,
+    "AmbientSkyColor": {
+      "r": 0.6149826,
+      "g": 0.6149826,
+      "b": 0.6149826
+    },
+    "AmbientEquatorColor": {
+      "r": 0.6324041,
+      "g": 0.6324041,
+      "b": 0.6324041
+    },
+    "AmbientGroundColor": {
+      "r": 0.325784,
+      "g": 0.325784,
+      "b": 0.325784
+    },
+    "ReflectionIntensity": 0.0,
+    "LutIndex": 0,
+    "LutContribution": 1.0,
+    "LutURL": ""
+  },
+  "LuaScriptState": {
     "chronicleStateString": "020004000110Empire and Exile1F00000123450403FFFFFFFFFFFF0724FFFFFFFFFFFFFFFFFFFF0B19FFFFFFFFFFFFFFFFFFFF000000",
     "curChronicleName": "Empire and Exile",
     "curDispossessedDeckCardCount": 0,
