@@ -17,10 +17,3 @@ function onLoad()
     ["White"] = getObjectFromGUID(guids['White']) 
   }
 end
-
-function onDestroy()
-  for color, object in pairs(shared.playerOwnershipZones) do
-    destroyObject(object)
-  end
-  shared.playerOwnershipZones = nil
-end
