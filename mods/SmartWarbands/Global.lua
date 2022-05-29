@@ -1,4 +1,6 @@
 ﻿function onLoad()
+  InvokeEvent('OnEnsureModActive', 'PlayerOwnershipZones')
+  
   ---@param warbandBag tts__Object
     ---@param color tts__PlayerColor
   for color, warbandBag in pairs(shared.playerWarbandBags) do
@@ -9,4 +11,5 @@
     end
     Shared(warbandBag).color = color
   end
+  
 end

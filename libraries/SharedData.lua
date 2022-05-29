@@ -79,6 +79,11 @@ function Shared(obj, layers)
       return Shared(obj, allLayers)
     end
 
+    -- when passed through get/set table metatable is destroyed. repair it.
+    if (type(v) == "ProxyObject") then
+      return ProxyObject(v.__ttsObject)
+    end
+
     return v
   end
 

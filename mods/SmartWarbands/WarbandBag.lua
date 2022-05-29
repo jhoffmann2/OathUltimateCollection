@@ -118,19 +118,17 @@ function onSwapToExile()
   shared.warbandColor = shared.color
   resetWarbandBag()
 
-  -- TODO: ADD OWNERSHIP ZONES BACK IN
   -- turn all imperial warbands in players space into exile warbands
-  -- local playerIndex = Global.getTable("playerIndex")
-  -- for i, object in pairs(playerOwnershipZones[playerIndex[color]].getObjects()) do
-  --     if (object.getName() == "Warband" and object.getDescription() == "Purple") then
-  --         if (warbandSupplyCount(warbandColor) > 0) then
-  --             object = setWarbandColor(object, color)
-  --         else
-  --             -- not enough warbands in exile supply. just get rid of excess
-  --             destroyObject(object)
-  --         end
-  --     end
-  -- end
+  for i, object in pairs(globalData.playerOwnershipZones[shared.color].getObjects()) do
+      if (object.hasTag("PurpleWarband")) then
+          if (warbandSupplyCount(shared.warbandColor) > 0) then
+              object = setWarbandColor(object, shared.color)
+          else
+              -- not enough warbands in exile supply. just get rid of excess
+              destroyObject(object)
+          end
+      end
+  end
 end
 
 function resetWarbandBag()
@@ -221,9 +219,16 @@ function spawnWarbandInBag(color)
 end
 
 function setWarbandColor(warband, newColor)
+  local oldColor = warband.getDescription()
   local colorData = warbandAssetInfo[shared.warbandColor]
   warband.setCustomObject(colorData.warbandAsset)
   warband.setDescription(newColor)
+  
+  -- make sure this warband isn't tagged as any other color
+  for _, color in ipairs(globalData.playerColors) do
+    warband.removeTag(color .. "Warband")
+  end
+  
   warband.addTag(newColor .. "Warband")
   warband.addTag("Warband")
   warband.setColorTint(colorData.warbandColorTint)

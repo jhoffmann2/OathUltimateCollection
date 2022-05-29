@@ -25,6 +25,6 @@
     "type": "toggle",
     "value": true,
     "mod": "SmartWarbands",
-    "tooltip": "quality of life mod that will make managing warbands easier in situations like offering citizenship"
+    "tooltip": "quality of life mod that will make managing warbands easier in situations like offering citizenship\n\n\t- when you're citizened, your warbands will turn purple\n\t- when you're exiled, your warbands will change to your exile color\n\t- citizens have a purple warband bag that reflects the number of warbands in the chancellors bag\n\t- you can put warbands in any warband bag and they will be moved to the correct bag"
   }
 }

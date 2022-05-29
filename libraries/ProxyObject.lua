@@ -18,9 +18,7 @@ function ProxyObject(object)
     ---@type tts__Object
     ttsObject = object,
 
-    self = {},
-
-    __type = 'ProxyObject',
+    self = {__type = 'ProxyObject', __ttsObject = object},
 
     ---@type function[]
     __get = {},
@@ -96,7 +94,6 @@ function ProxyObject(object)
   function mt.setTags(tags)
     local prev_tags = mt.ttsObject.getTags()
     if mt.ttsObject.setTags(tags) then
-      print(type(mt.self) .. '.setTags("' .. JSON.encode(tags) .. '")')
 
       local tagsToRemove = {}
       for _, tag in ipairs(prev_tags) do
