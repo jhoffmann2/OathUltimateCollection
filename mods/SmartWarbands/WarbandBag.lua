@@ -76,13 +76,13 @@ function onLoad()
 end
 
 function Callback.OnPlayerCitizened(color)
-  if (color == shared.color) then
+  if (color == shared.playerColor) then
     onSwapToCitizen()
   end
 end
 
 function Callback.OnPlayerExiled(color)
-  if (color == shared.color) then
+  if (color == shared.playerColor) then
     onSwapToExile()
   end
 end
@@ -92,7 +92,7 @@ function onSwapToCitizen()
   resetWarbandBag()
 
   -- list of all warbands that need to be changed into emperial warbands
-  local WarbandsToGiveCitizenship = getObjectsWithTag(shared.color .. "Warband")
+  local WarbandsToGiveCitizenship = getObjectsWithTag(shared.playerColor .. "Warband")
   if (warbandSupplyCount("Purple") >= #WarbandsToGiveCitizenship) then
     for i, warband in ipairs(WarbandsToGiveCitizenship) do
       warband = setWarbandColor(warband, "Purple")
@@ -115,14 +115,14 @@ function onSwapToCitizen()
 end
 
 function onSwapToExile()
-  shared.warbandColor = shared.color
+  shared.warbandColor = shared.playerColor
   resetWarbandBag()
 
   -- turn all imperial warbands in players space into exile warbands
-  for i, object in pairs(globalData.playerOwnershipZones[shared.color].getObjects()) do
+  for i, object in pairs(globalData.playerOwnershipZones[shared.playerColor].getObjects()) do
       if (object.hasTag("PurpleWarband")) then
           if (warbandSupplyCount(shared.warbandColor) > 0) then
-              object = setWarbandColor(object, shared.color)
+              object = setWarbandColor(object, shared.playerColor)
           else
               -- not enough warbands in exile supply. just get rid of excess
               destroyObject(object)
@@ -142,17 +142,17 @@ function resetWarbandBag()
 end
 
 function Callback.OnPlayerPiecesShown(color)
-  if (color == shared.color) then
+  if (color == shared.playerColor) then
     resetWarbandBag()
   end
 end
 
 function updateBagStatus()
-  local curPlayerStatus = globalData.curPlayerStatus[shared.color]
+  local curPlayerStatus = globalData.curPlayerStatus[shared.playerColor]
   shared.playerFaction = curPlayerStatus[1] -- Chancellor, Exile, or Citizen
   shared.isPlayerActive = curPlayerStatus[2]
 
-  shared.warbandColor = shared.color
+  shared.warbandColor = shared.playerColor
   if (shared.playerFaction == "Citizen") then
     shared.warbandColor = "Purple"
   end

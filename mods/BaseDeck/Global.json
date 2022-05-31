@@ -14027,6 +14027,7 @@
       "ContainedObjects": [
         {
           "Nickname": "Secret",
+          "Tags": ["Secret"],
           "Name": "Custom_Assetbundle",
           "GUID": "6c0839",
           "Transform": {

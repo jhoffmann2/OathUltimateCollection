@@ -5565,6 +5565,7 @@ function spawnFavor()
         -- Clone the below-table favor token.
         newFavorToken = shared.belowTableFavor.clone()
         newFavorToken.setName("Favor (" .. curFavorCount .. " " .. curSuitName .. ")")
+        newFavorToken.addTag("Favor")
         newFavorToken.locked = false
         newFavorToken.interactable = true
         newFavorToken.tooltip = true
@@ -5584,6 +5585,7 @@ function spawnFavor()
     for tokenIndex = 1, supplyFavor do
       newFavorToken = shared.belowTableFavor.clone()
       newFavorToken.setName("Favor")
+      newFavorToken.addTag("Favor")
       newFavorToken.locked = false
       newFavorToken.interactable = true
       newFavorToken.tooltip = true
