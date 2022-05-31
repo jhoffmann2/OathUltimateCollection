@@ -3,7 +3,10 @@ local favorStackOffset = Vector(-6.2, 0.1, 1.08)
 local secretStackOffset = Vector(-6.2, 0.32, -0.76)
 
 function onLoad()
+  
   globalData = Shared(Global)
+  local exileBoard = globalData.playerBoards["Purple"]
+  InvokeMethod('GetPlayerSupply', exileBoard)
 
   owner.clearContextMenu()
   owner.addContextMenuItem("Rest", OnRest)
@@ -87,7 +90,7 @@ function CreateRestButtons()
 end
 
 -- return the amount of action supply that this player has
-function getPlayerSupply()
+function GetPlayerSupply()
   for i, zone in ipairs(shared.supplyZones) do
     for j, object in ipairs(zone.getObjects()) do
       if (object.guid == shared.supplyMarker.guid) then
@@ -98,6 +101,10 @@ function getPlayerSupply()
   return 0
 end
 
+function Method.GetPlayerSupply()
+  return GetPlayerSupply()
+end
+
 function OnRest()
   InvokeEvent('OnRest', shared.playerColor)
   ReturnFavor()
@@ -105,7 +112,7 @@ function OnRest()
   ResetSupply()
 end
 
-function getSecretReturnPosition(count)
+function GetSecretReturnPosition(count)
   local secretHeight = 0.5
   local output = Vector(secretStackPosition)
   for _, object in ipairs(shared.secretZone.getObjects()) do
@@ -117,7 +124,7 @@ function getSecretReturnPosition(count)
   return output
 end
 
-function getFavorReturnPosition(suit, count)
+function GetFavorReturnPosition(suit, count)
   local favorHeight = 0.2
   local zone = globalData.suitFavorZones[suit]
   local output = Vector(zone.getPosition())
@@ -164,7 +171,7 @@ function ReturnFavor()
       if cardSuit and #favorOnCard > 0 then
         for i, favor in ipairs(favorOnCard) do
           foundFavorCounts[cardSuit] = foundFavorCounts[cardSuit] + 1
-          favor.setPositionSmooth(getFavorReturnPosition(cardSuit, foundFavorCounts[cardSuit]))
+          favor.setPositionSmooth(GetFavorReturnPosition(cardSuit, foundFavorCounts[cardSuit]))
           favor.setRotationSmooth(owner.getRotation())
         end
       end
@@ -193,7 +200,7 @@ function ReturnFavor()
     if cardSuit and #favorOnCard > 0 then
       for i, favor in ipairs(favorOnCard) do
         foundFavorCounts[cardSuit] = foundFavorCounts[cardSuit] + 1
-        favor.setPositionSmooth(getFavorReturnPosition(cardSuit, foundFavorCounts[cardSuit]))
+        favor.setPositionSmooth(GetFavorReturnPosition(cardSuit, foundFavorCounts[cardSuit]))
         favor.setRotationSmooth(owner.getRotation())
       end
     end
@@ -210,7 +217,7 @@ function ReturnSecrets()
       for i, object in ipairs(zone.getObjects()) do
         if object.hasTag('Secret') then
           foundSecretCount = foundSecretCount + 1
-          object.setPositionSmooth(getSecretReturnPosition(foundSecretCount))
+          object.setPositionSmooth(GetSecretReturnPosition(foundSecretCount))
           object.setRotationSmooth(owner.getRotation())
         end
       end
@@ -222,7 +229,7 @@ function ReturnSecrets()
     for i, object in ipairs(zone.getObjects()) do
       if object.hasTag('Secret') then
         foundSecretCount = foundSecretCount + 1
-        object.setPositionSmooth(getSecretReturnPosition(foundSecretCount))
+        object.setPositionSmooth(GetSecretReturnPosition(foundSecretCount))
         object.setRotationSmooth(owner.getRotation())
       end
     end
@@ -236,7 +243,7 @@ function ResetSupply()
 end
 
 function ResetExileSupply()
-  local remainingSupply = getPlayerSupply()
+  local remainingSupply = GetPlayerSupply()
   local warbandCount = #shared.warbandBag.getObjects()
 
   -- 9+ warbands
@@ -256,7 +263,7 @@ function ResetExileSupply()
 end
 
 function ResetChancellorSupply()
-  local remainingSupply = getPlayerSupply()
+  local remainingSupply = GetPlayerSupply()
   local warbandCount = #shared.warbandBag.getObjects()
 
   -- 18+ warbands
@@ -282,8 +289,9 @@ function ResetChancellorSupply()
 end
 
 function ResetCitizenSupply()
-  local remainingSupply = getPlayerSupply()
-  local chancellorSupply = globalData.playerBoards["Purple"].call('getPlayerSupply')
+  local remainingSupply = GetPlayerSupply()
+  local exileBoard = globalData.playerBoards["Purple"]
+  local chancellorSupply = InvokeMethod('GetPlayerSupply', exileBoard)
   SetSupply(chancellorSupply + remainingSupply)
 end
 
