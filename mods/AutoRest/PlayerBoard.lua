@@ -5,8 +5,6 @@ local secretStackOffset = Vector(-6.2, 0.32, -0.76)
 function onLoad()
   
   globalData = Shared(Global)
-  local exileBoard = globalData.playerBoards["Purple"]
-  InvokeMethod('GetPlayerSupply', exileBoard)
 
   owner.clearContextMenu()
   owner.addContextMenuItem("Rest", OnRest)
