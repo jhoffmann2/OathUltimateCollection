@@ -38,7 +38,7 @@ function SetupFavorAndSecretZones()
     })
   end
 
-  local rotation = owner.getRotation()
+  local rotation = GetXYRotation()
   local scale = Vector(1.8, 5.10, 1.8)
   
   favorStackPosition = favorStackOffset
@@ -136,6 +136,12 @@ function GetFavorReturnPosition(suit, count)
   return output
 end
 
+function GetXYRotation()
+  local output = owner.getRotation()
+  output.z = 0
+  return output
+end
+
 -- TODO
 function ReturnFavor()
   local foundFavorCounts = { 
@@ -170,7 +176,7 @@ function ReturnFavor()
         for i, favor in ipairs(favorOnCard) do
           foundFavorCounts[cardSuit] = foundFavorCounts[cardSuit] + 1
           favor.setPositionSmooth(GetFavorReturnPosition(cardSuit, foundFavorCounts[cardSuit]))
-          favor.setRotationSmooth(owner.getRotation())
+          favor.setRotationSmooth(GetXYRotation())
         end
       end
       
@@ -199,7 +205,7 @@ function ReturnFavor()
       for i, favor in ipairs(favorOnCard) do
         foundFavorCounts[cardSuit] = foundFavorCounts[cardSuit] + 1
         favor.setPositionSmooth(GetFavorReturnPosition(cardSuit, foundFavorCounts[cardSuit]))
-        favor.setRotationSmooth(owner.getRotation())
+        favor.setRotationSmooth(GetXYRotation())
       end
     end
   end
@@ -216,7 +222,7 @@ function ReturnSecrets()
         if object.hasTag('Secret') then
           foundSecretCount = foundSecretCount + 1
           object.setPositionSmooth(GetSecretReturnPosition(foundSecretCount))
-          object.setRotationSmooth(owner.getRotation())
+          object.setRotationSmooth(GetXYRotation())
         end
       end
     end
@@ -228,7 +234,7 @@ function ReturnSecrets()
       if object.hasTag('Secret') then
         foundSecretCount = foundSecretCount + 1
         object.setPositionSmooth(GetSecretReturnPosition(foundSecretCount))
-        object.setRotationSmooth(owner.getRotation())
+        object.setRotationSmooth(GetXYRotation())
       end
     end
   end

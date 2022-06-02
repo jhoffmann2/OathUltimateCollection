@@ -176,7 +176,17 @@ function onUpdate()
 
   -- remove extra supply
   while (#owner.getObjects() > desiredSupplyCount) do
-    destroyObject(owner.takeObject({ top = true, position = { 0, -1, 0 } }))
+    ---@type tts__Object
+    object = owner.takeObject({ top = true, position = { 0, -1, 0 } })
+    if object.hasTag('Warband') then
+      destroyObject(object)
+    else
+      printToAll("Found an unexpected object in a warband bag. Removing it")
+      local position = owner.getPosition()
+      position.x = position.x + 5
+      position.y = position.y + 2
+      object.setPosition(position)
+    end
   end
 
   -- add missing supply
