@@ -1,4 +1,26 @@
 ﻿
+
+---@param ttsObjectTable tts__Object[]
+---@return ProxyObject[]
+local function ProxyObjectTable(ttsObjectTable)
+  local t = {};
+  for _, ttsObject in ipairs(ttsObjectTable) do
+    table.insert(t, ProxyObject(ttsObject))
+  end
+  return t
+end
+
+---@param proxyObjectTable ProxyObject[]
+---@return tts__Object[]
+local function TTSObjectTable(proxyObjectTable)
+  local t = {};
+  for _, proxyObject in ipairs(proxyObjectTable) do
+    table.insert(t, proxyObject.ttsObject)
+  end
+  return t
+end
+
+
 ---@param object tts__Object
 ---@return ProxyObject
 function ProxyObject(object)
@@ -89,6 +111,10 @@ function ProxyObject(object)
     return ProxyObject(mt.ttsObject.takeObject(...))
   end
 
+  function mt.getObjects(...)
+    return ProxyObjectTable(mt.ttsObject.getObjects(...))
+  end
+
   ---@param tag string
   ---@return boolean
   function mt.setTags(tags)
@@ -131,6 +157,24 @@ function ProxyObject(object)
   function mt.__set.remainder(v)
     mt.ttsObject.remainder = v.ttsObject
   end
+  
+  function mt.__get.tag()
+    printToAll("tag is deprecated. Use type instead", {1,0,0})
+    return mt.ttsObject.tag
+  end
+  function mt.__set.tag(v)
+    printToAll("tag is deprecated. Use type instead", {1,0,0})
+    mt.ttsObject.tag = v
+  end
+  
+  function mt.__get.value_flags()
+    printToAll("value_flags is deprecated. Use value_flags instead", {1,0,0})
+    return mt.ttsObject.value_flags
+  end
+  function mt.__set.value_flags(v)
+    printToAll("value_flags is deprecated. Use value_flags instead", {1,0,0})
+    mt.ttsObject.value_flags = v
+  end
 
   function mt.__index(t, k)
     if (mt[k] ~= nil) then
@@ -169,26 +213,6 @@ function ProxyObject(object)
   return setmetatable(mt.self, mt)
 end
 
----@param ttsObjectTable tts__Object[]
----@return ProxyObject[]
-local function ProxyObjectTable(ttsObjectTable)
-  local t = {};
-  for _, ttsObject in ipairs(ttsObjectTable) do
-    table.insert(t, ProxyObject(ttsObject))
-  end
-  return t
-end
-
----@param proxyObjectTable ProxyObject[]
----@return tts__Object[]
-local function TTSObjectTable(proxyObjectTable)
-  local t = {};
-  for _, proxyObject in ipairs(proxyObjectTable) do
-    table.insert(t, proxyObject.ttsObject)
-  end
-  return t
-end
-
 local _copy = copy
 ---@param objects ProxyObject[]
 ---@return boolean
@@ -213,6 +237,13 @@ end
 local _getObjects = getObjects
 ---@return ProxyObject[]
 function getObjects()
+  return ProxyObjectTable(_getObjects())
+end
+
+local _getObjects = getObjects
+---@return ProxyObject[]
+function getAllObjects()
+  printToAll("getAllObjects() is deprecated. Use getObjects() instead", {1,0,0})
   return ProxyObjectTable(_getObjects())
 end
 

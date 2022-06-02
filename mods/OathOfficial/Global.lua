@@ -2363,7 +2363,7 @@ function confirmSelectWinner(player, value, id)
       removeDispossessedBag()
     end
 
-    allObjects = getAllObjects()
+    allObjects = getObjects()
 
     -- Check if the Bandit Crown is faceup somewhere.
 
@@ -2371,7 +2371,7 @@ function confirmSelectWinner(player, value, id)
     shared.banditCrownHoldingColor = nil
 
     for i, curObject in ipairs(allObjects) do
-      if ("Card" == curObject.tag) then
+      if ("Card" == curObject.type) then
         if ("Bandit Crown" == curObject.getName()) then
           -- Only detect the card if it is faceup.
           cardRotation = curObject.getRotation()
@@ -2459,14 +2459,14 @@ function confirmDoneMovingWinnerRelics(player, value, id)
   if ((true == player.host) or (player.color == shared.winningColor)) then
     Global.UI.setAttribute("panel_move_winner_relics", "active", false)
 
-    allObjects = getAllObjects()
+    allObjects = getObjects()
 
     -- Check if "Family Wagon" or "Pied Piper" is in play and NOT on the world map.  This card allows players to exceed the normal 3-adviser limit.
     for i, curObject in ipairs(allObjects) do
       curObjectName = curObject.getName()
 
       -- Check only isolated cards.
-      if ("Card" == curObject.tag) then
+      if ("Card" == curObject.type) then
         if (("Family Wagon" == curObjectName) or ("Pied Piper" == curObjectName)) then
           -- Only detect the card if it is faceup.
           cardRotation = curObject.getRotation()
@@ -3123,14 +3123,14 @@ function spawnDispossessedButtonClicked(buttonObject, playerColor, altClick)
       shared.bagJSON.Transform.scaleZ = 2.0
       -- Make the bag use random ordering.
       shared.bagJSON.Bag = { ["Order"] = 2 }
-      spawnParams.json = JSON.encode(shared.bagJSON)
-      spawnParams.position = { shared.dispossessedSpawnPosition[1], shared.dispossessedSpawnPosition[2], shared.dispossessedSpawnPosition[3] }
+      spawnParams.json = JSON.encode(shared.bagJSON())
+      spawnParams.position = shared.dispossessedSpawnPosition()
       spawnParams.rotation = { 0.00, 0.00, 0.00 }
       spawnParams.scale = { 2.00, 2.00, 2.00 }
       spawnParams.callback_function = function(spawnedObject)
         shared.dispossessedBagGuid = spawnedObject.guid
         handleSpawnedObject(spawnedObject,
-            { shared.dispossessedSpawnPosition[1], shared.dispossessedSpawnPosition[2], shared.dispossessedSpawnPosition[3] },
+            shared.dispossessedSpawnPosition(),
             false,
             false)
       end
@@ -3802,7 +3802,7 @@ function scanTable(alwaysScan)
 
       scriptZoneObjects = shared.discardZones[discardZoneIndex].getObjects()
       for i, curObject in ipairs(scriptZoneObjects) do
-        if ("Deck" == curObject.tag) then
+        if ("Deck" == curObject.type) then
           -- Since a deck was encountered, scan it for Denizen or Vision cards.
           for i, curCardInDeck in ipairs(curObject.getObjects()) do
             cardName = curCardInDeck.nickname
@@ -3814,7 +3814,7 @@ function scanTable(alwaysScan)
               end
             end
           end
-        elseif ("Card" == curObject.tag) then
+        elseif ("Card" == curObject.type) then
           cardName = curObject.getName()
           cardInfo = shared.cardsTable[cardName]
 
@@ -3825,7 +3825,7 @@ function scanTable(alwaysScan)
           end
         else
           -- Nothing needs done.
-        end -- end if ("Deck" == curObject.tag)
+        end -- end if ("Deck" == curObject.type)
       end -- end for i,curObject in ipairs(scriptZoneObjects)
     end -- end for discardZoneIndex = 1,3
 
@@ -3843,7 +3843,7 @@ function scanTable(alwaysScan)
 
       scriptZoneObjects = shared.mapSiteCardZones[siteIndex].getObjects()
       for i, curObject in ipairs(scriptZoneObjects) do
-        if ("Card" == curObject.tag) then
+        if ("Card" == curObject.type) then
           siteInfo = shared.cardsTable[curObject.getName()]
 
           if (nil ~= siteInfo) then
@@ -3870,7 +3870,7 @@ function scanTable(alwaysScan)
       for normalCardIndex = 1, 3 do
         scriptZoneObjects = shared.mapNormalCardZones[siteIndex][normalCardIndex].getObjects()
         for i, curObject in ipairs(scriptZoneObjects) do
-          if ("Card" == curObject.tag) then
+          if ("Card" == curObject.type) then
             cardName = curObject.getName()
             cardInfo = shared.cardsTable[cardName]
 
@@ -3890,7 +3890,7 @@ function scanTable(alwaysScan)
             end
 
             break
-          end -- end if ("Card" == curObject.tag)
+          end -- end if ("Card" == curObject.type)
         end -- end for i,curObject in ipairs(scriptZoneObjects)
       end -- end for normalCardIndex = 1,3
     end -- for siteIndex = 1,8
@@ -3899,7 +3899,7 @@ function scanTable(alwaysScan)
     shared.remainingWorldDeck = {}
     scriptZoneObjects = shared.worldDeckZone.getObjects()
     for i, curObject in ipairs(scriptZoneObjects) do
-      if ("Deck" == curObject.tag) then
+      if ("Deck" == curObject.type) then
         for i, curCardInDeck in ipairs(curObject.getObjects()) do
           cardName = curCardInDeck.nickname
           cardInfo = shared.cardsTable[cardName]
@@ -3910,7 +3910,7 @@ function scanTable(alwaysScan)
             end
           end
         end
-      elseif ("Card" == curObject.tag) then
+      elseif ("Card" == curObject.type) then
         cardName = curObject.getName()
         cardInfo = shared.cardsTable[cardName]
 
@@ -3944,7 +3944,7 @@ function scanPlayerAdvisers()
       for i, curObject in ipairs(scriptZoneObjects) do
         testRotation = curObject.getRotation()
 
-        if ("Deck" == curObject.tag) then
+        if ("Deck" == curObject.type) then
 
           -- Since a deck was encountered, scan it for Denizen cards.
           for i, curCardInDeck in ipairs(curObject.getObjects()) do
@@ -3965,7 +3965,7 @@ function scanPlayerAdvisers()
               end
             end -- end if (nil ~= cardInfo)
           end
-        elseif ("Card" == curObject.tag) then
+        elseif ("Card" == curObject.type) then
           cardName = curObject.getName()
           cardInfo = shared.cardsTable[cardName]
 
@@ -3982,7 +3982,7 @@ function scanPlayerAdvisers()
               end
             end
           end -- end if (nil ~= cardInfo)
-        end -- end if ("Card" == curObject.tag)
+        end -- end if ("Card" == curObject.type)
       end -- end for i,curObject in ipairs(scriptZoneObjects)
     end -- end for adviserSlotIndex = 1,3
   end -- end for i,curColor in ipairs(playerColors)
@@ -4309,14 +4309,14 @@ function cleanTable()
   -- Also delete all favor and secret tokens other than the hidden unlabeled ones.
   --
 
-  allObjects = getAllObjects()
+  allObjects = getObjects()
 
   for i, curObject in ipairs(allObjects) do
     curObjectName = curObject.getName()
 
-    if (("Deck" == curObject.tag) or ("Card" == curObject.tag)) then
+    if (("Deck" == curObject.type) or ("Card" == curObject.type)) then
       destroyObject(curObject)
-    elseif ("Figurine" == curObject.tag) then
+    elseif ("Figurine" == curObject.type) then
       curObjectDescription = curObject.getDescription()
       if ("Warband" == curObjectName) then
         if ("Black" == curObjectDescription) then
@@ -4344,7 +4344,7 @@ function cleanTable()
       else
         -- Nothing needs done.
       end
-    elseif ("Generic" == curObject.tag) then
+    elseif ("Generic" == curObject.type) then
       if (("Favor" == curObjectName) or
           ("Favor (" == string.sub(curObject.getName(), 1, 7))) then
         destroyObject(curObject)
@@ -7338,7 +7338,7 @@ function handleChronicleAfterOfferCitizenship(player)
           convertedObjectColor = curObjectDescription
         end
 
-        if ("Figurine" == curObject.tag) then
+        if ("Figurine" == curObject.type) then
           if ("Warband" == curObjectName) then
             siteHasWarband = true
 
@@ -7751,7 +7751,7 @@ function handleChronicleAfterBuildRepair(player)
         convertedObjectColor = curObjectDescription
       end
 
-      if ("Figurine" == curObject.tag) then
+      if ("Figurine" == curObject.type) then
         if (("Warband" == curObjectName) and
             ((shared.winningColor == convertedObjectColor) or
                 (true == shared.grantPlayerCitizenship[convertedObjectColor]) or
@@ -7799,7 +7799,7 @@ function handleChronicleAfterBuildRepair(player)
       scriptZoneObjects = shared.mapSiteCardZones[siteIndex].getObjects()
       for i, curObject in ipairs(scriptZoneObjects) do
         curObjectName = curObject.getName()
-        if ("Card" == curObject.tag) then
+        if ("Card" == curObject.type) then
           destroyObject(curObject)
         end
       end
@@ -7808,7 +7808,7 @@ function handleChronicleAfterBuildRepair(player)
       for normalCardIndex = 1, 3 do
         scriptZoneObjects = shared.mapNormalCardZones[siteIndex][normalCardIndex].getObjects()
         for i, curObject in ipairs(scriptZoneObjects) do
-          if ("Card" == curObject.tag) then
+          if ("Card" == curObject.type) then
             cardName = curObject.getName()
             cardInfo = shared.cardsTable[cardName]
 
@@ -7842,7 +7842,7 @@ function handleChronicleAfterBuildRepair(player)
 
             -- Delete the card.
             destroyObject(curObject)
-          end -- end if ("Card" == curObject.tag)
+          end -- end if ("Card" == curObject.type)
         end -- end for i,curObject in ipairs(scriptZoneObjects)
       end -- end for normalCardIndex = 1,3
     end -- end if (false == keepSiteStatus[siteIndex])
@@ -8650,7 +8650,7 @@ function handleChronicleAfterSelectSuit()
   scriptZoneObjects = shared.bigReliquaryZone.getObjects()
   for i, curObject in ipairs(scriptZoneObjects) do
     curObjectName = curObject.getName()
-    if ("Deck" == curObject.tag) then
+    if ("Deck" == curObject.type) then
       -- Since a deck was encountered, scan it for Relic cards.
       for i, curCardInDeck in ipairs(curObject.getObjects()) do
         cardName = curCardInDeck.nickname
@@ -8663,7 +8663,7 @@ function handleChronicleAfterSelectSuit()
           end
         end
       end
-    elseif ("Card" == curObject.tag) then
+    elseif ("Card" == curObject.type) then
       cardInfo = shared.cardsTable[curObjectName]
       if (nil ~= cardInfo) then
         if ("Relic" == cardInfo.cardtype) then
