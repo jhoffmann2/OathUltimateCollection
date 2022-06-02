@@ -103,7 +103,19 @@ function Method.GetPlayerSupply()
   return GetPlayerSupply()
 end
 
+function onPlayerTurn(player, previous_player)
+  if (previous_player) then
+    if (previous_player.color == shared.playerColor) then
+      OnRest()
+    end
+  end
+end
+
 function OnRest()
+  if Turns.enable and Turns.turn_color == shared.playerColor then
+    Turns.turn_color = Turns.getNextTurnColor()
+    return
+  end
   InvokeEvent('OnRest', shared.playerColor)
   ReturnFavor()
   ReturnSecrets()
