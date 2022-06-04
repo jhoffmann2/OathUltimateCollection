@@ -1,9 +1,16 @@
-﻿
-local favorStackOffset = Vector(-6.2, 0.1, 1.08)
-local secretStackOffset = Vector(-6.2, 0.32, -0.76)
 
-function onLoad()
-  
+local favorStackOffset = Vector(-6.2, 0.1, 1.08)
+local secretStackOffset = Vector(-6.2, 0.2, -0.76)
+
+
+function Callback.OnPlayerPiecesShown(color)
+  if (color == shared.playerColor) then
+    OnShown()
+  end
+end
+
+function OnShown()
+
   globalData = Shared(Global)
 
   owner.clearContextMenu()
@@ -22,7 +29,6 @@ function onLoad()
     ---@type tts__Object[]
     shared.supplyZones = globalData.playerSupplyZones[shared.playerColor]()
   end
-
   SetupFavorAndSecretZones()
 end
 
@@ -45,13 +51,13 @@ function SetupFavorAndSecretZones()
   Vector.rotateOver(favorStackPosition, 'y', rotation.y)
   favorStackPosition = favorStackPosition + owner.getPosition()
   local favorZonePosition = favorStackPosition
-  favorZonePosition.y = 3.61 - owner.getPosition().y
+  favorZonePosition.y = favorZonePosition.y + (scale.y / 2)
   
   secretStackPosition = secretStackOffset
   Vector.rotateOver(secretStackPosition, 'y', rotation.y)
   secretStackPosition = secretStackPosition + owner.getPosition()
   local secretZonePosition = secretStackPosition
-  secretZonePosition.y = 3.61 - owner.getPosition().y
+  secretZonePosition.y = secretZonePosition.y + (scale.y / 2)
 
   shared.favorZone.setPosition(favorZonePosition)
   shared.favorZone.setScale(scale)
