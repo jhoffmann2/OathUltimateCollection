@@ -9,13 +9,8 @@ function Callback.OnPlayerPiecesShown(color)
   end
 end
 
-function OnShown()
-
+function onLoad()
   globalData = Shared(Global)
-
-  owner.clearContextMenu()
-  owner.addContextMenuItem("Rest", OnRest)
-  CreateRestButtons()
 
   if shared.warbandBag == nil then
     shared.warbandBag = globalData.playerWarbandBags[shared.playerColor]
@@ -29,7 +24,30 @@ function OnShown()
     ---@type tts__Object[]
     shared.supplyZones = globalData.playerSupplyZones[shared.playerColor]()
   end
+
+  owner.clearContextMenu()
+  owner.addContextMenuItem("Rest", OnRest)
+  CreateRestButtons()
+end
+
+function OnShown()
   SetupFavorAndSecretZones()
+end
+
+function FavorStackPosition()
+  local rotation = GetXYRotation()
+  local favorStackPosition = Vector.new(favorStackOffset)
+  Vector.rotateOver(favorStackPosition, 'y', rotation.y)
+  favorStackPosition = favorStackPosition + owner.getPosition()
+  return favorStackPosition
+end
+
+function SecretStackPosition()
+  local rotation = GetXYRotation()
+  local secretStackPosition = Vector.new(secretStackOffset)
+  Vector.rotateOver(secretStackPosition, 'y', rotation.y)
+  secretStackPosition = secretStackPosition + owner.getPosition()
+  return secretStackPosition
 end
 
 function SetupFavorAndSecretZones()
@@ -46,17 +64,10 @@ function SetupFavorAndSecretZones()
 
   local rotation = GetXYRotation()
   local scale = Vector(1.8, 5.10, 1.8)
-  
-  favorStackPosition = favorStackOffset
-  Vector.rotateOver(favorStackPosition, 'y', rotation.y)
-  favorStackPosition = favorStackPosition + owner.getPosition()
-  local favorZonePosition = favorStackPosition
+  local favorZonePosition = FavorStackPosition()
   favorZonePosition.y = favorZonePosition.y + (scale.y / 2)
   
-  secretStackPosition = secretStackOffset
-  Vector.rotateOver(secretStackPosition, 'y', rotation.y)
-  secretStackPosition = secretStackPosition + owner.getPosition()
-  local secretZonePosition = secretStackPosition
+  local secretZonePosition = SecretStackPosition()
   secretZonePosition.y = secretZonePosition.y + (scale.y / 2)
 
   shared.favorZone.setPosition(favorZonePosition)
@@ -130,11 +141,9 @@ end
 
 function GetSecretReturnPosition(count)
   local secretHeight = 0.5
-  local output = Vector(secretStackPosition)
+  local output = Vector(SecretStackPosition())
   for _, object in ipairs(shared.secretZone.getObjects()) do
-    if object.hasTag('Secret') then
-      output.y = math.max(output.y, object.getPosition().y)
-    end
+    output.y = math.max(output.y, object.getPosition().y + object.getScale().y / 2)
   end
   output.y = output.y + (count * secretHeight)
   return output
@@ -144,11 +153,9 @@ function GetFavorReturnPosition(suit, count)
   local favorHeight = 0.2
   local zone = globalData.suitFavorZones[suit]
   local output = Vector(zone.getPosition())
-  output.y = favorStackPosition.y
+  output.y = FavorStackPosition().y
   for _, object in ipairs(zone.getObjects()) do
-    if object.hasTag('Favor') then
-      output.y = math.max(output.y, object.getPosition().y)
-    end
+    output.y = math.max(output.y, object.getPosition().y + object.getScale().y / 2)
   end
   output.y = output.y + (count * favorHeight)
   return output

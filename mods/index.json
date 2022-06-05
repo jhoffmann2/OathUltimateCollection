@@ -21,6 +21,24 @@
     "value": true,
     "mod": "OathOfficial"
   },
+  "Turns": {
+    "type": "toggle",
+    "value": true,
+    "mod": "Turns",
+    "tooltip": "Enable turns and order them clockwise starting with the Chancellor"
+  },
+  "Turn Order Seating": {
+    "type": "toggle",
+    "value": true,
+    "mod": "TurnOrderSeating",
+    "tooltip": "On Game start, players will be seated Based on the set turn order"
+  },
+  "Randomize Turn Order": {
+    "type": "toggle",
+    "value": true,
+    "mod": "RandomTurnOrder",
+    "tooltip": "Randomize the turn order of all exiles and citizens every game"
+  },
   "Smart Warbands": {
     "type": "toggle",
     "value": true,
@@ -31,6 +49,6 @@
     "type": "toggle",
     "value": true,
     "mod": "AutoRest",
-    "tooltip": "quality of life mod that will add an 'Automate Rest Phase' button to player boards\n\n\t- Resets supply\n\t- Returns favor to favor banks\n\t- Returns secrets to player board"
+    "tooltip": "quality of life mod that will add an 'Automate Rest Phase' button to player boards\n\n\t- Resets supply\n\t- Returns favor to favor banks\n\t- Returns secrets to player board\n\t- Advances turn if turns are enabled"
   }
 }

@@ -76,24 +76,8 @@ function onLoad(save_state)
                                           { 16.87, 1.07, 2.61 },
                                           { 16.87, 1.07, -2.11 } }
   shared.normalCardXSpawnChange = { 0.00, 3.05, 6.10 }
-  shared.supplyMarkerStartPositions = { ["Purple"] = { -17.49, 1.06, 20.28 },
-                                        ["Red"] = { 12.91, 0.96, 20.24 },
-                                        ["Brown"] = { 32.28, 1.06, 3.33 },
-                                        ["Blue"] = { 11.92, 1.06, -14.08 },
-                                        ["Yellow"] = { -17.44, 1.06, -14.09 },
-                                        ["White"] = { -32.14, 1.06, 5.58 } }
-  shared.pawnStartPositions = { ["Purple"] = { -25.04, 1.06, 14.64 },
-                                ["Red"] = { 5.16, 1.06, 14.51 },
-                                ["Brown"] = { 26.58, 1.06, 10.81 },
-                                ["Blue"] = { 19.08, 1.06, -8.41 },
-                                ["Yellow"] = { -9.88, 1.06, -8.37 },
-                                ["White"] = { -26.46, 1.06, -1.92 } }
-  shared.pawnStartYRotations = { ["Purple"] = 0.0,
-                                 ["Red"] = 0.0,
-                                 ["Brown"] = 90.0,
-                                 ["Blue"] = 180.0,
-                                 ["Yellow"] = 180.0,
-                                 ["White"] = 270.0 }
+  shared.supplyMarkerStartOffset = {0.91, 0.10, 3.03}
+  shared.pawnStartOffset = {-6.24, 0.10, -2.61}
   shared.handCardSpawnPositions = { ["Purple"] = { { -13.15, 2.97, 29.83 }, { -16.09, 3.07, 29.83 }, { -19.03, 3.17, 29.83 } },
                                     ["Red"] = { { 16.38, 2.97, 29.83 }, { 13.44, 3.07, 29.83 }, { 10.49, 3.17, 29.83 } },
                                     ["Brown"] = { { 47.29, 2.97, 1.90 }, { 47.29, 3.07, 4.84 }, { 47.29, 3.17, 7.79 } },
@@ -121,12 +105,6 @@ function onLoad(save_state)
   shared.discardPileSpawnPositions = { { -14.01, 1.07, 11.14 },
                                        { 2.73, 1.07, 11.24 },
                                        { 19.64, 1.07, 11.22 } }
-  shared.playerButtonPositions = { ["Purple"] = nil,
-                                   ["Red"] = { -43.3, 4.6, 0.6 },
-                                   ["Brown"] = { -64.0, 4.6, -18.8 },
-                                   ["Blue"] = { -42.5, 4.6, -38.0 },
-                                   ["Yellow"] = { -12.0, 4.6, -38.0 },
-                                   ["White"] = { 4.3, 4.6, -15.4 } }
   shared.playerButtonColors = { ["Purple"] = nil,
                                 ["Red"] = { 0.80, 0.05, 0.05, 1.00 },
                                 ["Brown"] = { 0.40, 0.40, 0.40, 1.00 },
@@ -645,7 +623,6 @@ function onLoad(save_state)
   -- Used to randomize setup.
   shared.randomEnabled = false
   -- Used for buttons.
-  shared.playerButtonIndices = {}
   shared.spawnDispossessedButtonIndex = 0
   -- Used during chronicle.
   shared.banditCrownFound = false
@@ -2634,10 +2611,6 @@ function configGeneralButtons(buttonConfig)
   self.clearButtons()
   shared.spawnDispossessedButtonIndex = 0
 
-  for i, curColor in ipairs(shared.playerColors) do
-    shared.playerButtonIndices[curColor] = nil
-  end
-
   if (shared.BUTTONS_NONE == buttonConfig) then
     -- Nothing needs done.
   elseif (shared.BUTTONS_NOT_IN_GAME == buttonConfig) then
@@ -2783,57 +2756,37 @@ end
 -- Creates player buttons.
 function createPlayerButtons()
   local buttonTable
-  local numButtonsCreated = 0
   local nextTableIndex = 1
 
   for i, curColor in ipairs(shared.playerColors) do
     -- If this color is active in this game, and they are not Purple, create a citizen/exile button for them.
     if (true == shared.curPlayerStatus[curColor][2]) then
       if ("Purple" ~= curColor) then
-        if ("Exile" == shared.curPlayerStatus[curColor][1]) then
-          self.createButton({
-            label = "Citizen",
-            click_function = "flipButtonClicked" .. curColor,
-            function_owner = self,
-            position = shared.playerButtonPositions[curColor](),
-            scale = { 2.0, 2.0, 2.0 },
-            rotation = { 0.0, shared.handCardYRotations[curColor], 0.0 },
-            width = 700,
-            height = 500,
-            font_size = 180,
-            color = shared.playerButtonColors[curColor]()
-          })
+        shared.playerBoards[curColor].createButton({
+          label = "Citizen",
+          click_function = "flipButtonClicked" .. curColor,
+          function_owner = self,
+          position = {0.0, 0.15, 1.5},
+          scale = { .5, .5, .5 },
+          rotation = { 0.0, 0.0, 0.0 },
+          width = 700,
+          height = 500,
+          font_size = 180,
+          color = shared.playerButtonColors[curColor]()
+        })
 
-          numButtonsCreated = (numButtonsCreated + 1)
-        else
-          self.createButton({
-            label = "Exile",
-            click_function = "flipButtonClicked" .. curColor,
-            function_owner = self,
-            position = shared.playerButtonPositions[curColor](),
-            scale = { 2.0, 2.0, 2.0 },
-            rotation = { 0.0, shared.handCardYRotations[curColor], 0.0 },
-            width = 700,
-            height = 500,
-            font_size = 180,
-            color = shared.playerButtonColors[curColor]()
-          })
-
-          numButtonsCreated = (numButtonsCreated + 1)
-        end
-      end
-    end
-  end
-
-  -- Get indices of all player buttons.
-  buttonTable = self.getButtons()
-
-  nextTableIndex = ((#buttonTable - numButtonsCreated) + 1)
-  for i, curColor in ipairs(shared.playerColors) do
-    if (true == shared.curPlayerStatus[curColor][2]) then
-      if ("Purple" ~= curColor) then
-        shared.playerButtonIndices[curColor] = buttonTable[nextTableIndex].index
-        nextTableIndex = (nextTableIndex + 1)
+        shared.playerBoards[curColor].createButton({
+          label = "Exile",
+          click_function = "flipButtonClicked" .. curColor,
+          function_owner = self,
+          position = {0.0, -0.15, 1.5},
+          scale = { .5, .5, .5 },
+          rotation = { 0.0, 0.0, 180.0 },
+          width = 700,
+          height = 500,
+          font_size = 180,
+          color = shared.playerButtonColors[curColor]()
+        })
       end
     end
   end
@@ -3360,8 +3313,6 @@ function flipButtonClickedBrown(buttonObject, playerColor, altClick)
     shared.curPlayerStatus[buttonPlayerColor][1] = "Citizen"
     updatePlayerBoardRotation(buttonPlayerColor)
 
-    self.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Exile" })
-
     -- Note special case:  TTS "Brown" is Oath "Black".
     printToAll("[000000]Black[-] is now a Citizen.", { 1, 1, 1 })
 
@@ -3369,8 +3320,6 @@ function flipButtonClickedBrown(buttonObject, playerColor, altClick)
   else
     shared.curPlayerStatus[buttonPlayerColor][1] = "Exile"
     updatePlayerBoardRotation(buttonPlayerColor)
-
-    self.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Citizen" })
 
     -- Note special case:  TTS "Brown" is Oath "Black".
     printToAll("[000000]Black[-] is now an Exile.", { 1, 1, 1 })
@@ -3386,16 +3335,12 @@ function flipButtonClickedYellow(buttonObject, playerColor, altClick)
     shared.curPlayerStatus[buttonPlayerColor][1] = "Citizen"
     updatePlayerBoardRotation(buttonPlayerColor)
 
-    self.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Exile" })
-
     printToAll("[" .. Color.fromString(buttonPlayerColor):toHex(false) .. "]" .. buttonPlayerColor .. "[-] is now a Citizen.", { 1, 1, 1 })
 
     InvokeEvent('OnPlayerCitizened', buttonPlayerColor)
   else
     shared.curPlayerStatus[buttonPlayerColor][1] = "Exile"
     updatePlayerBoardRotation(buttonPlayerColor)
-
-    self.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Citizen" })
 
     printToAll("[" .. Color.fromString(buttonPlayerColor):toHex(false) .. "]" .. buttonPlayerColor .. "[-] is now a Exile.", { 1, 1, 1 })
 
@@ -3410,16 +3355,12 @@ function flipButtonClickedWhite(buttonObject, playerColor, altClick)
     shared.curPlayerStatus[buttonPlayerColor][1] = "Citizen"
     updatePlayerBoardRotation(buttonPlayerColor)
 
-    self.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Exile" })
-
     printToAll("[" .. Color.fromString(buttonPlayerColor):toHex(false) .. "]" .. buttonPlayerColor .. "[-] is now a Citizen.", { 1, 1, 1 })
 
     InvokeEvent('OnPlayerCitizened', buttonPlayerColor)
   else
     shared.curPlayerStatus[buttonPlayerColor][1] = "Exile"
     updatePlayerBoardRotation(buttonPlayerColor)
-
-    self.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Citizen" })
 
     printToAll("[" .. Color.fromString(buttonPlayerColor):toHex(false) .. "]" .. buttonPlayerColor .. "[-] is now a Exile.", { 1, 1, 1 })
 
@@ -3434,16 +3375,12 @@ function flipButtonClickedBlue(buttonObject, playerColor, altClick)
     shared.curPlayerStatus[buttonPlayerColor][1] = "Citizen"
     updatePlayerBoardRotation(buttonPlayerColor)
 
-    self.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Exile" })
-
     printToAll("[" .. Color.fromString(buttonPlayerColor):toHex(false) .. "]" .. buttonPlayerColor .. "[-] is now a Citizen.", { 1, 1, 1 })
 
     InvokeEvent('OnPlayerCitizened', buttonPlayerColor)
   else
     shared.curPlayerStatus[buttonPlayerColor][1] = "Exile"
     updatePlayerBoardRotation(buttonPlayerColor)
-
-    self.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Citizen" })
 
     printToAll("[" .. Color.fromString(buttonPlayerColor):toHex(false) .. "]" .. buttonPlayerColor .. "[-] is now a Exile.", { 1, 1, 1 })
 
@@ -3458,16 +3395,12 @@ function flipButtonClickedRed(buttonObject, playerColor, altClick)
     shared.curPlayerStatus[buttonPlayerColor][1] = "Citizen"
     updatePlayerBoardRotation(buttonPlayerColor)
 
-    self.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Exile" })
-
     printToAll("[" .. Color.fromString(buttonPlayerColor):toHex(false) .. "]" .. buttonPlayerColor .. "[-] is now a Citizen.", { 1, 1, 1 })
 
     InvokeEvent('OnPlayerCitizened', buttonPlayerColor)
   else
     shared.curPlayerStatus[buttonPlayerColor][1] = "Exile"
     updatePlayerBoardRotation(buttonPlayerColor)
-
-    self.editButton({ index = shared.playerButtonIndices[buttonPlayerColor], label = "Citizen" })
 
     printToAll("[" .. Color.fromString(buttonPlayerColor):toHex(false) .. "]" .. buttonPlayerColor .. "[-] is now a Exile.", { 1, 1, 1 })
 
@@ -4328,7 +4261,7 @@ function cleanTable()
         -- Move the warband below the table so the warbands do not flicker as they cleanup.
         curObjectPosition = curObject.getPosition()
         -- Set the warband's rotation to match the starting pawn rotation, and put the warband back in the matching bag.
-        curObject.setRotation({ 0.0, shared.pawnStartYRotations[curObjectColor], 0.0 })
+        curObject.setRotation({ 0.0, shared.playerBoards[curObjectColor].getRotation().y, 0.0 })
         curObject.setPosition({ curObjectPosition[1], 1000, curObjectPosition[3] })
         shared.playerWarbandBags[curObjectColor].putObject(curObject)
       elseif ("Pawn" == curObjectName) then
@@ -4339,8 +4272,13 @@ function cleanTable()
         end
 
         -- Move the pawn back to its starting position.
-        curObject.setRotation({ 0.0, shared.pawnStartYRotations[curObjectColor], 0.0 })
-        curObject.setPosition(shared.pawnStartPositions[curObjectColor]())
+
+        local rotation = shared.playerBoards[curObjectColor].getRotation().y
+        local offset = Vector.new(shared.pawnStartOffset())
+        offset:rotateOver('y', rotation)
+        local position = shared.playerBoards[curObjectColor].getPosition() + offset
+        curObject.setPosition(position)
+        curObject.setRotation(Vector(0, rotation, 0))
       else
         -- Nothing needs done.
       end
@@ -4810,6 +4748,9 @@ function handleSpawnedObject(spawnedObject, finalPosition, shouldUnlock, spawnFa
 end
 
 function setupGame()
+  InvokeEvent("SetupTurnOrder")
+  InvokeEvent("BeforeGameStart")
+  
   local availableSites
   local numAvailableSites = 0
   local curSiteName
@@ -5091,6 +5032,7 @@ function setupGame()
       curColor = "Purple"
       spawnSingleCard(shared.curWorldDeckCards[shared.curWorldDeckCardCount - deckOffset], true, shared.tutorialAdviserPositions[curColor], shared.handCardYRotations[curColor], false)
       deckOffset = (deckOffset + 1)
+      
       table.insert(provincesDiscards, shared.curWorldDeckCards[shared.curWorldDeckCardCount - deckOffset])
       deckOffset = (deckOffset + 1)
       table.insert(provincesDiscards, shared.curWorldDeckCards[shared.curWorldDeckCardCount - deckOffset])
@@ -5180,10 +5122,17 @@ function setupGame()
     printToAll("", { 1, 1, 1 })
     printToAll("SETUP COMPLETE.", { 0, 0.8, 0 })
   end
+  
+  InvokeEvent("OnGameStart")
 end
 
 function resetSupplyCylinder(playerColor)
-  shared.playerSupplyMarkers[playerColor].setPosition({ shared.supplyMarkerStartPositions[playerColor][1], shared.supplyMarkerStartPositions[playerColor][2], shared.supplyMarkerStartPositions[playerColor][3] })
+  local rotation = shared.playerBoards[playerColor].getRotation().y
+  local offset = Vector.new(shared.supplyMarkerStartOffset())
+  offset:rotateOver('y', rotation)
+  local position = shared.playerBoards[playerColor].getPosition() + offset
+  shared.playerSupplyMarkers[playerColor].setPosition(position)
+  shared.playerSupplyMarkers[playerColor].setRotation(Vector(0, rotation, 0))
 end
 
 function showGeneralPieces()
