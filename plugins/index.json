@@ -5,12 +5,12 @@
     "options": [
       {
         "name": "Official",
-        "mod": "BaseDeck",
+        "plugin": "BaseDeck",
         "tooltip": "play with all the cards found in the official base game!"
       },
       {
         "name": "Your custom deck here",
-        "mod": "None",
+        "plugin": "None",
         "tooltip": "This option will not work. it's just a placeholder for now"
       }
     ]
@@ -19,36 +19,36 @@
     "type": "toggle",
     "hidden": true,
     "value": true,
-    "mod": "OathOfficial"
+    "plugin": "OathOfficial"
   },
   "Turns": {
     "type": "toggle",
     "value": true,
-    "mod": "Turns",
+    "plugin": "Turns",
     "tooltip": "Enable turns and order them clockwise starting with the Chancellor"
   },
   "Turn Order Seating": {
     "type": "toggle",
     "value": true,
-    "mod": "TurnOrderSeating",
+    "plugin": "TurnOrderSeating",
     "tooltip": "On Game start, players will be seated Based on the set turn order"
   },
   "Randomize Turn Order": {
     "type": "toggle",
     "value": true,
-    "mod": "RandomTurnOrder",
+    "plugin": "RandomTurnOrder",
     "tooltip": "Randomize the turn order of all exiles and citizens every game"
   },
   "Smart Warbands": {
     "type": "toggle",
     "value": true,
-    "mod": "SmartWarbands",
-    "tooltip": "quality of life mod that will make managing warbands easier in situations like offering citizenship\n\n\t- when you're citizened, your warbands will turn purple\n\t- when you're exiled, your warbands will change to your exile color\n\t- citizens have a purple warband bag that reflects the number of warbands in the chancellors bag\n\t- you can put warbands in any warband bag and they will be moved to the correct bag"
+    "plugin": "SmartWarbands",
+    "tooltip": "quality of life plugin that will make managing warbands easier in situations like offering citizenship\n\n\t- when you're citizened, your warbands will turn purple\n\t- when you're exiled, your warbands will change to your exile color\n\t- citizens have a purple warband bag that reflects the number of warbands in the chancellors bag\n\t- you can put warbands in any warband bag and they will be moved to the correct bag"
   },
   "Auto Rest": {
     "type": "toggle",
     "value": true,
-    "mod": "AutoRest",
-    "tooltip": "quality of life mod that will add an 'Automate Rest Phase' button to player boards\n\n\t- Resets supply\n\t- Returns favor to favor banks\n\t- Returns secrets to player board\n\t- Advances turn if turns are enabled"
+    "plugin": "AutoRest",
+    "tooltip": "quality of life plugin that will add an 'Automate Rest Phase' button to player boards\n\n\t- Resets supply\n\t- Returns favor to favor banks\n\t- Returns secrets to player board\n\t- Advances turn if turns are enabled"
   }
 }
