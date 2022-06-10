@@ -1,5 +1,5 @@
 ﻿function onLoad()
-  InvokeEvent('OnEnsureModActive', 'PlayerOwnershipZones')
+  InvokeEvent('OnEnsurePluginActive', 'PlayerOwnershipZones')
   
   ---@param warbandBag tts__Object
     ---@param color tts__PlayerColor

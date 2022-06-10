@@ -105,7 +105,7 @@ local playerOwnershipZoneTransforms = {
 local playerSeat
 
 function onLoad()
-  InvokeEvent('OnEnsureModActive', 'PlayerOwnershipZones')
+  InvokeEvent('OnEnsurePluginActive', 'PlayerOwnershipZones')
 end
 
 function Callback.BeforeGameStart()
