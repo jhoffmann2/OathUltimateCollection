@@ -2,6 +2,7 @@
   "Deck": {
     "type": "radio",
     "value": "BaseDeck",
+    "hidden": true,
     "options": [
       {
         "name": "Official",
