@@ -1,0 +1,35 @@
+﻿[
+  {
+    "activeDarkColor": [0.192, 0.294, 0.239],
+    "inactiveDarkColor": [0.192, 0.294, 0.239, 0.65],
+    "activeHoveredDarkColor": [0,0,0],
+    "inactiveHoveredDarkColor": [0.25, 0.121, 0.121, 0.85],
+
+    "activeLightColor": [1, 1, 1],
+    "inactiveLightColor": [1, 1, 1, 0.55],
+    "activeHoveredLightColor": [0.8, 0.9, 1],
+    "inactiveHoveredLightColor": [0.8, 0.9, 1, 0.55]
+  },
+  {
+    "activeDarkColor": [0.254, 0.137, 0.231],
+    "inactiveDarkColor": [0.254, 0.137, 0.231, 0.65],
+    "activeHoveredDarkColor": [0,0,0],
+    "inactiveHoveredDarkColor": [0.25, 0.121, 0.121, 0.85],
+
+    "activeLightColor": [1, 1, 1],
+    "inactiveLightColor": [1, 1, 1, 0.55],
+    "activeHoveredLightColor": [0.8, 0.9, 1],
+    "inactiveHoveredLightColor": [0.8, 0.9, 1, 0.55]
+  },
+  {
+    "activeDarkColor": [0.25, 0.121, 0.121],
+    "inactiveDarkColor": [0.25, 0.121, 0.121, 0.65],
+    "activeHoveredDarkColor": [0,0,0],
+    "inactiveHoveredDarkColor": [0.25, 0.121, 0.121, 0.85],
+
+    "activeLightColor": [1, 1, 1],
+    "inactiveLightColor": [1, 1, 1, 0.55],
+    "activeHoveredLightColor": [0.8, 0.9, 1],
+    "inactiveHoveredLightColor": [0.8, 0.9, 1, 0.55]
+  }
+]

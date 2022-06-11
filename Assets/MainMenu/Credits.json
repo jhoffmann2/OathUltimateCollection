@@ -1,0 +1,19 @@
+﻿{
+
+  "Board Game": 
+  {
+    "Game": "Cole Wehrle",
+    "Art": "Kyle Ferrin",
+    "Studio": "Leder Games"
+  },
+
+  "Scripting": {
+    "Engine": "Jordan Hoffmann",
+    "Base Game": "AgentElrond",
+    "Turn Order Seating": "Jordan Hoffmann",
+    "Randomized Turn Order": "Jordan Hoffmann",
+    "Smart Warbands": "Jordan Hoffmann",
+    "Auto Rest": "Jordan Hoffmann"
+  }
+}
+    
