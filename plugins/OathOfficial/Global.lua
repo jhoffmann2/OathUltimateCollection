@@ -713,7 +713,7 @@ function onLoad(save_state)
   -- Lock if hidden.
   if (nil ~= shared.curOathkeeperToken) then
     tokenPosition = shared.curOathkeeperToken.getPosition()
-    if (tokenPosition[2] < 0) then
+    if (tokenPosition.y < 0) then
       shared.curOathkeeperToken.locked = true
       shared.curOathkeeperToken.interactable = false
       shared.curOathkeeperToken.tooltip = false
@@ -827,7 +827,12 @@ function onLoad(save_state)
 
       -- Lock if hidden.
       if (nil ~= shared.oathReminderTokens[loopOathName]) then
+        print('why wont this work?')
         tokenPosition = shared.oathReminderTokens[loopOathName].getPosition()
+        print(tokenPosition.x)
+        print(tokenPosition[1])
+        print(type(shared.oathReminderTokens[loopOathName]))
+        print(shared.oathReminderTokens[loopOathName].getPosition())
         if (tokenPosition[2] < 0) then
           shared.oathReminderTokens[loopOathName].locked = true
           shared.oathReminderTokens[loopOathName].interactable = false

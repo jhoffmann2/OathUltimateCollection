@@ -91,6 +91,10 @@ function Shared(obj, layers)
     if (type(v) == 'ProxyObject') then
       v = v.ttsObject
     end
+    if (type(v) == 'SharedData') then
+      v = getmetatable(v).data()
+    end
+    
     if #layers > 0 then
 
       local base = obj.getTable(layers[1])
@@ -174,7 +178,7 @@ function Shared(obj, layers)
     return #tbl
   end
 
-  function mt.__call(t)
+  function mt.data()
     local tbl = obj.getTable(layers[1])
     for i, layer in ipairs(layers) do
       if i ~= 1 then
@@ -184,6 +188,10 @@ function Shared(obj, layers)
     end
 
     return tbl
+  end
+
+  function mt.__call(t)
+    return mt.data()
   end
 
   -- return a table that can be passed through events and be decompressed on the other side
