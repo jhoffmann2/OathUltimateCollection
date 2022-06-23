@@ -9,8 +9,13 @@ function Callback.OnPlayerPiecesShown(color)
   end
 end
 
-function onLoad()
+function onLoad(save_string)
   globalData = Shared(Global)
+
+  local save_data = {}
+  if save_string and save_string ~= '' then
+    save_data = JSON.decode(save_string)
+  end
 
   if shared.warbandBag == nil then
     shared.warbandBag = globalData.playerWarbandBags[shared.playerColor]
@@ -28,6 +33,46 @@ function onLoad()
   owner.clearContextMenu()
   owner.addContextMenuItem("Rest", OnRest)
   CreateRestButtons()
+
+  function GetSavedData(name, default)
+    if save_data[name] ~= nil then
+      return save_data[name]
+    end
+    return default
+  end
+  
+  function GetSavedObject(name)
+    local guid = GetSavedData(name..'GUID')
+    if guid ~= nil then
+      return getObjectFromGUID(guid)
+    end
+    return nil
+  end
+
+  shared.secretZone = GetSavedObject('secretZone')
+  shared.favorZone = GetSavedObject('favorZone')
+  
+end
+
+function onSave()
+  local save_data = {}
+  
+  function SaveData(name, val)
+    save_data[name] = val
+  end
+  
+  function SaveObject(name, val)
+    if val ~= nil then
+      save_data[name..'GUID'] = val.guid
+    else
+      save_data[name..'GUID'] = nil
+    end
+  end
+
+  SaveObject('secretZone', shared.secretZone)
+  SaveObject('favorZone', shared.favorZone)
+  
+  return JSON.encode(save_data)
 end
 
 function OnShown()
