@@ -713,7 +713,7 @@ function onLoad(save_state)
   -- Lock if hidden.
   if (nil ~= shared.curOathkeeperToken) then
     tokenPosition = shared.curOathkeeperToken.getPosition()
-    if (tokenPosition.y < 0) then
+    if (tokenPosition[2] < 0) then
       shared.curOathkeeperToken.locked = true
       shared.curOathkeeperToken.interactable = false
       shared.curOathkeeperToken.tooltip = false
@@ -3076,7 +3076,7 @@ function spawnDispossessedButtonClicked(buttonObject, playerColor, altClick)
       shared.bagJSON.Transform.scaleZ = 2.0
       -- Make the bag use random ordering.
       shared.bagJSON.Bag = { ["Order"] = 2 }
-      spawnParams.json = JSON.encode_pretty(shared.bagJSON)
+      spawnParams.json = JSON.encode(shared.bagJSON)
       spawnParams.position = shared.dispossessedSpawnPosition
       spawnParams.rotation = { 0.00, 0.00, 0.00 }
       spawnParams.scale = { 2.00, 2.00, 2.00 }
