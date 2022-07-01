@@ -45,10 +45,12 @@ local function UnShared(t)
   if(type(t) == 'SharedData') then
     t = getmetatable(t).data()
   end
+  return t
 end
 
 local function UnSharedRecursive(t)
-  if(type(t) == 'table' or type(t) == 'SharedData') then
+  local valType = type(t)
+  if(valType == 'table' or valType == 'SharedData') then
     local result = {}
     for k,v in pairs(t) do
       result[k] = UnSharedRecursive(v)
@@ -174,7 +176,7 @@ function ProxyObject(object)
   ---@param fast boolean
   ---@return boolean
   function mt.setPositionSmooth(vector, collide, fast)
-    return mt.ttsObject.setPositionSmooth(UnShared(vector))
+    return mt.ttsObject.setPositionSmooth(UnShared(vector), collide, fast)
   end
 
   ---@param vector tts__VectorShape
@@ -188,7 +190,7 @@ function ProxyObject(object)
   ---@param fast boolean
   ---@return boolean
   function mt.setRotationSmooth(vector, collide, fast)
-    return mt.ttsObject.setRotationSmooth(UnShared(vector))
+    return mt.ttsObject.setRotationSmooth(UnShared(vector), collide, fast)
   end
 
   ---@param vector tts__VectorShape
@@ -453,8 +455,6 @@ function ProxyObject(object)
   
   function mt.getPosition()
     local vector = mt.ttsObject.getPosition()
-    print(type(mt.ttsObject))
-    print('getPosition: ', vector.__isVector)
     return vector
   end
 
@@ -567,6 +567,13 @@ local _spawnObject = spawnObject
 ---@param parameters tts__SpawnObjectParams
 ---@return ProxyObject
 function spawnObject(parameters)
+  local _callback_function = parameters.callback_function
+  if _callback_function then
+    parameters.callback_function = function(spawnedObject)
+      _callback_function(ProxyObject(spawnedObject))
+    end
+  end
+  
   return ProxyObject(_spawnObject(UnSharedRecursive(parameters)))
 end
 
@@ -574,6 +581,13 @@ local _spawnObjectData = spawnObjectData
 ---@param parameters tts__SpawnObjectDataParams
 ---@return ProxyObject
 function spawnObjectData(parameters)
+  local _callback_function = parameters.callback_function
+  if _callback_function then
+    parameters.callback_function = function(spawnedObject)
+      _callback_function(ProxyObject(spawnedObject))
+    end
+  end
+
   return ProxyObject(_spawnObjectData(UnSharedRecursive(parameters)))
 end
 
@@ -581,173 +595,123 @@ local _spawnObjectJSON = spawnObjectJSON
 ---@param parameters tts__SpawnObjectJSONParams
 ---@return ProxyObject
 function spawnObjectJSON(parameters)
+  local _callback_function = parameters.callback_function
+  if _callback_function then
+    parameters.callback_function = function(spawnedObject)
+      _callback_function(ProxyObject(spawnedObject))
+    end
+  end
+
   return ProxyObject(_spawnObjectJSON(UnSharedRecursive(parameters)))
 end
 
-local _Color = Color
-Color = {}
 
----@overload fun(src: tts__Color): tts__Color
----@overload fun(r: number, g: number, b: number): tts__Color
----@return tts__Color
+local _ColorNew = Color.new
 function Color.new(...)
-  return _Color.new(UnSharedRecursive({...}))
+  if select('#', ...) == 1 then
+    -- single parameter overload is a table. make sure it's unshared
+    return _ColorNew(UnShared(select(1, ...)))
+  end
+  return _ColorNew(...)
 end
 
-local colorMetatable = {}
-function colorMetatable.__index(t, k)
-  local v = t[k]
-  if v ~= nil then
+
+local _VectorNew = Vector.new
+function Vector.new(...)
+  if select('#', ...) == 1 then
+    -- single parameter overload is a table. make sure it's unshared
+    return _VectorNew(UnShared(select(1, ...)))
+  end
+  return _VectorNew(...)
+end
+
+local _jsonEncode = JSON.encode
+---@overload fun(value: table | string | number | boolean)
+---@param value table | string | number | boolean
+---@param etc any @Unused
+---@param options tts__JSON__EncodeOptions
+---@return string
+function JSON.encode(value, etc, options)
+  return _jsonEncode(UnSharedRecursive(value), etc, UnSharedRecursive(options))
+end
+
+local _jsonEncodePretty = JSON.encode_pretty
+---@param value table | string | number | boolean
+---@param etc any @Unused
+---@param options tts__JSON__EncodeOptions
+---@return string
+function JSON.encode_pretty(value, etc, options)
+  return _jsonEncodePretty(UnSharedRecursive(value), etc, UnSharedRecursive(options))
+end
+
+local _Lighting = Lighting
+local lightingOverloads = {}
+local lightingMetatable = {}
+
+function lightingMetatable.__index(t,k)
+  v = lightingOverloads[k]
+  if v then
+    return v
+  end
+  
+  return _Lighting[k]
+end
+
+function lightingMetatable.__newindex(t,k,v)
+  _Lighting[k] = v
+end
+
+---@param tint tts__Color
+---@return boolean
+function lightingOverloads.setAmbientEquatorColor(tint)
+  return _Lighting.setAmbientEquatorColor(UnShared(tint))
+end
+
+---@param tint tts__Color
+---@return boolean
+function lightingOverloads.setAmbientGroundColor(tint)
+  return _Lighting.setAmbientGroundColor(UnShared(tint))
+end
+
+---@param tint tts__Color
+---@return boolean
+function lightingOverloads.setAmbientSkyColor(tint)
+  return _Lighting.setAmbientSkyColor(UnShared(tint))
+end
+
+---@param tint tts__Color
+---@return boolean
+function lightingOverloads.setLightColor(tint)
+  return _Lighting.setLightColor(UnShared(tint))
+end
+
+Lighting = setmetatable({}, lightingMetatable)
+
+local _Physics = Physics
+local physicsOverloads = {}
+local physicsMetatable = {}
+
+function physicsMetatable.__index(t,k)
+  v = physicsOverloads[k]
+  if v then
     return v
   end
 
-  return _Color[k]
+  return _Physics[k]
 end
 
-function colorMetatable.__call(t, ...)
-  return _Color.new(UnSharedRecursive({...}))
+function physicsMetatable.__newindex(t,k,v)
+  _Physics[k] = v
 end
 
-Color = setmetatable(Color, colorMetatable)
-
------@overload fun(x: number, y: number, z: number): tts__Vector
------@overload fun(src: tts__VectorShape): tts__Vector
------@field __isVector true
------@field [1] number
------@field [2] number
------@field [3] number
-local _Vector = Vector
---Vector = {}
---
------@overload fun(src: tts__VectorShape): tts__Vector
------@return tts__Vector
---function Vector.new(...)
---  v = _Vector.new(UnSharedRecursive({...}))
---  return v
---end
---
-local vectorMetatable = {}
-function vectorMetatable.__index(t, k)
-  --local v = t[k]
-  --if v ~= nil then
-  --  return v
-  --end
---
-  return _Vector[k]
+--- Returns an array (of up to 1000) intersections.
+---@param parameters tts__Physics_CastRayParameters | tts__Physics_CastSphereParameters | tts__Physics_CastBoxParameters
+---@return tts__Physics_CastResult[]
+function physicsOverloads.cast(parameters)
+  return _Physics.cast(UnSharedRecursive(parameters))
 end
 
---function vectorMetatable.__call(t, ...)
---  return Vector.new(...)
---end
-
-printToAll(tostring(getmetatable(Vector)), {1, 0, 1})
-Vector = setmetatable({}, vectorMetatable)
-
---local _JSON = JSON
---JSON = {}
---
------@param text string
------@return table
---function JSON.decode(text)
---  return _JSON.decode(text)
---end
---
------@overload fun(value: table | string | number | boolean)
------@param value table | string | number | boolean
------@param etc any @Unused
------@param options tts__JSON__EncodeOptions
------@return string
---function JSON.encode(value, etc, options)
---  return _JSON.encode(UnSharedRecursive(value, etc, options))
---end
---
------@param value table | string | number | boolean
------@param etc any @Unused
------@param options tts__JSON__EncodeOptions
------@return string
---function JSON.encode_pretty(value, etc, options)
---  return _JSON.encode_pretty(UnSharedRecursive(value, etc, options))
---end
-
---local _Lighting = Lighting
---local Lighting = {}
---local lightingMetatable = {}
---
---function lightingMetatable.__newindex(t,k,v)
---  _Lighting[k] = v
---end
---
------@return boolean
---function apply()
---  return _Lighting.apply()
---end
---
------@return tts__Color
---function getAmbientEquatorColor()
---  return _Lighting.getAmbientEquatorColor()
---end
---
------@return tts__Color
---function getAmbientGroundColor()
---  return _Lighting.getAmbientGroundColor()
---end
---
------@return tts__Color
---function getAmbientSkyColor()
---  return _Lighting.getAmbientSkyColor()
---end
---
------@return tts__Color
---function getLightColor()
---  return _Lighting.getLightColor()
---end
---
------@param tint tts__Color
------@return boolean
---function setAmbientEquatorColor(tint)
---  return _Lighting.setAmbientEquatorColor(UnShared(tint))
---end
---
------@param tint tts__Color
------@return boolean
---function setAmbientGroundColor(tint)
---  return _Lighting.setAmbientGroundColor(UnShared(tint))
---end
---
------@param tint tts__Color
------@return boolean
---function setAmbientSkyColor(tint)
---  return _Lighting.setAmbientSkyColor(UnShared(tint))
---end
---
------@param tint tts__Color
------@return boolean
---function setLightColor(tint)
---  return _Lighting.setLightColor(UnShared(tint))
---end
---
---local _Physics = Physics
---Physics = {}
---
------ Returns an array (of up to 1000) intersections.
------@param parameters tts__Physics_CastRayParameters | tts__Physics_CastSphereParameters | tts__Physics_CastBoxParameters
------@return tts__Physics_CastResult[]
---function Physics.cast(parameters)
---  return _Physics.cast(UnSharedRecursive(parameters))
---end
---
------ Returns a Vector representing the direction and magnitude of gravity.
------@return tts__Vector
---function Physics.getGravity() 
---  return _Physics.getGravity()
---end
---
------ Sets the direction and magnitude of gravity.
------@param gravity tts__VectorShape
------@return boolean
---function Physics.setGravity(gravity)
---  return _Physics.setGravity(gravity)
---end
+Physics = setmetatable({}, physicsMetatable)
 
 
 -- redefine owner because SharedData may have been included before this

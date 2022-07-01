@@ -27,7 +27,7 @@ function onLoad(save_string)
 
   if shared.supplyZones == nil then
     ---@type tts__Object[]
-    shared.supplyZones = globalData.playerSupplyZones[shared.playerColor]()
+    shared.supplyZones = globalData.playerSupplyZones[shared.playerColor]
   end
 
   owner.clearContextMenu()

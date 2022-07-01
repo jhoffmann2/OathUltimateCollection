@@ -190,10 +190,6 @@ function Shared(obj, layers)
     return tbl
   end
 
-  function mt.__call(t)
-    return mt.data()
-  end
-
   -- return a table that can be passed through events and be decompressed on the other side
   function mt.__compress(t)
     return {
