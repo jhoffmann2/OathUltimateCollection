@@ -10,7 +10,7 @@
   for i = 1, 100 do
     swapIndices(shared.turnOrder, math.random(2, 6), math.random(2, 6))
   end
-  Turns.order = shared.turnOrder()
+  Turns.order = shared.turnOrder
 end
 
 function swapIndices(t, i, j)

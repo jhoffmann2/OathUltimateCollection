@@ -713,7 +713,7 @@ function onLoad(save_state)
   -- Lock if hidden.
   if (nil ~= shared.curOathkeeperToken) then
     tokenPosition = shared.curOathkeeperToken.getPosition()
-    if (tokenPosition[2] < 0) then
+    if (tokenPosition.y < 0) then
       shared.curOathkeeperToken.locked = true
       shared.curOathkeeperToken.interactable = false
       shared.curOathkeeperToken.tooltip = false
@@ -1523,7 +1523,7 @@ end
 
 function spawnManualFullDecks(chatPlayer)
   -- Reveal the side board.
-  shared.sideBoard.setPosition(shared.sideBoardPosition())
+  shared.sideBoard.setPosition(shared.sideBoardPosition)
   shared.sideBoard.setScale({ 15.00, 1.00, 15.00 })
 
   -- Move the camera to look at the side board.
@@ -2772,7 +2772,7 @@ function createPlayerButtons()
           width = 700,
           height = 500,
           font_size = 180,
-          color = shared.playerButtonColors[curColor]()
+          color = shared.playerButtonColors[curColor]
         })
 
         shared.playerBoards[curColor].createButton({
@@ -2785,7 +2785,7 @@ function createPlayerButtons()
           width = 700,
           height = 500,
           font_size = 180,
-          color = shared.playerButtonColors[curColor]()
+          color = shared.playerButtonColors[curColor]
         })
       end
     end
@@ -3076,14 +3076,14 @@ function spawnDispossessedButtonClicked(buttonObject, playerColor, altClick)
       shared.bagJSON.Transform.scaleZ = 2.0
       -- Make the bag use random ordering.
       shared.bagJSON.Bag = { ["Order"] = 2 }
-      spawnParams.json = JSON.encode(shared.bagJSON())
-      spawnParams.position = shared.dispossessedSpawnPosition()
+      spawnParams.json = JSON.encode_pretty(shared.bagJSON)
+      spawnParams.position = shared.dispossessedSpawnPosition
       spawnParams.rotation = { 0.00, 0.00, 0.00 }
       spawnParams.scale = { 2.00, 2.00, 2.00 }
       spawnParams.callback_function = function(spawnedObject)
         shared.dispossessedBagGuid = spawnedObject.guid
         handleSpawnedObject(spawnedObject,
-            shared.dispossessedSpawnPosition(),
+            shared.dispossessedSpawnPosition,
             false,
             false)
       end
@@ -4274,7 +4274,7 @@ function cleanTable()
         -- Move the pawn back to its starting position.
 
         local rotation = shared.playerBoards[curObjectColor].getRotation().y
-        local offset = Vector.new(shared.pawnStartOffset())
+        local offset = Vector.new(shared.pawnStartOffset)
         offset:rotateOver('y', rotation)
         local position = shared.playerBoards[curObjectColor].getPosition() + offset
         curObject.setPosition(position)
@@ -5128,7 +5128,7 @@ end
 
 function resetSupplyCylinder(playerColor)
   local rotation = shared.playerBoards[playerColor].getRotation().y
-  local offset = Vector.new(shared.supplyMarkerStartOffset())
+  local offset = Vector(shared.supplyMarkerStartOffset)
   offset:rotateOver('y', rotation)
   local position = shared.playerBoards[playerColor].getPosition() + offset
   shared.playerSupplyMarkers[playerColor].setPosition(position)
