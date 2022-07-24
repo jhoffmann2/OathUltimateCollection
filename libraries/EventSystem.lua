@@ -1,24 +1,8 @@
 ﻿Callback = {}
 Method = {}
-function InvokeEvent(eventName, ...)
-
-  -- compress tables so they can be be transported across events
-  params = { ... }
-  for i, param in ipairs(params) do
-    mt = getmetatable(param)
-    if mt and mt.__compress then
-      params[i] = mt.__compress(param)
-    end
-  end
-
-  Global.call('_InvokeEvent', {
-    name = eventName,
-    params = params
-  })
-end
 
 local function Decompress(...)
-  params = {}
+  local params = {}
   for i, param in pairs({...}) do
     if param and type(param) == 'table' and param.__decompress ~= nil then
       local func = _G[param.__decompress.func]
@@ -37,19 +21,33 @@ local function Decompress(...)
   return table.unpack(params)
 end
 
-function InvokeMethod(methodName, owner, ...)
-  -- compress tables so they can be be transported across events
-  params = { ... }
+local function Compress(...)
+  local params = { ... }
   for i, param in ipairs(params) do
     mt = getmetatable(param)
     if mt and mt.__compress then
       params[i] = mt.__compress(param)
     end
   end
+  return params
+end
+
+function InvokeEvent(eventName, ...)
+  Global.call('_InvokeEvent', {
+    name = eventName,
+    params = Compress(...)
+  })
+end
+
+function InvokeMethod(methodName, owner, ...)
+  local ownerGUID = owner.guid
+  if owner == Global then
+    ownerGUID = 'Global'
+  end
   local result = Global.call('_InvokeMethod', {
     name = methodName,
-    owner = owner.guid,
-    params = params
+    owner = ownerGUID,
+    params = Compress(...)
   })
 
   return Decompress(result)

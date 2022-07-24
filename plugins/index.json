@@ -16,12 +16,24 @@
       }
     ]
   },
+  
+  
+  
   "Oath Official": {
     "type": "toggle",
     "hidden": true,
     "value": true,
     "plugin": "OathOfficial"
   },
+  "Card Tagging": {
+    "type": "toggle",
+    "hidden": true,
+    "value": true,
+    "plugin": "CardTagging"
+  },
+  
+  
+  
   "Turns": {
     "type": "toggle",
     "value": true,
@@ -51,5 +63,11 @@
     "value": true,
     "plugin": "AutoRest",
     "tooltip": "quality of life plugin that will add an 'Automate Rest Phase' button to player boards\n\n\t- Resets supply\n\t- Returns favor to favor banks\n\t- Returns secrets to player board\n\t- Advances turn if turns are enabled"
+  },
+  "Auto Tavern Songs": {
+    "type": "toggle",
+    "value": true,
+    "plugin": "AutoTavernSongs",
+    "tooltip": "If you have Tavern Songs or Oracular Pig and hover over the respective deck/discard,\n UI will pop up showing you the top three cards"
   }
 }

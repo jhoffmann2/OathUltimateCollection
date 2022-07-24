@@ -1,0 +1,85 @@
+﻿<!-- Xml UI. See documentation: https://api.tabletopsimulator.com/ui/introUI/ -->
+
+<Panel
+        id="CardPeek"
+        active="false"
+        color="rgba(0,0,0,0.5)"
+        width="700"
+        height="410"
+        offsetXY="-35 35"
+        rectAlignment="LowerRight"
+>
+    <Text
+            id="CardPeekTitle"
+            Alignment="UpperCenter"
+            color="rgba(1,1,1,1)"
+            fontSize="30"
+            offsetXY="0 -14"
+    >
+        TAVERN SONGS
+    </Text>
+    <HorizontalLayout
+            color="rgba(0,0,0,0)"
+            width="700"
+            height="337.5"
+            rectAlignment="LowerCenter"
+            offsetXY="0 14"
+    >
+        <Panel>
+            <VerticalScrollView
+                    active="true"
+                    width="213.75"
+                    height="337.5"
+                    vertical="false"
+                    noScrollbars="true"
+                    color="rgba(0,0,0,0)"
+            >
+                <Image
+                        id="CardImage1"
+                        width="1068.75"
+                        height="1350"
+                        offsetXY="0 0"
+                >
+                </Image>
+            </VerticalScrollView>
+        </Panel>
+        <Panel>
+            <VerticalScrollView
+                    active="true"
+                    width="213.75"
+                    height="337.5"
+                    returnToOriginalPositionWhenReleased="false"
+                    vertical="false"
+                    noScrollbars="true"
+                    color="rgba(0,0,0,0)"
+            >
+                <Image
+                        id="CardImage2"
+                        width="1068.75"
+                        height="1350"
+                        offsetXY="-213.75 0"
+                >
+                </Image>
+            </VerticalScrollView>
+        </Panel>
+        <Panel>
+            <VerticalScrollView
+                    active="true"
+                    width="213.75"
+                    height="337.5"
+                    returnToOriginalPositionWhenReleased="false"
+                    vertical="false"
+                    noScrollbars="true"
+                    color="rgba(0,0,0,0)"
+            >
+                <Image
+                        id="CardImage3"
+                        width="1068.75"
+                        height="1350"
+                        offsetXY="0 337.5"
+                >
+                </Image>
+            </VerticalScrollView>
+        </Panel>
+    </HorizontalLayout>
+</Panel>

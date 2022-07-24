@@ -120,6 +120,10 @@ function ProxyObject(object)
   end
   
   
+  function mt.__get.destroyed()
+    return mt.ttsObject == nil
+  end
+  
 
   ---@param vector tts__VectorShape
   ---@param force_type number
@@ -226,6 +230,9 @@ function ProxyObject(object)
   ---@param tag string
   ---@return boolean
   function mt.removeTag(tag)
+    if not mt.ttsObject then
+      return
+    end
     local hadTag = mt.ttsObject.hasTag(tag)
     local result = mt.ttsObject.removeTag(tag)
 

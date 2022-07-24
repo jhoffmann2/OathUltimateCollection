@@ -2507,7 +2507,7 @@ end
 function confirmDoneAdviserCombine(player, value, id)
   if ((true == player.host) or (player.color == shared.winningColor)) then
     -- Scan advisers one more time, in case player(s) moved adviser(s) into the 3 normal slots.
-    scanPlayerAdvisers()
+    Method.ScanPlayerAdvisers()
 
     -- If an Exile won, check if they used a vision.  If a Citizen won, they must have won by succession.  Otherwise, move on to the next step.
     if ("Exile" == shared.curPlayerStatus[shared.pendingWinningColor][1]) then
@@ -3727,7 +3727,7 @@ function scanTable(alwaysScan)
 
   -- Only scan the table if a game is in progress, or if the caller requested a scan always be performed.  Otherwise assume the table is up to date.
   if ((true == shared.isGameInProgress) or (true == alwaysScan)) then
-    scanPlayerAdvisers()
+    Method.ScanPlayerAdvisers()
 
     -- Scan discard piles.
     for discardZoneIndex = 1, 3 do
@@ -3859,7 +3859,7 @@ function scanTable(alwaysScan)
   end -- if ((true == isGameInProgress) or (true == alwaysScan))
 end
 
-function scanPlayerAdvisers()
+function Method.ScanPlayerAdvisers()
   local testRotation
 
   for i, curColor in ipairs(shared.playerColors) do
