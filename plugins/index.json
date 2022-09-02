@@ -25,14 +25,6 @@
     "value": true,
     "plugin": "OathOfficial"
   },
-  "Card Tagging": {
-    "type": "toggle",
-    "hidden": true,
-    "value": true,
-    "plugin": "CardTagging"
-  },
-  
-  
   
   "Turns": {
     "type": "toggle",

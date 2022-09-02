@@ -3,6 +3,7 @@ local uiCardWidth = 213.75
 local uiCardHeight = 337.5
 
 function onLoad()
+  InvokeEvent('OnEnsurePluginActive', 'CardTagging')
   InvokeEvent('OnEnsurePluginActive', 'PlayerOwnershipZones')
   deckData = Shared(shared.deckZone) -- shared.deckZone was set in CardTagging/Global.lua
   globalData = Shared(Global)
@@ -37,7 +38,6 @@ function WhenGlobalUIMutable(func, ...)
 end
 
 function Method.HoveredInDeck(player_color)
-  
   -- you can only peak at cards on your turn
   if Turns.turn_color ~= player_color then
     return WhenGlobalUIMutable(DisableTavernSongsUI, player_color)

@@ -9,9 +9,6 @@ function onLoad()
   globalData = Shared(Global)
 
   ownerType = owner.type
-  if not deckData.deckCount then
-    deckData.deckCount = 0
-  end
   if not deckData.cardCount then
     deckData.cardCount = 0
   end
@@ -19,27 +16,23 @@ function onLoad()
     shared.isHovered = {}
   end
 
-  if ownerType == 'Deck' then
-    deckData.deckCount = deckData.deckCount + 1
-  end
-  if ownerType == 'Card' then
+  if ownerType == 'Deck' or ownerType == 'Card' then
     deckData.cardCount = deckData.cardCount + 1
+    print(deckData.cardCount)
   end
 end
 
 function onDestroy()
-  if ownerType == 'Deck' then
-    deckData.deckCount = deckData.deckCount - 1
-  end
-  if ownerType == 'Card' then
+  if ownerType == 'Deck' or ownerType == 'Card' then
     deckData.cardCount = deckData.cardCount - 1
+    print(deckData.cardCount)
   end
 end
 
 -- return whether the deck has been collapsed to a single card or deck object
 function DeckIsCollapsed()
   -- only do work if there's exactly one card/deck in the zone
-  return deckData.cardCount + deckData.deckCount == 1
+  return deckData.cardCount == 1
 end
 
 function onObjectHover(player_color, object)
