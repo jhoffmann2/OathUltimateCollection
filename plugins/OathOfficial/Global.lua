@@ -1456,6 +1456,8 @@ function onChat(message, chatPlayer)
         else
           printToAll("Error, please wait until the game is finished.", { 1, 0, 0 })
         end
+      elseif ("!repair" == string.sub(message, 1, 7)) then
+        SanityCheckAndRepair()
       elseif ("!" == string.sub(message, 1, 1)) then
         printToAll("Error, unknown command.", { 1, 0, 0 })
       else
@@ -3027,81 +3029,85 @@ Drag this window if you need to.]])
   end
 end
 
-function spawnDispossessedButtonClicked(buttonObject, playerColor, altClick)
+function SpawnDispossessedBag()
   local dispossessedUnshuffled = {}
   local dispossessedShuffled = {}
   local removeCardIndex = 1
   local spawnParams = {}
+  if (false == shared.isDispossessedSpawned) then
+    if (0 ~= shared.spawnDispossessedButtonIndex) then
+      self.editButton({ index = shared.spawnDispossessedButtonIndex, label = "Remove\nDispossessed" })
+    end
 
+    -- Create a copy of the dispossessed cards.
+    for cardIndex = 1, shared.curDispossessedDeckCardCount do
+      dispossessedUnshuffled[cardIndex] = shared.curDispossessedDeckCards[cardIndex]
+    end
+
+    -- Create a shuffled list of dispossessed cards.
+    for cardIndex = 1, shared.curDispossessedDeckCardCount do
+      removeCardIndex = math.random(1, #dispossessedUnshuffled)
+      dispossessedShuffled[cardIndex] = dispossessedUnshuffled[removeCardIndex]
+      table.remove(dispossessedUnshuffled, removeCardIndex)
+    end
+
+    -- Spawn the shuffled dispossessed cards in a bag.
+    if (0 == shared.curDispossessedDeckCardCount) then
+      shared.bagJSON.ContainedObjects = nil
+    else
+      shared.bagJSON.ContainedObjects = {}
+      for cardIndex = 1, shared.curDispossessedDeckCardCount do
+        addCardToContainerJSON(shared.bagJSON, dispossessedShuffled[cardIndex])
+      end
+    end
+
+    -- Set the bag name and description.
+    shared.bagJSON.Nickname = "Dispossessed"
+    shared.bagJSON.Description = "Please do not move or delete."
+    -- Set the bag transform to match the spawn settings.  Otherwise, the bag seems to sometimes blast cards around as it spawns.
+    shared.bagJSON.Transform.posX = shared.dispossessedSpawnPosition[1]
+    shared.bagJSON.Transform.posY = shared.dispossessedSpawnPosition[2]
+    shared.bagJSON.Transform.posZ = shared.dispossessedSpawnPosition[3]
+    shared.bagJSON.Transform.rotX = 0.0
+    shared.bagJSON.Transform.rotY = 0.0
+    shared.bagJSON.Transform.rotZ = 0.0
+    shared.bagJSON.Transform.scaleX = 2.0
+    shared.bagJSON.Transform.scaleY = 2.0
+    shared.bagJSON.Transform.scaleZ = 2.0
+    -- Make the bag use random ordering.
+    shared.bagJSON.Bag = { ["Order"] = 2 }
+    spawnParams.json = JSON.encode(shared.bagJSON())
+    spawnParams.position = shared.dispossessedSpawnPosition()
+    spawnParams.rotation = { 0.00, 0.00, 0.00 }
+    spawnParams.scale = { 2.00, 2.00, 2.00 }
+    spawnParams.callback_function = function(spawnedObject)
+      shared.dispossessedBagGuid = spawnedObject.guid
+      handleSpawnedObject(spawnedObject,
+          shared.dispossessedSpawnPosition(),
+          false,
+          false)
+    end
+
+    -- Update expected spawn count and spawn the object.
+    shared.loadExpectedSpawnCount = (shared.loadExpectedSpawnCount + 1)
+    spawnObjectJSON(spawnParams)
+
+    printToAll("", { 1, 1, 1 })
+    printToAll("Dispossessed bag spawned.  Please do not move or delete it.", { 1, 1, 1 })
+    printToAll("When finished, click the Removed Dispossessed button.", { 1, 1, 1 })
+    printToAll("", { 1, 1, 1 })
+
+    shared.isDispossessedSpawned = true
+  end
+end
+
+function spawnDispossessedButtonClicked(buttonObject, playerColor, altClick)
   if (true == Player[playerColor].host) then
     if (false == shared.isDispossessedSpawned) then
-      if (0 ~= shared.spawnDispossessedButtonIndex) then
-        self.editButton({ index = shared.spawnDispossessedButtonIndex, label = "Remove\nDispossessed" })
-      end
-
-      -- Create a copy of the dispossessed cards.
-      for cardIndex = 1, shared.curDispossessedDeckCardCount do
-        dispossessedUnshuffled[cardIndex] = shared.curDispossessedDeckCards[cardIndex]
-      end
-
-      -- Create a shuffled list of dispossessed cards.
-      for cardIndex = 1, shared.curDispossessedDeckCardCount do
-        removeCardIndex = math.random(1, #dispossessedUnshuffled)
-        dispossessedShuffled[cardIndex] = dispossessedUnshuffled[removeCardIndex]
-        table.remove(dispossessedUnshuffled, removeCardIndex)
-      end
-
-      -- Spawn the shuffled dispossessed cards in a bag.
-      if (0 == shared.curDispossessedDeckCardCount) then
-        shared.bagJSON.ContainedObjects = nil
-      else
-        shared.bagJSON.ContainedObjects = {}
-        for cardIndex = 1, shared.curDispossessedDeckCardCount do
-          addCardToContainerJSON(shared.bagJSON, dispossessedShuffled[cardIndex])
-        end
-      end
-
-      -- Set the bag name and description.
-      shared.bagJSON.Nickname = "Dispossessed"
-      shared.bagJSON.Description = "Please do not move or delete."
-      -- Set the bag transform to match the spawn settings.  Otherwise, the bag seems to sometimes blast cards around as it spawns.
-      shared.bagJSON.Transform.posX = shared.dispossessedSpawnPosition[1]
-      shared.bagJSON.Transform.posY = shared.dispossessedSpawnPosition[2]
-      shared.bagJSON.Transform.posZ = shared.dispossessedSpawnPosition[3]
-      shared.bagJSON.Transform.rotX = 0.0
-      shared.bagJSON.Transform.rotY = 0.0
-      shared.bagJSON.Transform.rotZ = 0.0
-      shared.bagJSON.Transform.scaleX = 2.0
-      shared.bagJSON.Transform.scaleY = 2.0
-      shared.bagJSON.Transform.scaleZ = 2.0
-      -- Make the bag use random ordering.
-      shared.bagJSON.Bag = { ["Order"] = 2 }
-      spawnParams.json = JSON.encode(shared.bagJSON())
-      spawnParams.position = shared.dispossessedSpawnPosition()
-      spawnParams.rotation = { 0.00, 0.00, 0.00 }
-      spawnParams.scale = { 2.00, 2.00, 2.00 }
-      spawnParams.callback_function = function(spawnedObject)
-        shared.dispossessedBagGuid = spawnedObject.guid
-        handleSpawnedObject(spawnedObject,
-            shared.dispossessedSpawnPosition(),
-            false,
-            false)
-      end
-
-      -- Update expected spawn count and spawn the object.
-      shared.loadExpectedSpawnCount = (shared.loadExpectedSpawnCount + 1)
-      spawnObjectJSON(spawnParams)
-
-      printToAll("", { 1, 1, 1 })
-      printToAll("Dispossessed bag spawned.  Please do not move or delete it.", { 1, 1, 1 })
-      printToAll("When finished, click the Removed Dispossessed button.", { 1, 1, 1 })
-      printToAll("", { 1, 1, 1 })
-
-      shared.isDispossessedSpawned = true
+      SpawnDispossessedBag()
     else
-      -- end bag spawning case
       removeDispossessedBag()
-    end -- end bag removal case
+    end
   else
     printToAll("Error, only the host can click that.", { 1, 0, 0 })
   end
@@ -3186,8 +3192,7 @@ function removeDispossessedBag()
   end
 end
 
-function addCardToContainerJSON(containerJSON, cardName)
-  local spawnStatus = shared.STATUS_SUCCESS
+function CreateCardJson(cardName, cardRotY)
   local cardInfo = shared.cardsTable[cardName]
   local cardType = cardInfo.cardtype
   local cardDescription
@@ -3217,14 +3222,18 @@ function addCardToContainerJSON(containerJSON, cardName)
     cardDescription = shared.NO_FAQ_TEXT
   end
 
-  cardJSON = {
+  if cardRotY == nil then
+    cardRotY = 180.0
+  end
+  
+  local cardJSON = {
     Name = "Card",
     Transform = {
       posX = 0.0,
       posY = 0.0,
       posZ = 0.0,
       rotX = 0.0,
-      rotY = 180.0,
+      rotY = cardRotY,
       rotZ = 180.0,
       scaleX = 1.00,
       scaleY = 1.00,
@@ -3243,7 +3252,7 @@ function addCardToContainerJSON(containerJSON, cardName)
     Autoraise = true,
     Sticky = true,
     Tooltip = true,
-    CardID = ttsCardID,
+    CardID = tonumber(ttsCardID),
     SidewaysCard = isCardSideways,
     HideWhenFaceDown = shouldHideWhenFaceDown,
     CustomDeck = {},
@@ -3254,51 +3263,57 @@ function addCardToContainerJSON(containerJSON, cardName)
   }
 
   if ("Site" == cardType) then
-    cardJSON.Transform.cardScaleX = 1.46
-    cardJSON.Transform.cardScaleZ = 1.46
+    cardJSON.Transform.scaleX = 1.46
+    cardJSON.Transform.scaleZ = 1.46
   elseif ("Relic" == cardType) then
-    cardJSON.Transform.cardScaleX = 0.96
-    cardJSON.Transform.cardScaleZ = 0.96
+    cardJSON.Transform.scaleX = 0.96
+    cardJSON.Transform.scaleZ = 0.96
   else
-    cardJSON.Transform.cardScaleX = 1.50
-    cardJSON.Transform.cardScaleZ = 1.50
+    cardJSON.Transform.scaleX = 1.50
+    cardJSON.Transform.scaleZ = 1.50
   end
 
   -- Update CustomDeck data.
   cardTTSDeckInfo = shared.ttsDeckInfo[tonumber(cardDeckID)]
   if (nil ~= cardTTSDeckInfo) then
-    if (nil ~= containerJSON.CustomDeck) then
-      -- Note that for cards inside a deck, a nil CustomDeck is used.  For some reason, using {} instead causes a JSON error, so nil is used.
-      cardJSON.CustomDeck = nil
-
-      -- Record the card ID for each card, even though some ID(s) may be repeated.  Note that despite the name, these values represent card IDs.
-      table.insert(containerJSON.DeckIDs, cardInfo.ttscardid)
-
-      -- If needed, record the CustomDeck information in the overall deck JSON.
-      if (nil == containerJSON.CustomDeck[cardDeckID]) then
-        containerJSON.CustomDeck[cardDeckID] = {
-          FaceURL = cardTTSDeckInfo.deckimage,
-          BackURL = cardTTSDeckInfo.backimage,
-          NumWidth = cardTTSDeckInfo.deckwidth,
-          NumHeight = cardTTSDeckInfo.deckheight,
-          BackIsHidden = true,
-          UniqueBack = cardTTSDeckInfo.hasuniqueback
-        }
-      end
-    else
-      cardJSON.CustomDeck[cardDeckID] = {
-        FaceURL = cardTTSDeckInfo.deckimage,
-        BackURL = cardTTSDeckInfo.backimage,
-        NumWidth = cardTTSDeckInfo.deckwidth,
-        NumHeight = cardTTSDeckInfo.deckheight,
-        BackIsHidden = true,
-        UniqueBack = cardTTSDeckInfo.hasuniqueback
-      }
-    end
+    cardJSON.CustomDeck[cardDeckID] = {
+      FaceURL = cardTTSDeckInfo.deckimage,
+      BackURL = cardTTSDeckInfo.backimage,
+      NumWidth = cardTTSDeckInfo.deckwidth,
+      NumHeight = cardTTSDeckInfo.deckheight,
+      BackIsHidden = true,
+      UniqueBack = cardTTSDeckInfo.hasuniqueback
+    }
   else
     -- end if (nil ~= cardTTSDeckInfo)
     printToAll("Error, did not find deck with ID " .. cardDeckID, { 1, 0, 0 })
     spawnStatus = shared.STATUS_FAILURE
+  end
+  return cardJSON
+end
+
+function addCardToContainerJSON(containerJSON, cardName)
+  local spawnStatus = shared.STATUS_SUCCESS
+  
+  local cardInfo = shared.cardsTable[cardName]
+  local ttsCardID = cardInfo.ttscardid
+  local cardDeckID = string.sub(ttsCardID, 1, -3)
+  
+  local cardJSON = CreateCardJson(cardName)
+  
+  -- Update CustomDeck data.
+  if (nil ~= containerJSON.CustomDeck) then
+
+    -- Record the card ID for each card, even though some ID(s) may be repeated.  Note that despite the name, these values represent card IDs.
+    table.insert(containerJSON.DeckIDs, ttsCardID)
+
+    -- If needed, record the CustomDeck information in the overall deck JSON.
+    if (nil == containerJSON.CustomDeck[cardDeckID]) then
+      containerJSON.CustomDeck[cardDeckID] = cardJSON.CustomDeck[cardDeckID]
+    end
+    
+    -- Note that for cards inside a deck, a nil CustomDeck is used.  For some reason, using {} instead causes a JSON error, so nil is used.
+    cardJSON.CustomDeck = nil
   end
 
   if (shared.STATUS_SUCCESS == spawnStatus) then
@@ -4585,120 +4600,21 @@ function spawnSingleCard(cardName, spawnFacedown, spawnPosition, cardRotY, spawn
   -- Create a copy of the spawn position to avoid problems with the data changing elsewhere.
   local spawnPositionLocal = { spawnPosition[1], spawnPosition[2], spawnPosition[3] }
   local spawnParams = {}
-  local cardJSON
-  local cardDeckID = 0
   local cardInfo = shared.cardsTable[cardName]
-  local cardDescription
-  local ttsCardID = 0
-  local cardType
-  local cardTTSDeckInfo
-  local cardScaleX = 0
-  local cardScaleZ = 0
-  local internalCardRotZ = 0.0
-  local shouldUnlock = false
   local shouldHideWhenFaceDown = true
 
   if (nil ~= cardInfo) then
-    ttsCardID = cardInfo.ttscardid
-    cardType = cardInfo.cardtype
+    local ttsCardID = cardInfo.ttscardid
+    local cardType = cardInfo.cardtype
+    local shouldUnlock = spawnInHand == true or "Site" ~= cardType
 
-    if ("Site" == cardType) then
-      cardScaleX = 1.46
-      cardScaleZ = 1.46
-      shouldUnlock = false
-    elseif ("Relic" == cardType) then
-      cardScaleX = 0.96
-      cardScaleZ = 0.96
-      shouldUnlock = true
-    elseif ("SuperRelic" == cardType) then
-      cardScaleX = 0.96
-      cardScaleZ = 0.96
-      shouldUnlock = true
-    else
-      -- Use default scaling for other cards.
-      cardScaleX = 1.50
-      cardScaleZ = 1.50
-      shouldUnlock = true
-    end
-
-    -- If spawning a card in the player's hand, always unlock it.
-    if (true == spawnInHand) then
-      shouldUnlock = true
-    end
-
-    -- All cards spawn facedown and will unflip if needed after loading.
-    internalCardRotZ = 180.0
-
-    -- Edifice / ruin cards should not hide the tooltip even when facedown.  Same for The Grand Scepter.
-    if (("EdificeRuin" == cardType) or ("SuperRelic" == cardType)) then
-      shouldHideWhenFaceDown = false
-    end
-
-    cardDeckID = string.sub(ttsCardID, 1, -3)
-
-    if (nil ~= cardInfo.faqText) then
-      cardDescription = cardInfo.faqText
-    else
-      cardDescription = shared.NO_FAQ_TEXT
-    end
-
-    cardJSON = {
-      Name = "Card",
-      Transform = {
-        posX = 0.0,
-        posY = 0.0,
-        posZ = 0.0,
-        rotX = 0.0,
-        rotY = cardRotY,
-        rotZ = internalCardRotZ,
-        scaleX = cardScaleX,
-        scaleY = 1.00,
-        scaleZ = cardScaleZ
-      },
-      Nickname = cardName,
-      Description = cardDescription,
-      ColorDiffuse = {
-        r = 0.713235259,
-        g = 0.713235259,
-        b = 0.713235259
-      },
-      -- Spawn locked so the card does not fall underneath the table.
-      Locked = true,
-      Grid = false,
-      Snap = true,
-      Autoraise = true,
-      Sticky = true,
-      Tooltip = true,
-      CardID = ttsCardID,
-      SidewaysCard = false,
-      HideWhenFaceDown = shouldHideWhenFaceDown,
-      CustomDeck = {},
-      LuaScript = "",
-      LuaScriptState = "",
-      -- Note that if there is a conflict, the GUID will be automatically updated when a card is spawned onto the table.
-      GUID = "700000"
-    }
-
-    cardTTSDeckInfo = shared.ttsDeckInfo[tonumber(cardDeckID)]
-    if (nil ~= cardTTSDeckInfo) then
-      cardJSON.CustomDeck[cardDeckID] = {
-        FaceURL = cardTTSDeckInfo.deckimage,
-        BackURL = cardTTSDeckInfo.backimage,
-        NumWidth = cardTTSDeckInfo.deckwidth,
-        NumHeight = cardTTSDeckInfo.deckheight,
-        BackIsHidden = true,
-        UniqueBack = cardTTSDeckInfo.hasuniqueback
-      }
-    else
-      printToAll("Failed to find deck with ID \"" .. cardDeckID .. "\".", { 1, 0, 0 })
-      spawnStatus = shared.STATUS_FAILURE
-    end
+    local cardJSON = CreateCardJson(cardName, cardRotY)
 
     -- Spawn the card underneath the table so it can be mvoed up instead of flashing white.
     if (shared.STATUS_SUCCESS == spawnStatus) then
       spawnParams.json = JSON.encode(cardJSON)
       spawnParams.position = { spawnPositionLocal[1], 1000, spawnPositionLocal[3] }
-      spawnParams.rotation = { 0, cardRotY, internalCardRotZ }
+      spawnParams.rotation = { 0, cardRotY, 180 }
       spawnParams.callback_function = function(spawnedObject)
         handleSpawnedObject(spawnedObject,
             { spawnPositionLocal[1], spawnPositionLocal[2], spawnPositionLocal[3] },
@@ -6367,14 +6283,14 @@ function loadFromSaveString_1_6_0(saveDataString)
   --
   -- This code can be uncommented for debug purposes.
   --
-  --if (STATUS_SUCCESS == loadStatus) then
+  --if (STATUS_SUCCESS == shared.loadStatus) then
   --  printToAll("MAP:", {1,1,1})
   --  printToAll("====", {1,1,1})
   --  for siteIndex = 1,8 do
-  --    printToAll(loadMapSites[siteIndex][1], {1,1,1})
-  --    printToAll("  " .. loadMapNormalCards[siteIndex][1][1], {1,1,1})
-  --    printToAll("  " .. loadMapNormalCards[siteIndex][2][1], {1,1,1})
-  --    printToAll("  " .. loadMapNormalCards[siteIndex][3][1], {1,1,1})
+  --    printToAll(shared.loadMapSites[siteIndex][1], {1,1,1})
+  --    printToAll("  " .. shared.loadMapNormalCards[siteIndex][1][1], {1,1,1})
+  --    printToAll("  " .. shared.loadMapNormalCards[siteIndex][2][1], {1,1,1})
+  --    printToAll("  " .. shared.loadMapNormalCards[siteIndex][3][1], {1,1,1})
   --  end
   --end
 
@@ -6420,13 +6336,13 @@ function loadFromSaveString_1_6_0(saveDataString)
   --
   -- This code can be uncommented for debug purposes.
   --
-  --if (STATUS_SUCCESS == loadStatus) then
+  --if (shared.STATUS_SUCCESS == shared.loadStatus) then
   --  printToAll("World deck:", {1,1,1})
   --  printToAll("===========", {1,1,1})
-  --  printToAll(loadWorldDeckInitCardCount .. " cards", {1,1,1})
+  --  printToAll(shared.loadWorldDeckInitCardCount .. " cards", {1,1,1})
   --  printToAll("===========", {1,1,1})
-  --  for cardIndex = 1,loadWorldDeckInitCardCount do
-  --    printToAll(loadWorldDeckInitCards[cardIndex], {1,1,1})
+  --  for cardIndex = 1,shared.loadWorldDeckInitCardCount do
+  --    printToAll(shared.loadWorldDeckInitCards[cardIndex], {1,1,1})
   --  end
   --end
 
@@ -6472,15 +6388,15 @@ function loadFromSaveString_1_6_0(saveDataString)
   --
   -- This code can be uncommented for debug purposes.
   --
-  --if (STATUS_SUCCESS == loadStatus) then
-  --  printToAll("Dispossessed deck:", {1,1,1})
-  --  printToAll("==================", {1,1,1})
-  --  printToAll(loadDispossessedDeckInitCardCount .. " cards", {1,1,1})
-  --  printToAll("===========", {1,1,1})
-  --  for cardIndex = 1,loadDispossessedDeckInitCardCount do
-  --    printToAll(loadDispossessedDeckInitCards[cardIndex], {1,1,1})
-  --  end
-  --end
+  if (STATUS_SUCCESS == loadStatus) then
+    printToAll("Dispossessed deck:", {1,1,1})
+    printToAll("==================", {1,1,1})
+    printToAll(shared.loadDispossessedDeckInitCardCount .. " cards", {1,1,1})
+    printToAll("===========", {1,1,1})
+    for cardIndex = 1,shared.loadDispossessedDeckInitCardCount do
+      printToAll(shared.loadDispossessedDeckInitCards[cardIndex], {1,1,1})
+    end
+  end
 
   return nextParseIndex
 end
@@ -8318,92 +8234,29 @@ function confirmSelectSuit(player, value, id)
 end
 
 function calculateArchiveContents()
-  local cardName
-  local cardInfo
-  local cardFound = false
-  local mapDenizens = {}
+  local activeCardsSet = {}
 
+  for _, object in ipairs(getObjects()) do
+    -- don't search any bags except the dispossessed
+    if object.type ~= 'Bag' or object.guid == shared.dispossessedBagGuid then
+      CardMultimapInsertDeckObject(activeCardsSet, object)
+    end
+  end
+  
+  calculateArchiveExcludingCardSet(activeCardsSet)
+end
+
+function calculateArchiveExcludingCardSet(activeCardsSet)
   -- Reset archive contents.
   for i, curSuit in ipairs(shared.suitNames) do
     shared.archiveContentsBySuit[curSuit] = {}
   end
 
-  -- Make a list of current map denizens.
-  for siteIndex = 1, 8 do
-    for normalCardIndex = 1, 3 do
-      cardName = shared.curMapNormalCards[siteIndex][normalCardIndex][1]
-      cardInfo = shared.cardsTable[cardName]
-
-      if ((nil ~= cardInfo) and ("Denizen" == cardInfo.cardtype)) then
-        table.insert(mapDenizens, cardName)
-      end
-    end
-  end
-
-  -- For every possible card, add it to the archive unless it is in the remaining world deck,
-  -- in a discard pile, on the map, in an adviser zone, or in the dispossessed deck.
+  -- For every possible card, add it to the archive unless it's already in play
   for cardSaveID = 0, 197 do
-    cardName = shared.normalCardsBySaveID[cardSaveID]
-    cardFound = false
-
-    for worldDeckIndex = 1, #shared.remainingWorldDeck do
-      if (cardName == shared.remainingWorldDeck[worldDeckIndex]) then
-        cardFound = true
-        break
-      end
-    end
-
-    if (false == cardFound) then
-      for discardZoneIndex = 1, 3 do
-        discardCount = #(shared.discardContents[discardZoneIndex])
-
-        for cardIndex = 1, discardCount do
-          if (cardName == shared.discardContents[discardZoneIndex][cardIndex]) then
-            cardFound = true
-            break
-          end
-        end
-
-        if (true == cardFound) then
-          break
-        end
-      end
-    end
-
-    if (false == cardFound) then
-      for mapDenizenIndex = 1, #mapDenizens do
-        if (cardName == mapDenizens[mapDenizenIndex]) then
-          cardFound = true
-          break
-        end
-      end
-    end
-
-    if (false == cardFound) then
-      for i, curColor in ipairs(shared.playerColors) do
-        for cardIndex = 1, shared.numPlayerAdvisers[curColor] do
-          if (cardName == shared.playerAdvisers[curColor][cardIndex]) then
-            cardFound = true
-            break
-          end
-        end
-
-        if (true == cardFound) then
-          break
-        end
-      end
-    end
-
-    if (false == cardFound) then
-      for dispossessedDeckIndex = 1, shared.curDispossessedDeckCardCount do
-        if (cardName == shared.curDispossessedDeckCards[dispossessedDeckIndex]) then
-          cardFound = true
-          break
-        end
-      end
-    end
-
-    if (false == cardFound) then
+    local cardName = shared.normalCardsBySaveID[cardSaveID]
+    
+    if (not activeCardsSet[cardName]) then
       table.insert(shared.archiveContentsBySuit[shared.cardsTable[cardName].suit], cardName)
     end
   end -- end for cardSaveID = 0,197
@@ -8864,4 +8717,318 @@ function handleChronicleAfterSelectSuit()
   printToAll("", { 1, 1, 1 })
 
   shared.isChronicleInProgress = false
+end
+
+function SanityCheckAndRepair()
+  startLuaCoroutine(self, "SanityCheckAndRepairCoroutine")
+end
+
+
+function CardMultimapInsert(map, key, value)
+  if not map[key] then
+    map[key] = {value}
+  else
+    table.insert(map[key], value)
+  end
+end
+
+function CardMultimapInsertDeckObject(map, object)
+
+  local function InsertIfDenizen(cardName, value)
+    local cardInfo = shared.cardsTable[cardName]
+    if (cardInfo and cardInfo.cardtype == "Denizen") then
+      CardMultimapInsert(map, cardName, value)
+    end
+  end
+
+
+  if object.type == 'Card' then
+    local cardName = object.getName()
+    InsertIfDenizen(cardName, object.guid)
+    return
+  end
+
+  if object.type == 'Deck' then
+    for i, curCardInDeck in ipairs(object.getObjects()) do
+      local cardName = curCardInDeck.nickname
+      InsertIfDenizen(cardName, object.guid)
+    end
+    return
+  end
+
+  if object.type == 'Bag' then
+    -- Note that since this is a bag, getData() is needed rather than getObjects().
+    bagObjects = object.getData().ContainedObjects
+    if (nil ~= bagObjects) then
+      for i, curObject in ipairs(bagObjects) do
+        if ("Deck" == curObject.Name) then
+          for _, curCardInDeck in ipairs(curObject.ContainedObjects) do
+            local cardName = curCardInDeck.Nickname
+            InsertIfDenizen(cardName, object.guid)
+          end
+        elseif ("Card" == curObject.Name) then
+          local cardName = curObject.Nickname
+          InsertIfDenizen(cardName, object.guid)
+        end
+      end
+    end
+
+    return
+  end
+end
+
+
+function SanityCheckAndRepairCoroutine()
+  local errorsFound = false
+  
+  -- world deck
+  local worldDeckMap = {}
+  for _, object in ipairs(shared.worldDeckZone.getObjects()) do
+    CardMultimapInsertDeckObject(worldDeckMap, object)
+  end
+
+  -- discards
+  local discardDeckMaps = {}
+  local regionNames = {"Cradle", "Provinces", "Hinterland"}
+  for zoneIndex, zone in ipairs(shared.discardZones) do
+    discardDeckMaps[regionNames[zoneIndex]] = {}
+    for _, object in ipairs(zone.getObjects()) do
+      CardMultimapInsertDeckObject(discardDeckMaps[regionNames[zoneIndex]], object)
+    end
+  end
+
+  -- player advisers, hands, and held items
+  local adviserCardMaps = {}
+  local handCardMaps = {}
+  local holdingCardMaps = {}
+  for playerColor, zones in pairs(shared.playerAdviserZones) do
+    
+    -- advisers
+    adviserCardMaps[playerColor] = {}
+    for _, zone in ipairs(zones) do
+      for _, object in ipairs(zone.getObjects()) do
+        CardMultimapInsertDeckObject(adviserCardMaps[playerColor], object)
+      end
+    end
+
+    -- hand
+    local player = Player[playerColor]
+    handCardMaps[playerColor] = {}
+    for _, object in ipairs(player.getHandObjects()) do
+      CardMultimapInsertDeckObject(handCardMaps[playerColor], object)
+    end
+  end
+
+  -- cards played to sites
+  local mapCardMaps = {}
+  for siteIndex, siteZones in ipairs(shared.mapNormalCardZones) do
+    local siteName = shared.curMapSites[siteIndex][1]
+    mapCardMaps[siteName] = {}
+    for cardIndex, zone in ipairs(siteZones) do
+      for _, object in ipairs(zone.getObjects()) do
+        CardMultimapInsertDeckObject(mapCardMaps[siteName], object)
+      end
+    end
+  end
+  
+  -- iterate all objects looking for cards
+  local activeCardsMap = {}
+  local allCardsMap = {}
+  for _, object in ipairs(getObjects()) do
+    -- don't search any bags except the dispossessed
+    if object.type ~= 'Bag' then
+      CardMultimapInsertDeckObject(activeCardsMap, object)
+      CardMultimapInsertDeckObject(allCardsMap, object)
+    end
+  end
+  
+  -- dispossessed cards
+  local dispossessedCardsMap = {}
+  for i, cardName in ipairs(shared.curDispossessedDeckCards) do
+    CardMultimapInsert(dispossessedCardsMap, cardName, 'Dispossessed')
+    CardMultimapInsert(allCardsMap, cardName, 'Dispossessed')
+  end
+  
+  calculateArchiveExcludingCardSet(allCardsMap)
+
+  local cardCountInGame = 0
+  for cardName, cardInstances in pairs(activeCardsMap) do
+    cardCountInGame = cardCountInGame + #cardInstances
+  end
+  
+  for cardName, cardInstances in pairs(activeCardsMap) do
+    local activeDuplicateCount = #cardInstances
+    if activeDuplicateCount > 1 then
+      printToAll("Error: '"..cardName.."' was found ".. activeDuplicateCount .." times instead of once.", { 1, 0, 0});
+      errorsFound = true
+      local identifiedCount = 0
+      
+      function PrintCountFound(map, key, msg)
+        local found = map[key]
+        if found then
+          identifiedCount = identifiedCount + #found
+          local s = ""
+          if #found ~= 1 then
+            s = "s"
+          end
+          printToAll(string.format("      - "..msg..", %i time%s.", #found, s), {1,0,0});
+        end
+      end
+      
+      -- check world deck
+      PrintCountFound(worldDeckMap, cardName, "Found in World Deck")
+      
+      -- check discards
+      for regionName, discardDeckMap in pairs(discardDeckMaps) do
+        PrintCountFound(discardDeckMap, cardName, "Found in the "..regionName.." Discard")
+      end
+
+      -- check advisers
+      for playerColor, adviserCardMap in pairs(adviserCardMaps) do
+        PrintCountFound(adviserCardMap, cardName, "Found in "..playerColor.." Player's advisers")
+      end
+      
+      -- check hands
+      for playerColor, handCardMap in pairs(handCardMaps) do
+        PrintCountFound(handCardMap, cardName, "Found in the "..playerColor.." Player's hand")
+      end
+
+      -- check world map
+      for siteName, siteCardMap in pairs(mapCardMaps) do
+        PrintCountFound(siteCardMap, cardName, "Found at '"..siteName)
+      end
+
+      if identifiedCount < activeDuplicateCount then
+        local unaccountedFor = activeDuplicateCount - identifiedCount
+        printToAll("      - "..unaccountedFor.." copies weren't in any of the expected locations", { 1, 0, 0});
+      end
+
+      while #cardInstances > 1 do
+        if cardCountInGame > 54 then
+          RemoveCard(cardName, getObjectFromGUID(cardInstances[#cardInstances]))
+          table.remove(cardInstances)
+          cardCountInGame = cardCountInGame - 1
+        else
+          RepairCard(cardName, getObjectFromGUID(cardInstances[#cardInstances]))
+          table.remove(cardInstances)
+        end
+      end
+    end
+  end
+  
+  -- if there's still too many cards in the game, dispossess the extras
+  if cardCountInGame > 54 then
+    printToAll("There's "..cardCountInGame.." cards in the game but there should be 54. Please manually dispossess "..tostring(cardCountInGame - 54).." cards.", {1,0,0})
+  end
+
+  -- remove duplicates in dispossessed
+  shared.curDispossessedDeckCards = {}
+  for cardName, cards in pairs(dispossessedCardsMap) do
+    if not activeCardsMap[cardName] then
+      table.insert(shared.curDispossessedDeckCards, cardName)
+    end
+  end
+  shared.curDispossessedDeckCardCount = #shared.curDispossessedDeckCards
+  
+  --if errorsFound and debug and debug.traceback then
+  --  printToAll(debug.traceback(), {1, 0.8, 0})
+  --end
+  
+  return 1
+end
+
+function drawFromArchive(suit)
+  -- TODO: heal the deck if the archive runs out of cards in this suit
+  local archive = shared.archiveContentsBySuit[suit]
+  local index = math.random(1, #archive)
+  return table.removeSwap(archive, index)
+end
+
+function RemoveCard(cardName, container)
+  RepairCard(cardName, container, true)
+end
+
+function RepairCard(oldCardName, container, remove)
+  if not container then
+    printToAll("Tried to Repair Card but it's container was missing");
+    return
+  end
+  local newCardName = nil
+  if not remove then
+    newCardName = drawFromArchive(shared.cardsTable[oldCardName].suit)
+  end
+  
+  local containerType = container.type
+  if containerType == 'Card' then
+    destroyObject(container)
+    
+    if not remove then
+      local spawnFacedown = container.is_face_down
+      local spawnPosition = container.getPosition()
+      local cardRotY = container.getRotation().y
+      local spawnInHand = false
+      spawnSingleCard(newCardName, spawnFacedown, spawnPosition, cardRotY, spawnInHand)
+    end
+    
+    return
+  end
+  if containerType == 'Deck' or containerType == 'Bag' then
+    function replaceContainedObject(containerJSON, cardJSON, oldCardName)
+      for i, item in ipairs(containerJSON.ContainedObjects) do
+        if item.Name == "Card" then
+          if item.Nickname == oldCardName then
+            if containerJSON.Name == 'Deck' then
+              if cardJSON == nil then
+                table.remove(containerJSON.DeckIDs, i)
+              else
+                local cardDeckID = string.sub(tostring(cardJSON.CardID), 1, -3)
+                if (nil == containerJSON.CustomDeck[tonumber(cardDeckID)]) then
+                  containerJSON.CustomDeck[tonumber(cardDeckID)] = cardJSON.CustomDeck[cardDeckID]
+                end
+                containerJSON.DeckIDs[i] = cardJSON.CardID
+              end
+            end
+
+            if cardJSON == nil then
+              table.remove(containerJSON.ContainedObjects, i)
+            else
+              containerJSON.ContainedObjects[i] = cardJSON
+            end
+            
+            return true
+          end
+        elseif item.ContainedObjects then
+          if (replaceContainedObject(item, cardJSON, oldCardName)) then
+            return true
+          end
+        end
+      end
+    end
+    
+    local containerJSON = container.getData()
+    local cardJSON = nil
+    if not remove then
+      cardJSON = CreateCardJson(newCardName)
+    end
+
+    replaceContainedObject(containerJSON, cardJSON, oldCardName)
+
+    -- a deck of one card can't be spawned. just spawn the card instead.
+    if (containerJSON.Name == 'Deck' and #containerJSON.ContainedObjects == 1) then
+      containerJSON = containerJSON.ContainedObjects[1]
+    end
+
+    if containerJSON then
+      local spawnParams = {}
+      spawnParams.data = containerJSON
+      spawnParams.position = container.getPosition()
+      spawnParams.rotation = container.getRotation()
+      destroyObject(container)
+      coroutine.yield(0)
+      spawnObjectData(spawnParams)
+      coroutine.yield(0)
+      return
+    end
+    
+  end
 end

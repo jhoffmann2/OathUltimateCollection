@@ -1,6 +1,4 @@
-﻿
-
----@param ttsObjectTable tts__Object[]
+﻿---@param ttsObjectTable tts__Object[]
 ---@return ProxyObject[]
 local function ProxyObjectTable(ttsObjectTable)
   local t = {};
@@ -19,7 +17,6 @@ local function TTSObjectTable(proxyObjectTable)
   end
   return t
 end
-
 
 ---@param object tts__Object
 ---@return ProxyObject
@@ -40,7 +37,7 @@ function ProxyObject(object)
     ---@type tts__Object
     ttsObject = object,
 
-    self = {__type = 'ProxyObject', __ttsObject = object},
+    self = { __type = 'ProxyObject', __ttsObject = object },
 
     ---@type function[]
     __get = {},
@@ -51,19 +48,19 @@ function ProxyObject(object)
 
   ---@param tag string
   ---@return boolean
-  function mt.addTag(tag,...)
+  function mt.addTag(tag, ...)
     local hadTag = mt.ttsObject.hasTag(tag)
-    local result = mt.ttsObject.addTag(tag,...)
-    
+    local result = mt.ttsObject.addTag(tag, ...)
+
     if not hadTag then
       InvokeEvent('OnObjectTagged', mt.self, tag)
     end
     return result
   end
 
-  function mt.removeTag(tag,...)
+  function mt.removeTag(tag, ...)
     local hadTag = mt.ttsObject.hasTag(tag)
-    local result = mt.ttsObject.removeTag(tag,...)
+    local result = mt.ttsObject.removeTag(tag, ...)
 
     if hadTag then
       InvokeEvent('OnObjectUntagged', mt.self, tag)
@@ -75,8 +72,8 @@ function ProxyObject(object)
     return ProxyObject(mt.ttsObject.setState(...))
   end
 
-  function mt.addAttachment(inObject,...)
-    return mt.ttsObject.addAttachment(inObject.ttsObject,...)
+  function mt.addAttachment(inObject, ...)
+    return mt.ttsObject.addAttachment(inObject.ttsObject, ...)
   end
 
   function mt.clone(...)
@@ -157,22 +154,22 @@ function ProxyObject(object)
   function mt.__set.remainder(v)
     mt.ttsObject.remainder = v.ttsObject
   end
-  
+
   function mt.__get.tag()
-    printToAll("tag is deprecated. Use type instead", {1,0,0})
+    printToAll("tag is deprecated. Use type instead", { 1, 0, 0 })
     return mt.ttsObject.tag
   end
   function mt.__set.tag(v)
-    printToAll("tag is deprecated. Use type instead", {1,0,0})
+    printToAll("tag is deprecated. Use type instead", { 1, 0, 0 })
     mt.ttsObject.tag = v
   end
-  
+
   function mt.__get.value_flags()
-    printToAll("value_flags is deprecated. Use value_flags instead", {1,0,0})
+    printToAll("value_flags is deprecated. Use value_flags instead", { 1, 0, 0 })
     return mt.ttsObject.value_flags
   end
   function mt.__set.value_flags(v)
-    printToAll("value_flags is deprecated. Use value_flags instead", {1,0,0})
+    printToAll("value_flags is deprecated. Use value_flags instead", { 1, 0, 0 })
     mt.ttsObject.value_flags = v
   end
 
@@ -243,7 +240,7 @@ end
 local _getObjects = getObjects
 ---@return ProxyObject[]
 function getAllObjects()
-  printToAll("getAllObjects() is deprecated. Use getObjects() instead", {1,0,0})
+  printToAll("getAllObjects() is deprecated. Use getObjects() instead", { 1, 0, 0 })
   return ProxyObjectTable(_getObjects())
 end
 
