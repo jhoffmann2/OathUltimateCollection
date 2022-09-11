@@ -5038,8 +5038,16 @@ function setupGame()
     printToAll("", { 1, 1, 1 })
     printToAll("SETUP COMPLETE.", { 0, 0.8, 0 })
   end
+
+  Wait.time(
+      function()
+        -- A bug existed for a while that caused duplicate cards to appear. This should fix that.
+        SanityCheckAndRepair()
+        InvokeEvent("OnGameStart")
+      end,
+      .5
+  )
   
-  InvokeEvent("OnGameStart")
 end
 
 function resetSupplyCylinder(playerColor)
@@ -8900,9 +8908,12 @@ function SanityCheckAndRepairCoroutine()
 
       if identifiedCount < activeDuplicateCount then
         local unaccountedFor = activeDuplicateCount - identifiedCount
-        printToAll("      - "..unaccountedFor.." copies weren't in any of the expected locations", { 1, 0, 0});
+        printToAll("      - "..unaccountedFor.." copies weren't in any of the expected locations", {1, 0, 0});
       end
 
+      local cardSuit = shared.cardsTable[cardName].suit
+      printToAll("Replacing duplicates with random "..cardSuit.." cards.", {1, 0.8, 0});
+      printToAll("")
       while #cardInstances > 1 do
         if cardCountInGame > 54 then
           RemoveCard(cardName, getObjectFromGUID(cardInstances[#cardInstances]))
@@ -8918,7 +8929,7 @@ function SanityCheckAndRepairCoroutine()
   
   -- if there's still too many cards in the game, dispossess the extras
   if cardCountInGame > 54 then
-    printToAll("There's "..cardCountInGame.." cards in the game but there should be 54. Please manually dispossess "..tostring(cardCountInGame - 54).." cards.", {1,0,0})
+    printToAll("Error: There's "..cardCountInGame.." cards in the game but there should be 54. Please manually dispossess "..tostring(cardCountInGame - 54).." cards.", {1,0,0})
   end
 
   -- remove duplicates in dispossessed
