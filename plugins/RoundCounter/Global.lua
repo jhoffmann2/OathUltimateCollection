@@ -42,9 +42,9 @@ function onPlayerTurn(player, previous_player)
     if player and player.color == "Purple" then
       local round = GetNextRound()
       roundMarker.setPositionSmooth(roundMarkerPositions[round])
-      if round >= 6 then
-        RollPurpleDie()
-      end 
+      --if round >= 6 then
+      --  RollPurpleDie()
+      --end 
     end
   end
   
