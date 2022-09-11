@@ -51,5 +51,11 @@
     "value": true,
     "plugin": "AutoRest",
     "tooltip": "quality of life plugin that will add an 'Automate Rest Phase' button to player boards\n\n\t- Resets supply\n\t- Returns favor to favor banks\n\t- Returns secrets to player board\n\t- Advances turn if turns are enabled"
+  },
+  "Round Counter": {
+    "type": "toggle",
+    "value": true,
+    "plugin": "RoundCounter",
+    "tooltip": "quality of life plugin that will increment the round counter at the beginning of\n the chancellors turn. (Turns required)"
   }
 }
