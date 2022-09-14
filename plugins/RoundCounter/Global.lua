@@ -32,8 +32,8 @@ function onLoad()
   roundMarker = getObjectFromGUID(roundMarkerGuid)
   lastTurnWasDrafting = CardsInHands()
   
-  purpleDie = getObjectFromGUID(purpleDieGuid)
-  purpleDie.setPosition(purpleDiePos)
+  --purpleDie = getObjectFromGUID(purpleDieGuid)
+  --purpleDie.setPosition(purpleDiePos)
 end
 
 function onPlayerTurn(player, previous_player)
