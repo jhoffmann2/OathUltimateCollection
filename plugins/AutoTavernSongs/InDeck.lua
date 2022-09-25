@@ -40,7 +40,7 @@ function Method.OnNumberTyped(player_color, number)
 end
 
 function onPlayerTurn(newPlayer, previousPlayer)
-  if newPlayer ~= previousPlayer then
+  if newPlayer ~= previousPlayer and previousPlayer then
     WhenGlobalUIMutable(DisableTavernSongsUI, previousPlayer.color)
   end
 end
