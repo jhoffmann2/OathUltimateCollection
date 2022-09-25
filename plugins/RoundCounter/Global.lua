@@ -30,8 +30,11 @@ local purpleDie = nil
 
 function onLoad()
   roundMarker = getObjectFromGUID(roundMarkerGuid)
+end
+
+function Callback.OnGameStart()
   lastTurnWasDrafting = CardsInHands()
-  
+
   --purpleDie = getObjectFromGUID(purpleDieGuid)
   --purpleDie.setPosition(purpleDiePos)
 end
@@ -93,8 +96,8 @@ end
 -- return true if any players have cards in their hand
 function CardsInHands()
   --- @param player tts__Player
-  for _, player in ipairs(Player.getPlayers()) do
-    if #player.getHandObjects() > 0 then
+  for _, playerColor in ipairs(Player.getAvailableColors()) do
+    if #Player[playerColor].getHandObjects() > 0 then
       return true
     end
   end

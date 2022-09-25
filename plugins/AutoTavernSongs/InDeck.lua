@@ -2,11 +2,26 @@
 local uiCardWidth = 213.75
 local uiCardHeight = 337.5
 
-function onLoad()
-  InvokeEvent('OnEnsurePluginActive', 'CardTagging')
-  InvokeEvent('OnEnsurePluginActive', 'PlayerOwnershipZones')
+function onLoad(save_string)
+  local save_data = {}
+  if save_string then
+    save_data = JSON.decode(save_string)
+  end
+
+  -- deckZone must have either already been set or be in the save data
+  if not shared.deckZone then
+    shared.deckZone = getObjectFromGUID(save_data.deckZoneGuid)
+  end
+  
   deckData = Shared(shared.deckZone) -- shared.deckZone was set in CardTagging/Global.lua
   globalData = Shared(Global)
+end
+
+function onSave()
+  local save_data = {
+    deckZoneGuid = shared.deckZone.guid
+  }
+  return JSON.encode(save_data)
 end
 
 function onDestroy()
@@ -22,6 +37,12 @@ function Method.OnNumberTyped(player_color, number)
     0.5
   )
   return false
+end
+
+function onPlayerTurn(newPlayer, previousPlayer)
+  if newPlayer ~= previousPlayer then
+    WhenGlobalUIMutable(DisableTavernSongsUI, previousPlayer.color)
+  end
 end
 
 function WhenGlobalUIMutable(func, ...)
@@ -262,7 +283,9 @@ function EnableTavernSongsUI(player_color, card_power)
 end
 
 function DisableTavernSongsUI(player_color)
-  Global.UI.setAttribute('CardPeek', 'active', 'false')
+  if Global.UI.getAttribute('CardPeek', 'visibility') == player_color then
+    Global.UI.setAttribute('CardPeek', 'active', 'false')
+  end
 end
 
 function GetCardAssets(count)

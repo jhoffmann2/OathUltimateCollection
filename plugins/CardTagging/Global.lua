@@ -14,7 +14,7 @@ function onLoad()
   
 end
 
-function onObjectEnterZone( zone,  object)
+function onObjectEnterZone(zone, object)
   if zone.guid == shared.worldDeckZoneGuid then
     if object.type == 'Deck' or object.type == 'Card' then
       Shared(object).deckZone = zone

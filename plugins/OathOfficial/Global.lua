@@ -6396,15 +6396,15 @@ function loadFromSaveString_1_6_0(saveDataString)
   --
   -- This code can be uncommented for debug purposes.
   --
-  if (STATUS_SUCCESS == loadStatus) then
-    printToAll("Dispossessed deck:", {1,1,1})
-    printToAll("==================", {1,1,1})
-    printToAll(shared.loadDispossessedDeckInitCardCount .. " cards", {1,1,1})
-    printToAll("===========", {1,1,1})
-    for cardIndex = 1,shared.loadDispossessedDeckInitCardCount do
-      printToAll(shared.loadDispossessedDeckInitCards[cardIndex], {1,1,1})
-    end
-  end
+  -- if (STATUS_SUCCESS == loadStatus) then
+  --   printToAll("Dispossessed deck:", {1,1,1})
+  --   printToAll("==================", {1,1,1})
+  --   printToAll(shared.loadDispossessedDeckInitCardCount .. " cards", {1,1,1})
+  --   printToAll("===========", {1,1,1})
+  --   for cardIndex = 1,shared.loadDispossessedDeckInitCardCount do
+  --     printToAll(shared.loadDispossessedDeckInitCards[cardIndex], {1,1,1})
+  --   end
+  -- end
 
   return nextParseIndex
 end

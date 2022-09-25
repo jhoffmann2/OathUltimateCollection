@@ -158,7 +158,8 @@ function updateBagStatus()
   end
 end
 
-function onUpdate()
+-- called every half .5 seconds instead of every frame
+function Callback.SlowUpdate()
 
   -- only update if we've finished initalizing all our state
   updateBagStatus()

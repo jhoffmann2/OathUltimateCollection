@@ -716,6 +716,18 @@ end
 
 Physics = setmetatable({}, physicsMetatable)
 
+local _Turns = Turns
+local turnsMetatable = {}
+
+function turnsMetatable.__index(t,k)
+  return _Turns[k]
+end
+
+function turnsMetatable.__newindex(t,k,v)
+  _Turns[k] = UnShared(v)
+end
+
+Turns = setmetatable({}, turnsMetatable)
 
 -- redefine owner because SharedData may have been included before this
 owner = [[##OWNER##]]
