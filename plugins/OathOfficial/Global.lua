@@ -16,8 +16,8 @@ function onLoad(save_state)
   end
 
   shared.OATH_MAJOR_VERSION = 3
-  shared.OATH_MINOR_VERSION = 3
-  shared.OATH_PATCH_VERSION = 3
+  shared.OATH_MINOR_VERSION = 4
+  shared.OATH_PATCH_VERSION = 0
   shared.OATH_MOD_VERSION = shared.OATH_MAJOR_VERSION .. "." .. shared.OATH_MINOR_VERSION .. "." .. shared.OATH_PATCH_VERSION
 
   shared.STATUS_SUCCESS = 0
@@ -4013,12 +4013,11 @@ function generateSaveString()
         end
       end
 
-      mapDataString = (mapDataString .. string.format(
-          "%02X%02X%02X%02X",
-          curSiteSaveIDs[1],
-          curSiteSaveIDs[2],
-          curSiteSaveIDs[3],
-          curSiteSaveIDs[4]))
+      -- write all cards for this site out to the string
+      for i = 1, 4 do
+        mapDataString = mapDataString..BaseEncode(curSiteSaveIDs[i], BaseEncodeMax, 2)
+      end
+      
     end -- end for siteIndex = 1,8
   end -- end if (STATUS_SUCCESS == saveStatus)
 
@@ -4026,10 +4025,10 @@ function generateSaveString()
   -- Generate world deck data string.
   --
   if (shared.STATUS_SUCCESS == shared.saveStatus) then
-    worldDeckDataString = string.format("%02X", shared.curWorldDeckCardCount)
+    worldDeckDataString = BaseEncode(shared.curWorldDeckCardCount, BaseEncodeMax, 2)
     for cardIndex = 1, shared.curWorldDeckCardCount do
       deckCardID = shared.cardsTable[shared.curWorldDeckCards[cardIndex]].saveid
-      worldDeckDataString = (worldDeckDataString .. string.format("%02X", deckCardID))   -- Card ID for denizen card or vision
+      worldDeckDataString = worldDeckDataString .. BaseEncode(deckCardID, BaseEncodeMax, 2)   -- Card ID for denizen card or vision
     end
   end -- end if (STATUS_SUCCESS == saveStatus)
 
@@ -4037,10 +4036,10 @@ function generateSaveString()
   -- Generate dispossessed data string.
   --
   if (shared.STATUS_SUCCESS == shared.saveStatus) then
-    dispossessedDataString = string.format("%02X", shared.curDispossessedDeckCardCount)
+    dispossessedDataString = BaseEncode(shared.curDispossessedDeckCardCount, BaseEncodeMax, 2)
     for cardIndex = 1, shared.curDispossessedDeckCardCount do
       deckCardID = shared.cardsTable[shared.curDispossessedDeckCards[cardIndex]].saveid
-      dispossessedDataString = (dispossessedDataString .. string.format("%02X", deckCardID))    -- Card ID for denizen card or vision
+      dispossessedDataString = dispossessedDataString .. BaseEncode(deckCardID, BaseEncodeMax, 2)   -- Card ID for denizen card or vision
     end
   end -- end if (STATUS_SUCCESS == saveStatus)
 
@@ -4048,10 +4047,10 @@ function generateSaveString()
   -- Generate relic deck data string.
   --
   if (shared.STATUS_SUCCESS == shared.saveStatus) then
-    relicDeckDataString = string.format("%02X", shared.curRelicDeckCardCount)
+    relicDeckDataString = BaseEncode(shared.curRelicDeckCardCount, BaseEncodeMax, 2)
     for cardIndex = 1, shared.curRelicDeckCardCount do
       deckCardID = shared.cardsTable[shared.curRelicDeckCards[cardIndex]].saveid
-      relicDeckDataString = (relicDeckDataString .. string.format("%02X", deckCardID))   -- Card ID for relic card
+      relicDeckDataString = relicDeckDataString .. BaseEncode(deckCardID, BaseEncodeMax, 2)   -- Card ID for relic card
     end
   end -- end if (STATUS_SUCCESS == saveStatus)
 
@@ -5965,6 +5964,9 @@ function loadFromSaveString(saveDataString, setupGameAfter)
   -- Parse data string.
   --
 
+  -- original base representation for cards. (changed in later versions)
+  cardBase = 16
+
   if (string.len(saveDataString) > 6) then
     oathMajorVersion = tonumber(string.sub(saveDataString, 1, 2), 16)
     oathMinorVersion = tonumber(string.sub(saveDataString, 3, 4), 16)
@@ -6046,6 +6048,9 @@ function loadFromSaveString(saveDataString, setupGameAfter)
         (3 == oathMajorVersion) and (3 == oathMinorVersion) and (3 == oathPatchVersion)) then
       -- Previous starting citizen/exile status, previous winning color, and previous winner's Steam name are part of the save format from this version onwards.
       loadFromSaveString_3_3_1(saveDataString)
+    elseif ((3 == oathMajorVersion) and (4 == oathMinorVersion) and (0 == oathPatchVersion)) then
+      -- card save format changed to base 93 so we can store more unique cards
+      loadFromSaveString_3_4_0(saveDataString)
     else
       --printToAll("Save string:  " .. saveDataString, {1,1,1})
       printToAll("Unsupported data version.  Data version must be " .. shared.OATH_MAJOR_VERSION .. "." .. shared.OATH_MINOR_VERSION .. "." .. shared.OATH_PATCH_VERSION .. " or earlier.", { 1, 0, 0 })
@@ -6075,9 +6080,9 @@ function loadFromSaveString_1_6_0(saveDataString)
   local parseOathCode
   local parseSuitCodeHex
   local parseSuitCode
-  local parseCodeHex
+  local parseCodeEncoded
   local parseCode
-  local cardCountHex
+  local cardCountEncoded
   local oathCodeFound
   local suitCodeFound
   local nextParseIndex
@@ -6222,9 +6227,9 @@ function loadFromSaveString_1_6_0(saveDataString)
       -- Parse site.
       --
 
-      parseSiteCodeHex = string.sub(saveDataString, nextParseIndex, (nextParseIndex + 1))
-      if (nil ~= parseSiteCodeHex) then
-        parseCode = tonumber(parseSiteCodeHex, 16)
+      local parseSiteCodeEncoded = string.sub(saveDataString, nextParseIndex, (nextParseIndex + 1))
+      if (nil ~= parseSiteCodeEncoded) then
+        parseCode = BaseDecode(parseSiteCodeEncoded, cardBase)
         nextParseIndex = (nextParseIndex + 2)
 
         if (nil ~= shared.sitesBySaveID[parseCode]) then
@@ -6236,7 +6241,7 @@ function loadFromSaveString_1_6_0(saveDataString)
             shared.loadMapSites[parseMapSiteIndex][2] = false
           end
         else
-          printToAll("Error, invalid site code 0x" .. parseSiteCodeHex .. ".", { 1, 0, 0 })
+          printToAll("Error, invalid site code 0x" .. parseSiteCodeEncoded .. ".", { 1, 0, 0 })
           shared.loadStatus = shared.STATUS_FAILURE
           break
         end
@@ -6246,10 +6251,10 @@ function loadFromSaveString_1_6_0(saveDataString)
         --
 
         for parseCardIndex = 1, 3 do
-          parseCodeHex = string.sub(saveDataString, nextParseIndex, (nextParseIndex + 1))
+          parseCodeEncoded = string.sub(saveDataString, nextParseIndex, (nextParseIndex + 1))
 
-          if (nil ~= parseCodeHex) then
-            parseCode = tonumber(parseCodeHex, 16)
+          if (nil ~= parseCodeEncoded) then
+            parseCode = BaseDecode(parseCodeEncoded, cardBase)
             nextParseIndex = (nextParseIndex + 2)
 
             if (nil ~= shared.normalCardsBySaveID[parseCode]) then
@@ -6265,7 +6270,7 @@ function loadFromSaveString_1_6_0(saveDataString)
                 shared.loadMapNormalCards[parseMapSiteIndex][parseCardIndex][2] = false
               end
             else
-              printToAll("Error, invalid normal card code 0x" .. parseCodeHex .. ".", { 1, 0, 0 })
+              printToAll("Error, invalid normal card code 0x" .. parseCodeEncoded .. ".", { 1, 0, 0 })
               shared.loadStatus = shared.STATUS_FAILURE
               break
             end
@@ -6303,28 +6308,28 @@ function loadFromSaveString_1_6_0(saveDataString)
   --end
 
   if (shared.STATUS_SUCCESS == shared.loadStatus) then
-    cardCountHex = string.sub(saveDataString, nextParseIndex, (nextParseIndex + 1))
+    cardCountEncoded = string.sub(saveDataString, nextParseIndex, (nextParseIndex + 1))
 
     -- Reset world deck, attempting to release memory.
     shared.loadWorldDeckInitCardCount = 0
     shared.loadWorldDeckInitCards = nil
     shared.loadWorldDeckInitCards = {}
 
-    if (nil ~= cardCountHex) then
-      shared.loadWorldDeckInitCardCount = tonumber(cardCountHex, 16)
+    if (nil ~= cardCountEncoded) then
+      shared.loadWorldDeckInitCardCount = BaseDecode(cardCountEncoded, cardBase)
       nextParseIndex = (nextParseIndex + 2)
 
       for cardIndex = 1, shared.loadWorldDeckInitCardCount do
-        parseCodeHex = string.sub(saveDataString, nextParseIndex, (nextParseIndex + 1))
+        parseCodeEncoded = string.sub(saveDataString, nextParseIndex, (nextParseIndex + 1))
 
-        if (nil ~= parseCodeHex) then
-          parseCode = tonumber(parseCodeHex, 16)
+        if (nil ~= parseCodeEncoded) then
+          parseCode = BaseDecode(parseCodeEncoded, cardBase)
           nextParseIndex = (nextParseIndex + 2)
 
           if (nil ~= shared.normalCardsBySaveID[parseCode]) then
             shared.loadWorldDeckInitCards[cardIndex] = shared.normalCardsBySaveID[parseCode]
           else
-            printToAll("Error, invalid normal card code 0x" .. parseCodeHex .. ".", { 1, 0, 0 })
+            printToAll("Error, invalid normal card code 0x" .. parseCodeEncoded .. ".", { 1, 0, 0 })
             shared.loadStatus = shared.STATUS_FAILURE
             break
           end
@@ -6355,28 +6360,28 @@ function loadFromSaveString_1_6_0(saveDataString)
   --end
 
   if (shared.STATUS_SUCCESS == shared.loadStatus) then
-    cardCountHex = string.sub(saveDataString, nextParseIndex, (nextParseIndex + 1))
+    cardCountEncoded = string.sub(saveDataString, nextParseIndex, (nextParseIndex + 1))
 
     -- Reset deck of dispossessed cards, attempting to release memory.
     shared.loadDispossessedDeckInitCardCount = 0
     shared.loadDispossessedDeckInitCards = nil
     shared.loadDispossessedDeckInitCards = {}
 
-    if (nil ~= cardCountHex) then
-      shared.loadDispossessedDeckInitCardCount = tonumber(cardCountHex, 16)
+    if (nil ~= cardCountEncoded) then
+      shared.loadDispossessedDeckInitCardCount = BaseDecode(cardCountEncoded, cardBase)
       nextParseIndex = (nextParseIndex + 2)
 
       for cardIndex = 1, shared.loadDispossessedDeckInitCardCount do
-        parseCodeHex = string.sub(saveDataString, nextParseIndex, (nextParseIndex + 1))
+        parseCodeEncoded = string.sub(saveDataString, nextParseIndex, (nextParseIndex + 1))
 
-        if (nil ~= parseCodeHex) then
-          parseCode = tonumber(parseCodeHex, 16)
+        if (nil ~= parseCodeEncoded) then
+          parseCode = BaseDecode(parseCodeEncoded, cardBase)
           nextParseIndex = (nextParseIndex + 2)
 
           if (nil ~= shared.normalCardsBySaveID[parseCode]) then
             shared.loadDispossessedDeckInitCards[cardIndex] = shared.normalCardsBySaveID[parseCode]
           else
-            printToAll("Error, invalid normal card code 0x" .. parseCodeHex .. ".", { 1, 0, 0 })
+            printToAll("Error, invalid normal card code 0x" .. parseCodeEncoded .. ".", { 1, 0, 0 })
             shared.loadStatus = shared.STATUS_FAILURE
             break
           end
@@ -6435,14 +6440,14 @@ function loadFromSaveString_3_1_0(saveDataString)
     shared.loadRelicDeckInitCards = {}
 
     if (nil ~= cardCountHex) then
-      shared.loadRelicDeckInitCardCount = tonumber(cardCountHex, 16)
+      shared.loadRelicDeckInitCardCount = BaseDecode(cardCountHex, cardBase)
       nextParseIndex = (nextParseIndex + 2)
 
       for cardIndex = 1, shared.loadRelicDeckInitCardCount do
         parseCodeHex = string.sub(saveDataString, nextParseIndex, (nextParseIndex + 1))
 
         if (nil ~= parseCodeHex) then
-          parseCode = tonumber(parseCodeHex, 16)
+          parseCode = BaseDecode(parseCodeHex, cardBase)
           nextParseIndex = (nextParseIndex + 2)
 
           if (nil ~= shared.normalCardsBySaveID[parseCode]) then
@@ -6713,6 +6718,11 @@ function loadFromSaveString_3_3_1(saveDataString)
       shared.loadStatus = shared.STATUS_FAILURE
     end
   end
+end
+
+function loadFromSaveString_3_4_0(saveDataString)
+  cardBase = BaseEncodeMax -- rather than storing in hexadecimal, store in the most compact way possible
+  loadFromSaveString_3_3_1(saveDataString)
 end
 
 function parseExileCitizenStatusByte(statusByte)
