@@ -1,6 +1,4 @@
-﻿
-
----@param ttsObjectTable tts__Object[]
+﻿---@param ttsObjectTable tts__Object[]
 ---@return ProxyObject[]
 local function ProxyObjectTable(ttsObjectTable)
   if ttsObjectTable == nil then
@@ -61,7 +59,6 @@ local function UnSharedRecursive(t)
   return t
 end
 
-
 ---@param object tts__Object
 ---@return ProxyObject
 function ProxyObject(object)
@@ -81,7 +78,7 @@ function ProxyObject(object)
     ---@type tts__Object
     ttsObject = object,
 
-    self = {__type = 'ProxyObject', __ttsObject = object},
+    self = { __type = 'ProxyObject', __ttsObject = object },
 
     ---@type function[]
     __get = {},
@@ -220,7 +217,6 @@ function ProxyObject(object)
   function mt.addTag(tag)
     local hadTag = mt.ttsObject.hasTag(tag)
     local result = mt.ttsObject.addTag(tag)
-    
     if not hadTag then
       InvokeEvent('OnObjectTagged', mt.self, tag)
     end
@@ -532,7 +528,7 @@ end
 local _getObjects = getObjects
 ---@return ProxyObject[]
 function getAllObjects()
-  printToAll("getAllObjects() is deprecated. Use getObjects() instead", {1,0,0})
+  printToAll("getAllObjects() is deprecated. Use getObjects() instead", { 1, 0, 0 })
   return ProxyObjectTable(_getObjects())
 end
 
