@@ -1,4 +1,11 @@
 ﻿{
+  "Deck Data": {
+    "type": "toggle",
+    "hidden": true,
+    "value": true,
+    "plugin": "DeckData"
+  },
+  
   "Deck": {
     "type": "radio",
     "value": "BaseDeck",

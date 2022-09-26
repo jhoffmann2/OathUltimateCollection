@@ -1,13 +1,18 @@
 ﻿local zeroVal = string.byte(" ")
 local key = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!\"#$%&'()*+,-./:;<=>?@[]^_`{|}~"
-BaseEncodeMax = #key
+MaximumBase = #key
 
 ---@param val number
 ---@param base number
 ---@return string
-function BaseEncode(val, base, minLength)
-  if base > BaseEncodeMax or base < 1 then
+function BaseEncode(val, base, digitCount)
+  if base > MaximumBase or base < 1 then
     return nil
+  end
+
+  -- negatives wrap around to max value
+  if val < 0 then
+    val = (base^digitCount) + val
   end
 
   str = ""
@@ -16,9 +21,9 @@ function BaseEncode(val, base, minLength)
     val = math.floor(val / base)
   end
 
-  if minLength ~= nil then
+  if digitCount ~= nil then
     -- pad string with zeros at beginning
-    while #str < minLength do
+    while #str < digitCount do
       str = string.char(key:byte(1))..str
     end
   end

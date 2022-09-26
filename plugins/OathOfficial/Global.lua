@@ -5,6 +5,10 @@
 --
 
 function onLoad(save_state)
+
+  -- make sure all deck data is up to date
+  InvokeMethod("UpdateDeckData", Global)
+  
   -- If the mod was just loaded and no one else is seated, start as Blue so the menu and map appear correctly oriented.
   if ((false == Player["Purple"].seated) and
       (false == Player["Red"].seated) and
@@ -4015,7 +4019,7 @@ function generateSaveString()
 
       -- write all cards for this site out to the string
       for i = 1, 4 do
-        mapDataString = mapDataString..BaseEncode(curSiteSaveIDs[i], BaseEncodeMax, 2)
+        mapDataString = mapDataString..BaseEncode(curSiteSaveIDs[i], MaximumBase, 2)
       end
       
     end -- end for siteIndex = 1,8
@@ -4025,10 +4029,10 @@ function generateSaveString()
   -- Generate world deck data string.
   --
   if (shared.STATUS_SUCCESS == shared.saveStatus) then
-    worldDeckDataString = BaseEncode(shared.curWorldDeckCardCount, BaseEncodeMax, 2)
+    worldDeckDataString = BaseEncode(shared.curWorldDeckCardCount, MaximumBase, 2)
     for cardIndex = 1, shared.curWorldDeckCardCount do
       deckCardID = shared.cardsTable[shared.curWorldDeckCards[cardIndex]].saveid
-      worldDeckDataString = worldDeckDataString .. BaseEncode(deckCardID, BaseEncodeMax, 2)   -- Card ID for denizen card or vision
+      worldDeckDataString = worldDeckDataString .. BaseEncode(deckCardID, MaximumBase, 2)   -- Card ID for denizen card or vision
     end
   end -- end if (STATUS_SUCCESS == saveStatus)
 
@@ -4036,10 +4040,10 @@ function generateSaveString()
   -- Generate dispossessed data string.
   --
   if (shared.STATUS_SUCCESS == shared.saveStatus) then
-    dispossessedDataString = BaseEncode(shared.curDispossessedDeckCardCount, BaseEncodeMax, 2)
+    dispossessedDataString = BaseEncode(shared.curDispossessedDeckCardCount, MaximumBase, 2)
     for cardIndex = 1, shared.curDispossessedDeckCardCount do
       deckCardID = shared.cardsTable[shared.curDispossessedDeckCards[cardIndex]].saveid
-      dispossessedDataString = dispossessedDataString .. BaseEncode(deckCardID, BaseEncodeMax, 2)   -- Card ID for denizen card or vision
+      dispossessedDataString = dispossessedDataString .. BaseEncode(deckCardID, MaximumBase, 2)   -- Card ID for denizen card or vision
     end
   end -- end if (STATUS_SUCCESS == saveStatus)
 
@@ -4047,10 +4051,10 @@ function generateSaveString()
   -- Generate relic deck data string.
   --
   if (shared.STATUS_SUCCESS == shared.saveStatus) then
-    relicDeckDataString = BaseEncode(shared.curRelicDeckCardCount, BaseEncodeMax, 2)
+    relicDeckDataString = BaseEncode(shared.curRelicDeckCardCount, MaximumBase, 2)
     for cardIndex = 1, shared.curRelicDeckCardCount do
       deckCardID = shared.cardsTable[shared.curRelicDeckCards[cardIndex]].saveid
-      relicDeckDataString = relicDeckDataString .. BaseEncode(deckCardID, BaseEncodeMax, 2)   -- Card ID for relic card
+      relicDeckDataString = relicDeckDataString .. BaseEncode(deckCardID, MaximumBase, 2)   -- Card ID for relic card
     end
   end -- end if (STATUS_SUCCESS == saveStatus)
 
@@ -6230,7 +6234,12 @@ function loadFromSaveString_1_6_0(saveDataString)
       local parseSiteCodeEncoded = string.sub(saveDataString, nextParseIndex, (nextParseIndex + 1))
       if (nil ~= parseSiteCodeEncoded) then
         parseCode = BaseDecode(parseSiteCodeEncoded, cardBase)
+        if parseSiteCodeEncoded == BaseEncode(-1, cardBase, 2) then
+          parseCode = -1
+        end
+        
         nextParseIndex = (nextParseIndex + 2)
+
 
         if (nil ~= shared.sitesBySaveID[parseCode]) then
           shared.loadMapSites[parseMapSiteIndex][1] = shared.sitesBySaveID[parseCode]
@@ -6255,6 +6264,9 @@ function loadFromSaveString_1_6_0(saveDataString)
 
           if (nil ~= parseCodeEncoded) then
             parseCode = BaseDecode(parseCodeEncoded, cardBase)
+            if parseCodeEncoded == BaseEncode(-1, cardBase, 2) then
+              parseCode = -1
+            end
             nextParseIndex = (nextParseIndex + 2)
 
             if (nil ~= shared.normalCardsBySaveID[parseCode]) then
@@ -6721,7 +6733,7 @@ function loadFromSaveString_3_3_1(saveDataString)
 end
 
 function loadFromSaveString_3_4_0(saveDataString)
-  cardBase = BaseEncodeMax -- rather than storing in hexadecimal, store in the most compact way possible
+  cardBase = MaximumBase -- rather than storing in hexadecimal, store in the most compact way possible
   loadFromSaveString_3_3_1(saveDataString)
 end
 
