@@ -9,7 +9,7 @@
   "Deck": {
     "type": "radio",
     "value": "BaseDeck",
-    "hidden": true,
+    "hidden": false,
     "options": [
       {
         "name": "Official",
@@ -17,9 +17,9 @@
         "tooltip": "play with all the cards found in the official base game!"
       },
       {
-        "name": "Your custom deck here",
-        "plugin": "None",
-        "tooltip": "This option will not work. it's just a placeholder for now"
+        "name": "Naysayers",
+        "plugin": "NaysayersDeck",
+        "tooltip": "Add extra cards to the deck designed by The Naysayers (in development)"
       }
     ]
   },
