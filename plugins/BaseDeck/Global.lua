@@ -6,22 +6,12 @@
 -- This file contains card data so that the main script file can be shorter.
 --
 
-
-function onChat(message, chatPlayer)
-  if ("!debug" == string.sub(message, 1, 6)) then
-    InvokeMethod('ResetDecks', Global)
-    onLoad()
-    InvokeMethod('UpdateDeckData', Global)
-  end
-end
-
 function onLoad()
   
   -------------------------------------------------------------------------------------------
   --- Sites
   ---
 
-  print('Adding Decks')
   InvokeMethod('AddDeck', Global,
     { deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/lands.jpg", backimage = "SITE_BACK", deckwidth = 2, deckheight = 4, hasuniqueback = false },
     {
@@ -370,7 +360,19 @@ function onLoad()
     {
       { cardName = "The Darkest Secret", cardtype = "SuperRelic" },
       { cardName = "The People's Favor / The Mob's Favor", cardtype = "SuperRelic" },
-      { cardName = "Padding", cardtype = "SuperRelic" },
+      { cardName = "The Grand Scepter", cardtype = "SuperRelic" }
+    }
+  )
+
+
+  -------------------------------------------------------------------------------------------
+  --- Grand Scepter
+  ---
+  
+  InvokeMethod('AddDeck', Global,
+    { deckimage = "http://tts.ledergames.com/Oath/cards/3_3_2/grandScepterBack.png", backimage = "http://tts.ledergames.com/Oath/cards/3_3_2/grandScepterFront.png", deckwidth = 1, deckheight = 1, hasuniqueback = true },
+    {
+      { cardName = "The Grand Scepter", cardtype = "SuperRelic" }
     }
   )
 
@@ -402,13 +404,6 @@ function onLoad()
       { cardName = "Obsidian Cage", cardtype = "Relic" },
       { cardName = "Book of Records", cardtype = "Relic" },
       { cardName = "Dragonskin Drum", cardtype = "Relic" }
-    }
-  )
-
-  InvokeMethod('AddDeck', Global,
-    { deckimage = "http://tts.ledergames.com/Oath/cards/3_3_2/grandScepterBack.png", backimage = "http://tts.ledergames.com/Oath/cards/3_3_2/grandScepterFront.png", deckwidth = 1, deckheight = 1, hasuniqueback = true },
-    {
-      { cardName = "The Grand Scepter", cardtype = "Relic" }
     }
   )
 

@@ -38,6 +38,7 @@ function onLoad()
     Vision = {},
     Relic = {},
     SuperRelic = {},
+    Extra = {}
   }
 
   shared.sitesBySaveID = {[-1] = "NONE"}
@@ -54,6 +55,7 @@ function onLoad()
     ["Banner of the Mob's Favor"] = "The People's Favor / The Mob's Favor",
     ["Banner of the Darkest Secret"] = "The Darkest Secret"
   }
+  shared.edificeSaveIDs = {}
 end
 
 function Method.ResetDecks()
@@ -76,28 +78,59 @@ function Method.AddDeck(deckInfo, cards)
   table.insert(shared.ttsDeckInfo, deckInfo)
   local deckId = #shared.ttsDeckInfo
   for deckIndex, oathCardData in ipairs(cards) do
-    oathCardData.ttscardid = string.format("%02d%02d", deckId, deckIndex - 1)
-    oathCardData.saveid = nil -- if saveid was provided, delete it. we'll write our own saveid
+    if oathCardData.cardtype ~= nil then
+      oathCardData.ttscardid = string.format("%02d%02d", deckId, deckIndex - 1)
+      oathCardData.saveid = nil -- if saveid was provided, delete it. we'll write our own saveid
 
-    table.insert(cardLists[oathCardData.cardtype], oathCardData.cardName)
-    shared.cardsTable[oathCardData.cardName] = oathCardData
+      table.insert(cardLists[oathCardData.cardtype], oathCardData.cardName)
+      shared.cardsTable[oathCardData.cardName] = oathCardData
+    end
   end
 end
 
 function Method.UpdateDeckData()
+  shared.NUM_TOTAL_SITES = #cardLists.Site
+  shared.NUM_TOTAL_DENIZENS = #cardLists.Denizen
   
   -- sitesBySaveID has every site twice to symbolize faceup and facedown versions
   local siteCardCount = 0
+  
+  shared.MIN_SITE = siteCardCount
   siteCardCount = AppendArray(shared.sitesBySaveID, cardLists.Site, siteCardCount)
+  shared.MAX_SITE = siteCardCount - 1
+  
   siteCardCount = siteCardCount + 1 -- legacy padding between faceup and facedown sites
+
+  shared.MIN_SITE_FACEDOWN = siteCardCount
   siteCardCount = AppendArray(shared.sitesBySaveID, cardLists.Site, siteCardCount)
+  shared.MAX_SITE_FACEDOWN = siteCardCount - 1
+  
   
   local normalCardCount = 0
+  
+  shared.MIN_DENIZEN = normalCardCount
   normalCardCount = AppendArray(shared.normalCardsBySaveID, cardLists.Denizen, normalCardCount)
+  shared.MAX_DENIZEN = normalCardCount - 1
+  
+  shared.MIN_EDIFICE_RUIN = normalCardCount
   normalCardCount = AppendEdificeRuins(normalCardCount)
+  shared.MAX_EDIFICE_RUIN = normalCardCount - 1
+
+  shared.MIN_VISION = normalCardCount
   normalCardCount = AppendArray(shared.normalCardsBySaveID, cardLists.Vision, normalCardCount)
+  shared.MAX_VISION = normalCardCount - 1
+
+  shared.MIN_SUPER_RELIC = normalCardCount
   normalCardCount = AppendArray(shared.normalCardsBySaveID, cardLists.SuperRelic, normalCardCount)
+  shared.MAX_SUPER_RELIC = normalCardCount - 1
+
+  shared.MIN_RELIC = normalCardCount
   normalCardCount = AppendArray(shared.normalCardsBySaveID, cardLists.Relic, normalCardCount)
+  shared.MAX_RELIC = normalCardCount - 1
+  
+  shared.MIN_EXTRA_CARD = normalCardCount
+  normalCardCount = AppendArray(shared.normalCardsBySaveID, cardLists.Extra, normalCardCount)
+  shared.MAX_EXTRA_CARD = normalCardCount - 1
 
   -- update site save ids in the cardsTable
   for index, cardName in ipairs(cardLists.Site) do
@@ -135,6 +168,7 @@ function AppendEdificeRuins(len)
   ---@param cardName string
   for _, cardName in ipairs(cardLists.EdificeRuin) do
     shared.normalCardsBySaveID[len] = cardName -- edifice side
+    table.insert(shared.edificeSaveIDs, len)
     len = len + 1
 
     shared.normalCardsBySaveID[len] = cardName -- ruin side

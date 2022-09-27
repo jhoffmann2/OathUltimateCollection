@@ -38,11 +38,6 @@ function onLoad(save_state)
   shared.CHRONICLE_INFO_CREATE_SAVE = 0
   shared.CHRONICLE_INFO_COMBINE_ADVISERS = 1
 
-  -- Currently, the 24th and final site is not used.
-  shared.NUM_TOTAL_SITES = 23
-
-  shared.NUM_TOTAL_DENIZENS = 198
-
   ---@type nil | tts__VectorShape
   local tokenPosition
 
@@ -667,7 +662,6 @@ function onLoad(save_state)
                             "0 512",
                             "-327 512",
                             "-654 512" }
-  shared.edificeSaveIDs = { 198, 200, 202, 204, 206, 208 }
   shared.numPlayerAdvisers = { ["Purple"] = 0,
                                ["Red"] = 0,
                                ["Brown"] = 0,
@@ -1528,6 +1522,7 @@ function spawnAllDecks()
 end
 
 function spawnManualFullDecks(chatPlayer)
+  manualSetupEnabled = true
   -- Reveal the side board.
   shared.sideBoard.setPosition(shared.sideBoardPosition)
   shared.sideBoard.setScale({ 15.00, 1.00, 15.00 })
@@ -1651,7 +1646,7 @@ function spawnAllDecksAfterDelayB()
   deckJSON.ContainedObjects = {}
   deckJSON.DeckIDs = {}
 
-  for cardSaveID = 53, 0, -1 do
+  for cardSaveID = 53 + shared.MIN_DENIZEN, shared.MIN_DENIZEN, -1 do
     curCardName = shared.normalCardsBySaveID[cardSaveID]
     curCardInfo = shared.cardsTable[curCardName]
 
@@ -1698,7 +1693,7 @@ function spawnAllDecksAfterDelayB()
   deckJSON.ContainedObjects = {}
   deckJSON.DeckIDs = {}
 
-  for cardSaveID = 214, 210, -1 do
+  for cardSaveID = shared.MAX_VISION, shared.MIN_VISION, -1 do
     curCardName = shared.normalCardsBySaveID[cardSaveID]
     curCardInfo = shared.cardsTable[curCardName]
 
@@ -1745,12 +1740,14 @@ function spawnAllDecksAfterDelayB()
   deckJSON.ContainedObjects = {}
   deckJSON.DeckIDs = {}
 
-  for cardSaveID = 77, 54, -1 do
+  for cardSaveID = shared.MAX_DENIZEN, shared.MIN_DENIZEN, -1 do
     curCardName = shared.normalCardsBySaveID[cardSaveID]
     curCardInfo = shared.cardsTable[curCardName]
 
     if (nil ~= curCardInfo) then
-      addCardToContainerJSON(deckJSON, curCardName)
+      if curCardInfo.suit == "Arcane" then
+        addCardToContainerJSON(deckJSON, curCardName)
+      end
     else
       -- end if (nil ~= curCardInfo)
       printToAll("Failed to find card with name \"" .. curCardName .. "\".", { 1, 0, 0 })
@@ -1788,12 +1785,14 @@ function spawnAllDecksAfterDelayB()
   deckJSON.ContainedObjects = {}
   deckJSON.DeckIDs = {}
 
-  for cardSaveID = 101, 78, -1 do
+  for cardSaveID = shared.MAX_DENIZEN, shared.MIN_DENIZEN, -1 do
     curCardName = shared.normalCardsBySaveID[cardSaveID]
     curCardInfo = shared.cardsTable[curCardName]
 
     if (nil ~= curCardInfo) then
-      addCardToContainerJSON(deckJSON, curCardName)
+      if curCardInfo.suit == "Discord" then
+        addCardToContainerJSON(deckJSON, curCardName)
+      end
     else
       -- end if (nil ~= curCardInfo)
       printToAll("Failed to find card with name \"" .. curCardName .. "\".", { 1, 0, 0 })
@@ -1831,12 +1830,14 @@ function spawnAllDecksAfterDelayB()
   deckJSON.ContainedObjects = {}
   deckJSON.DeckIDs = {}
 
-  for cardSaveID = 125, 102, -1 do
+  for cardSaveID = shared.MAX_DENIZEN, shared.MIN_DENIZEN, -1 do
     curCardName = shared.normalCardsBySaveID[cardSaveID]
     curCardInfo = shared.cardsTable[curCardName]
 
     if (nil ~= curCardInfo) then
-      addCardToContainerJSON(deckJSON, curCardName)
+      if curCardInfo.suit == "Order" then
+        addCardToContainerJSON(deckJSON, curCardName)
+      end
     else
       -- end if (nil ~= curCardInfo)
       printToAll("Failed to find card with name \"" .. curCardName .. "\".", { 1, 0, 0 })
@@ -1874,12 +1875,14 @@ function spawnAllDecksAfterDelayB()
   deckJSON.ContainedObjects = {}
   deckJSON.DeckIDs = {}
 
-  for cardSaveID = 149, 126, -1 do
+  for cardSaveID = shared.MAX_DENIZEN, shared.MIN_DENIZEN, -1 do
     curCardName = shared.normalCardsBySaveID[cardSaveID]
     curCardInfo = shared.cardsTable[curCardName]
 
     if (nil ~= curCardInfo) then
-      addCardToContainerJSON(deckJSON, curCardName)
+      if curCardInfo.suit == "Hearth" then
+        addCardToContainerJSON(deckJSON, curCardName)
+      end
     else
       -- end if (nil ~= curCardInfo)
       printToAll("Failed to find card with name \"" .. curCardName .. "\".", { 1, 0, 0 })
@@ -1917,12 +1920,14 @@ function spawnAllDecksAfterDelayB()
   deckJSON.ContainedObjects = {}
   deckJSON.DeckIDs = {}
 
-  for cardSaveID = 173, 150, -1 do
+  for cardSaveID = shared.MAX_DENIZEN, shared.MIN_DENIZEN, -1 do
     curCardName = shared.normalCardsBySaveID[cardSaveID]
     curCardInfo = shared.cardsTable[curCardName]
 
     if (nil ~= curCardInfo) then
-      addCardToContainerJSON(deckJSON, curCardName)
+      if curCardInfo.suit == "Nomad" then
+        addCardToContainerJSON(deckJSON, curCardName)
+      end
     else
       -- end if (nil ~= curCardInfo)
       printToAll("Failed to find card with name \"" .. curCardName .. "\".", { 1, 0, 0 })
@@ -1960,12 +1965,14 @@ function spawnAllDecksAfterDelayB()
   deckJSON.ContainedObjects = {}
   deckJSON.DeckIDs = {}
 
-  for cardSaveID = 197, 174, -1 do
+  for cardSaveID = shared.MAX_DENIZEN, shared.MIN_DENIZEN, -1 do
     curCardName = shared.normalCardsBySaveID[cardSaveID]
     curCardInfo = shared.cardsTable[curCardName]
 
     if (nil ~= curCardInfo) then
-      addCardToContainerJSON(deckJSON, curCardName)
+      if curCardInfo.suit == "Beast" then
+        addCardToContainerJSON(deckJSON, curCardName)
+      end
     else
       -- end if (nil ~= curCardInfo)
       printToAll("Failed to find card with name \"" .. curCardName .. "\".", { 1, 0, 0 })
@@ -2007,7 +2014,7 @@ function spawnAllDecksAfterDelayB()
   deckJSON.ContainedObjects = {}
   deckJSON.DeckIDs = {}
 
-  for cardSaveID = 208, 198, -2 do
+  for cardSaveID = shared.MAX_EDIFICE_RUIN, shared.MIN_EDIFICE_RUIN, -1 do
     curCardName = shared.normalCardsBySaveID[cardSaveID]
     curCardInfo = shared.cardsTable[curCardName]
 
@@ -2054,7 +2061,7 @@ function spawnAllDecksAfterDelayB()
   deckJSON.ContainedObjects = {}
   deckJSON.DeckIDs = {}
 
-  for cardSaveID = 22, 0, -1 do
+  for cardSaveID = shared.MAX_SITE, shared.MIN_SITE, -1 do
     curCardName = shared.sitesBySaveID[cardSaveID]
     curCardInfo = shared.cardsTable[curCardName]
 
@@ -2101,7 +2108,7 @@ function spawnAllDecksAfterDelayB()
   deckJSON.ContainedObjects = {}
   deckJSON.DeckIDs = {}
 
-  for cardSaveID = 237, 218, -1 do
+  for cardSaveID = shared.MAX_RELIC, shared.MIN_RELIC, -1 do
     curCardName = shared.normalCardsBySaveID[cardSaveID]
     curCardInfo = shared.cardsTable[curCardName]
 
@@ -3994,7 +4001,7 @@ function generateSaveString()
       -- Add 24 to represent a facedown site if needed.
       if (("NONE" ~= shared.curMapSites[siteIndex][1]) and
           (true == shared.curMapSites[siteIndex][2])) then
-        curSiteSaveIDs[1] = (shared.cardsTable[shared.curMapSites[siteIndex][1]].saveid + 24)
+        curSiteSaveIDs[1] = (shared.cardsTable[shared.curMapSites[siteIndex][1]].saveid + shared.MIN_SITE_FACEDOWN)
       else
         curSiteSaveIDs[1] = shared.cardsTable[shared.curMapSites[siteIndex][1]].saveid
       end
@@ -5249,11 +5256,11 @@ function hidePieces(playerColor)
 end
 
 function generateRandomWorldDeck(cardsForWorldDeck, cardsForWorldDeckCount, numCardsToChoose)
-  local visionsAvailable = { shared.normalCardsBySaveID[210],
-                             shared.normalCardsBySaveID[211],
-                             shared.normalCardsBySaveID[212],
-                             shared.normalCardsBySaveID[213],
-                             shared.normalCardsBySaveID[214] }
+  local visionsAvailable = {}
+  for saveId = shared.MIN_VISION, shared.MAX_VISION do
+    table.insert(visionsAvailable, shared.normalCardsBySaveID[saveId])
+  end
+  
   local numVisionsAvailable = 5
   local copyCardName
   local sourceSubset = {}
@@ -5280,7 +5287,7 @@ function generateRandomWorldDeck(cardsForWorldDeck, cardsForWorldDeckCount, numC
         printToAll("Warning, there are dispossessed card(s) but no world deck.", { 1, 0, 0 })
       end
 
-      for cardSaveID = 0, 53 do
+      for cardSaveID = shared.MIN_DENIZEN, shared.MIN_DENIZEN + 53 do
         copyCardName = shared.normalCardsBySaveID[cardSaveID]
 
         if (("Longbows" ~= copyCardName) and
@@ -5391,7 +5398,7 @@ function generateRandomRelicDeck()
   local chosenIndex
 
   -- Determine which cards are options to add to the relic deck.
-  for cardSaveID = 218, 237 do
+  for cardSaveID = shared.MIN_RELIC, shared.MAX_RELIC do
     copyCardName = shared.normalCardsBySaveID[cardSaveID]
 
     table.insert(cardsForRelicDeck, copyCardName)
@@ -5610,7 +5617,7 @@ function spawnWorldDeck(removedFromUnderneathCount)
       table.insert(deckJSON.ContainedObjects, cardJSON)
     else
       -- end if (nil ~= curCardInfo)
-      printToAll("Failed to find card with name \"" .. cardName .. "\".", { 1, 0, 0 })
+      printToAll("Failed to find card with name \"" .. curCardName .. "\".", { 1, 0, 0 })
       spawnStatus = shared.STATUS_FAILURE
       break
     end
@@ -6244,7 +6251,7 @@ function loadFromSaveString_1_6_0(saveDataString)
         if (nil ~= shared.sitesBySaveID[parseCode]) then
           shared.loadMapSites[parseMapSiteIndex][1] = shared.sitesBySaveID[parseCode]
           -- If the parse code is >= 24, it represents a facedown site.
-          if (parseCode >= 24) then
+          if (parseCode >= shared.MIN_SITE_FACEDOWN) then
             shared.loadMapSites[parseMapSiteIndex][2] = true
           else
             shared.loadMapSites[parseMapSiteIndex][2] = false
@@ -6606,7 +6613,7 @@ function loadFromSaveString_3_1_0(saveDataString)
 
     -- Finally, if any relics do not exist on the map or the relic deck, add them to the relic deck.
     missingRelicCount = 0
-    for cardSaveID = 218, 237 do
+    for cardSaveID = shared.MIN_RELIC, shared.MAX_RELIC do
       cardName = shared.normalCardsBySaveID[cardSaveID]
       cardFound = false
 
@@ -8283,7 +8290,7 @@ function calculateArchiveExcludingCardSet(activeCardsSet)
   end
 
   -- For every possible card, add it to the archive unless it's already in play
-  for cardSaveID = 0, 197 do
+  for cardSaveID = shared.MIN_DENIZEN, shared.MAX_DENIZEN do
     local cardName = shared.normalCardsBySaveID[cardSaveID]
     
     if (not activeCardsSet[cardName]) then
@@ -8456,7 +8463,7 @@ function handleChronicleAfterSelectSuit()
 
   -- First, make a list of all possible relics, indexing by name for convenience.
   deckRelicsAvailable = {}
-  for cardSaveID = 218, 237 do
+  for cardSaveID = shared.MIN_RELIC, shared.MAX_RELIC do
     cardName = shared.normalCardsBySaveID[cardSaveID]
     deckRelicsAvailable[cardName] = true
   end
@@ -8514,7 +8521,7 @@ function handleChronicleAfterSelectSuit()
   -- All available relics were either in the relic deck or belonged to losing players.  All other relics were on the world map or in the reliquary.
   -- Relics in the reliquary are there because they were already there, or because the winner moved them there at the start of the chronicle phase.
   deckRelicsBeforeShuffle = {}
-  for cardSaveID = 218, 237 do
+  for cardSaveID = shared.MIN_RELIC, shared.MAX_RELIC do
     cardName = shared.normalCardsBySaveID[cardSaveID]
     if (true == deckRelicsAvailable[cardName]) then
       table.insert(deckRelicsBeforeShuffle, cardName)
@@ -8634,7 +8641,7 @@ function handleChronicleAfterSelectSuit()
   shared.curWorldDeckCards = {}
 
   -- Add vision cards to the actual world deck structure so they do not need found elsewhere.
-  for cardSaveID = 210, 214 do
+  for cardSaveID = shared.MIN_VISION, shared.MAX_VISION do
     table.insert(shared.curWorldDeckCards, shared.normalCardsBySaveID[cardSaveID])
     shared.curWorldDeckCardCount = (shared.curWorldDeckCardCount + 1)
   end
@@ -8750,6 +8757,9 @@ function handleChronicleAfterSelectSuit()
 end
 
 function SanityCheckAndRepair()
+  if (manualSetupEnabled) then
+    return
+  end
   startLuaCoroutine(self, "SanityCheckAndRepairCoroutine")
 end
 
