@@ -12,9 +12,9 @@
       hasuniqueback = false 
     },
     {
-      {  }, -- skip card
-      {  }, -- skip card
-      {  }, -- skip card
+      {  }, -- skip template card
+      {  }, -- skip template card
+      {  }, -- skip template card
       { cardName = "BigHouse", suit = "Hearth", cardtype = "Denizen", siteOnly = true },
       { cardName = "Bustling Tavern", suit = "Hearth", cardtype = "Denizen", siteOnly = true },
       { cardName = "Friendly Conversation", suit = "Hearth", cardtype = "Denizen" },
@@ -28,15 +28,15 @@
   )
   InvokeMethod('AddDeck', Global,
     { 
-      deckimage = "http://cloud-3.steamusercontent.com/ugc/1806529457279029392/24FCF529F730964E317690DD2406415AA9431EE1/", 
+      deckimage = "https://cdn.discordapp.com/attachments/1019210076768178196/1025271975293231185/oath-denizen-for-tts_2.png", 
       backimage = "DENIZEN_BACK", 
       deckwidth = 10, 
       deckheight = 2, 
       hasuniqueback = false 
     },
     {
-      {  }, -- skip card
-      {  }, -- skip card
+      {  }, -- skip template card
+      {  }, -- skip template card
       { cardName = "Aggressive Curator", suit = "Order", cardtype = "Denizen", playerOnly = true },
       { cardName = "Brutal Training", suit = "Order", cardtype = "Denizen" },
       { cardName = "Convincing Offer", suit = "Order", cardtype = "Denizen", playerOnly = true },
@@ -51,7 +51,7 @@
   
   InvokeMethod('AddDeck', Global,
     { 
-      deckimage = "http://cloud-3.steamusercontent.com/ugc/1806529457278981365/7872A46561AD8D7E09F1A4BD60D0765E2E27D9CC/", 
+      deckimage = "http://cloud-3.steamusercontent.com/ugc/1794145495333391310/59C9BA82FB37DD410C40D8D9258FFD8E078DB615/", 
       backimage = "DENIZEN_BACK", 
       deckwidth = 10, 
       deckheight = 3, 
@@ -84,7 +84,7 @@
   
   InvokeMethod('AddDeck', Global,
     { 
-      deckimage = "http://cloud-3.steamusercontent.com/ugc/1806529457279015024/7EF38B8EC9D98F28FEEBD3DF7D1B21C7DC144717/", 
+      deckimage = "https://media.discordapp.net/attachments/1019210076768178196/1025283295216414750/oath-denizen-for-tts_2_but_better.png", 
       backimage = "DENIZEN_BACK", 
       deckwidth = 10, 
       deckheight = 3, 
@@ -92,22 +92,23 @@
     },
     {
       { cardName = "Alleyways", suit = "Discord", cardtype = "Denizen" },
-      { cardName = "Bullies", suit = "Discord", cardtype = "Denizen", siteOnly = true },
       { cardName = "Cantankerous Elders", suit = "Discord", cardtype = "Denizen" },
-      { cardName = "Carnival Floats", suit = "Discord", cardtype = "Denizen" },
       { cardName = "Fireworks", suit = "Discord", cardtype = "Denizen" },
-      { cardName = "Hooligans", suit = "Discord", cardtype = "Denizen", siteOnly = true },
-      { cardName = "Inside Agents", suit = "Discord", cardtype = "Denizen" },
-      { cardName = "Junk Dealer", suit = "Discord", cardtype = "Denizen", playerOnly = true },
-      { cardName = "Mad With Power!", suit = "Discord", cardtype = "Denizen", playerOnly = true },
-      { cardName = "Opportunists", suit = "Discord", cardtype = "Denizen", playerOnly = true },
-      { cardName = "Tactical Gift", suit = "Discord", cardtype = "Denizen", playerOnly = true },
-      { cardName = "Urchins", suit = "Discord", cardtype = "Denizen", playerOnly = true },
       { cardName = "A Long Journey", suit = "Nomad", cardtype = "Denizen", siteOnly = true },
       { cardName = "Across the Land", suit = "Nomad", cardtype = "Denizen" },
       { cardName = "Adventurer's Guild", suit = "Nomad", cardtype = "Denizen", siteOnly = true },
       { cardName = "Ancient Guardians", suit = "Nomad", cardtype = "Denizen", siteOnly = true },
+      {}, -- skip template card
+      { cardName = "Bullies", suit = "Discord", cardtype = "Denizen", siteOnly = true },
+      { cardName = "Carnival Floats", suit = "Discord", cardtype = "Denizen" },
+      { cardName = "Hooligans", suit = "Discord", cardtype = "Denizen", siteOnly = true },
+      { cardName = "Inside Agents", suit = "Discord", cardtype = "Denizen" },
+      { cardName = "Junk Dealer", suit = "Discord", cardtype = "Denizen", playerOnly = true },
+      { cardName = "Mad With Power!", suit = "Discord", cardtype = "Denizen", playerOnly = true },
       { cardName = "Noisy Neighbors", suit = "Discord", cardtype = "Denizen", siteOnly = true },
+      { cardName = "Opportunists", suit = "Discord", cardtype = "Denizen", playerOnly = true },
+      { cardName = "Tactical Gift", suit = "Discord", cardtype = "Denizen", playerOnly = true },
+      { cardName = "Urchins", suit = "Discord", cardtype = "Denizen", playerOnly = true },
       { cardName = "High Tide", suit = "Nomad", cardtype = "Denizen", siteOnly = true },
       { cardName = "Navigators", suit = "Nomad", cardtype = "Denizen" },
       { cardName = "Oasis", suit = "Nomad", cardtype = "Denizen", siteOnly = true },
@@ -115,20 +116,6 @@
       { cardName = "Tourist Agency", suit = "Nomad", cardtype = "Denizen", siteOnly = true },
       { cardName = "Traveling Market", suit = "Nomad", cardtype = "Denizen", siteOnly = true },
       { cardName = "Wandering Laborers", suit = "Nomad", cardtype = "Denizen" },
-    }
-  )
-  
-  InvokeMethod('AddDeck', Global,
-    { deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/lands2.jpg", backimage = "SITE_BACK", deckwidth = 2, deckheight = 4, hasuniqueback = false },
-    {
-      { cardName = "AAAAAA", cardtype = "Site", capacity = 3, relicCount = 0 },
-      { cardName = "BBBBBB", cardtype = "Site", capacity = 2, relicCount = 1 },
-      { cardName = "CCCCCC", cardtype = "Site", capacity = 1, relicCount = 1 },
-      { cardName = "DDDDDD", cardtype = "Site", capacity = 2, relicCount = 0 },
-      { cardName = "EEEEEE", cardtype = "Site", capacity = 1, relicCount = 1 },
-      { cardName = "FFFFFF", cardtype = "Site", capacity = 3, relicCount = 0 },
-      { cardName = "GGGGGG", cardtype = "Site", capacity = 2, relicCount = 1 },
-      { cardName = "HHHHHH", cardtype = "Site", capacity = 2, relicCount = 1 }
     }
   )
   
