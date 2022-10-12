@@ -6,6 +6,8 @@
 
 function onLoad(save_state)
 
+  RegisterChatCommands()
+  
   -- make sure all deck data is up to date
   InvokeMethod("UpdateDeckData", Global)
   
@@ -511,29 +513,19 @@ function onLoad(save_state)
     shared.curMapSites = curMapSites
     shared.curMapNormalCards = curMapNormalCards
 
-    shared.curWorldDeckCardCount = shared.initState.curWorldDeckCardCount
     shared.curWorldDeckCards = {}
-    for cardIndex = 1, shared.curWorldDeckCardCount do
+    for cardIndex = 1, #shared.initState.curWorldDeckCards do
       shared.curWorldDeckCards[cardIndex] = shared.initState.curWorldDeckCards[cardIndex]
     end
 
-    shared.curDispossessedDeckCardCount = shared.initState.curDispossessedDeckCardCount
     shared.curDispossessedDeckCards = {}
-    for cardIndex = 1, shared.curDispossessedDeckCardCount do
+    for cardIndex = 1, #shared.initState.curDispossessedDeckCards do
       shared.curDispossessedDeckCards[cardIndex] = shared.initState.curDispossessedDeckCards[cardIndex]
     end
 
-    shared.curRelicDeckCardCount = shared.initState.curRelicDeckCardCount
     shared.curRelicDeckCards = {}
-
-    if ((nil ~= shared.curRelicDeckCardCount) and
-        (shared.curRelicDeckCardCount > 0) and
-        (nil ~= shared.initState.curRelicDeckCards)) then
-      for cardIndex = 1, shared.curRelicDeckCardCount do
-        shared.curRelicDeckCards[cardIndex] = shared.initState.curRelicDeckCards[cardIndex]
-      end
-    else
-      shared.curRelicDeckCardCount = 0
+    for cardIndex = 1, #shared.initState.curRelicDeckCards do
+      shared.curRelicDeckCards[cardIndex] = shared.initState.curRelicDeckCards[cardIndex]
     end
 
     shared.favorBag = getObjectFromGUID(shared.favorBagGuid)
@@ -594,11 +586,8 @@ function onLoad(save_state)
                                   { { "NONE", false }, { "NONE", false }, { "NONE", false } },
                                   { { "NONE", false }, { "NONE", false }, { "NONE", false } },
                                   { { "NONE", false }, { "NONE", false }, { "NONE", false } } }
-    shared.loadWorldDeckInitCardCount = 0
     shared.loadWorldDeckInitCards = {}
-    shared.loadDispossessedDeckInitCardCount = 0
     shared.loadDispossessedDeckInitCards = {}
-    shared.loadRelicDeckInitCardCount = 0
     shared.loadRelicDeckInitCards = {}
 
     shared.loadExpectedSpawnCount = 0
@@ -1084,23 +1073,14 @@ function onSave()
     end
   end
 
-  saveDataTable.curWorldDeckCardCount = shared.curWorldDeckCardCount
   saveDataTable.curWorldDeckCards = {}
-  for cardIndex = 1, shared.curWorldDeckCardCount do
-    saveDataTable.curWorldDeckCards[cardIndex] = shared.curWorldDeckCards[cardIndex]
-  end
+  table.shallowCopy(shared.curWorldDeckCards, saveDataTable.curWorldDeckCards)
 
-  saveDataTable.curDispossessedDeckCardCount = shared.curDispossessedDeckCardCount
   saveDataTable.curDispossessedDeckCards = {}
-  for cardIndex = 1, shared.curDispossessedDeckCardCount do
-    saveDataTable.curDispossessedDeckCards[cardIndex] = shared.curDispossessedDeckCards[cardIndex]
-  end
+  table.shallowCopy(shared.curDispossessedDeckCards, saveDataTable.curDispossessedDeckCards)
 
-  saveDataTable.curRelicDeckCardCount = shared.curRelicDeckCardCount
   saveDataTable.curRelicDeckCards = {}
-  for cardIndex = 1, shared.curRelicDeckCardCount do
-    saveDataTable.curRelicDeckCards[cardIndex] = shared.curRelicDeckCards[cardIndex]
-  end
+  table.shallowCopy(shared.curRelicDeckCards, saveDataTable.curRelicDeckCards)
 
   return JSON.encode(saveDataTable)
 end
@@ -1274,14 +1254,11 @@ function initDefaultGameState()
                                { { "NONE", false }, { "NONE", false }, { "NONE", false } },
                                { { "NONE", false }, { "NONE", false }, { "NONE", false } },
                                { { "NONE", false }, { "NONE", false }, { "NONE", false } } }
-  shared.curDispossessedDeckCardCount = 0
   shared.curDispossessedDeckCards = {}
 
-  shared.curWorldDeckCardCount = 0
   shared.curWorldDeckCards = {}
-  generateRandomWorldDeck({}, 0, 0)
+  generateRandomWorldDeck({}, 0)
 
-  shared.curRelicDeckCardCount = 0
   shared.curRelicDeckCards = {}
   generateRandomRelicDeck()
 
@@ -1336,11 +1313,8 @@ function initDefaultGameState()
                                 { { "NONE", false }, { "NONE", false }, { "NONE", false } },
                                 { { "NONE", false }, { "NONE", false }, { "NONE", false } },
                                 { { "NONE", false }, { "NONE", false }, { "NONE", false } } }
-  shared.loadWorldDeckInitCardCount = 0
   shared.loadWorldDeckInitCards = {}
-  shared.loadDispossessedDeckInitCardCount = 0
   shared.loadDispossessedDeckInitCards = {}
-  shared.loadRelicDeckInitCardCount = 0
   shared.loadRelicDeckInitCards = {}
 
   shared.loadExpectedSpawnCount = 0
@@ -1354,115 +1328,163 @@ function initDefaultGameState()
   shared.loadWaitID = nil
 end
 
-function onChat(message, chatPlayer)
-  local spawnCardName
-  local displayString
+function RegisterChatCommands()
+  
+  InvokeMethod("AddCommand", Global, {
+    identifier = '!pilgrimage',
+    description = 'Spawn 3 random site cards in hand.',
+    eventName = 'OnCommand_Pilgrimage',
+  })
+  
+  InvokeMethod("AddCommand", Global, {
+    identifier = '!card',
+    parameters = {"Card Name"},
+    description = 'Spawn card in hand.',
+    hostOnly = true,
+    eventName = 'OnCommand_Card',
+  })
+  
+  InvokeMethod("AddCommand", Global, {
+    identifier = '!name',
+    description = 'Display or change chronicle name.',
+    hostOnly = true,
+    eventName = 'OnCommand_Name',
+  })
+  
+  InvokeMethod("AddCommand", Global, {
+    identifier = '!reset_chronicle',
+    description = 'Fully resets the chronicle.',
+    hostOnly = true,
+    eventName = 'OnCommand_ResetChronicle',
+  })
+  
+  InvokeMethod("AddCommand", Global, {
+    identifier = '!stats',
+    description = 'Show chronicle stats.',
+    hostOnly = true,
+    eventName = 'OnCommand_Stats',
+  })
 
-  if ("!help" == string.sub(message, 1, 5)) then
-    -- Note that the chat font is not necessarily fixed-width, so alignment is done manually.
-    printToColor("", chatPlayer.color, { 1, 1, 1 })
-    printToColor("Chat commands for all players:", chatPlayer.color, { 1, 1, 1 })
-    printToColor("!help                                                Print this message.", chatPlayer.color, { 1, 1, 1 })
-    printToColor("!pilgrimage                                     Spawn 3 random site cards in hand.", chatPlayer.color, { 1, 1, 1 })
-    printToColor("", chatPlayer.color, { 1, 1, 1 })
-    printToColor("Chat commands only usable by the host:", chatPlayer.color, { 1, 1, 1 })
-    printToColor("===========================================", chatPlayer.color, { 1, 1, 1 })
-    printToColor("!card <Card Name>                        Spawn card in hand.", chatPlayer.color, { 1, 1, 1 })
-    printToColor("!name                                              Display or change chronicle name.", chatPlayer.color, { 1, 1, 1 })
-    printToColor("!reset_chronicle                             Fully resets the chronicle.", chatPlayer.color, { 1, 1, 1 })
-    printToColor("!stats                                               Show chronicle stats.", chatPlayer.color, { 1, 1, 1 })
+  InvokeMethod("AddCommand", Global, {
+    identifier = '!repair',
+    description = 'Search for duplicate cards and replace them.',
+    hostOnly = true,
+    eventName = 'OnCommand_Repair',
+  })
+  
+  InvokeMethod("AddCommand", Global, {
+    identifier = '!show_world_deck',
+    description = 'Show contents of the world deck.',
+    hostOnly = true,
+    eventName = 'OnCommand_ShowWorldDeck',
+  })
+  
+  InvokeMethod("AddCommand", Global, {
+    identifier = '!show_relic_deck',
+    description = 'Show contents of the relic deck.',
+    hostOnly = true,
+    eventName = 'OnCommand_ShowRelicDeck',
+  })
+  
+  InvokeMethod("AddCommand", Global, {
+    identifier = '!show_dispossessed',
+    description = 'Show contents of the dispossessed.',
+    hostOnly = true,
+    eventName = 'OnCommand_ShowDispossessed',
+  })
+  
+  InvokeMethod("AddCommand", Global, {
+    identifier = '!show_pieces',
+    description = 'Make all game pieces visible.',
+    hostOnly = true,
+    eventName = 'OnCommand_ShowPieces',
+  })
+  
+  InvokeMethod("AddCommand", Global, {
+    identifier = '!hide_pieces',
+    description = 'Make all game pieces invisible.',
+    hostOnly = true,
+    eventName = 'OnCommand_HidePieces',
+  })
+  
+end
 
-    printToColor("", chatPlayer.color, { 1, 1, 1 })
-    printToColor("", chatPlayer.color, { 1, 1, 1 })
-  elseif ("!pilgrimage" == string.sub(message, 1, 11)) then
-    runPilgrimageCommand(chatPlayer)
+-- Chat Command to spawn card in hand.
+function Callback.OnCommand_Card(chatPlayer, ...)
+  local spawnCardName = table.concat(table.pack(...), ' ')
+  spawnSingleCard(spawnCardName, false, shared.handCardSpawnPositions[chatPlayer.color][2], shared.handCardYRotations[chatPlayer.color], true)
+end
+
+-- Chat Command to display or change chronicle name.
+function Callback.OnCommand_Name(chatPlayer)
+  showChronicleNameDialog()
+end
+
+-- Chat Command to display or change chronicle name.
+function Callback.OnCommand_ResetChronicle(chatPlayer)
+  if (false == shared.isGameInProgress) then
+    if (false == shared.isChronicleInProgress) then
+      shared.pendingEraseType = "reset"
+      Global.UI.setAttribute("panel_erase_chronicle_check", "active", true)
+    else
+      printToAll("Error, please wait until the Chronicle phase is finished.", { 1, 0, 0 })
+    end
   else
-    --
-    -- Begin processing other commands.
-    --
+    printToAll("Error, please wait until the game is finished.", { 1, 0, 0 })
+  end
+end
 
-    -- Only process these commands for the host.
-    if (true == chatPlayer.host) then
-      -- If the host repeats a command, treat it as confirmation.
-      if (message == shared.lastHostChatMessage) then
-        shared.isCommandConfirmed = true
-        -- Reset the last message so that typing a command 3 times does not count as 2 confirmations.
-        shared.lastHostChatMessage = ""
-      else
-        shared.isCommandConfirmed = false
-        -- Save the host chat message for possible future command confirmation.
-        shared.lastHostChatMessage = message
-      end
+-- Chat Command to show chronicle stats.
+function Callback.OnCommand_Stats(chatPlayer)
+  showStats()
+end
 
-      if ("!card" == string.sub(message, 1, 5)) then
-        spawnCardName = string.sub(message, 7)
-        if (nil ~= shared.cardsTable[spawnCardName]) then
-          -- Spawn into the middle of the player's hand zone.
-          spawnSingleCard(spawnCardName, false, shared.handCardSpawnPositions[chatPlayer.color][2], shared.handCardYRotations[chatPlayer.color], true)
-        else
-          printToAll("Unknown card.  Capitalization and spacing matter. ", { 1, 0, 0 })
-        end
-      elseif ("!stats" == string.sub(message, 1, 16)) then
-        showStats()
-      elseif ("!show_world_deck" == string.sub(message, 1, 16)) then
-        displayString = "World deck:\n"
-        for _, curCard in ipairs(shared.curWorldDeckCards) do
-          displayString = displayString .. "\n" .. curCard
-        end
-        showDataString(displayString)
-      elseif ("!show_relic_deck" == string.sub(message, 1, 16)) then
-        displayString = "Relic deck:\n"
-        for _, curCard in ipairs(shared.curRelicDeckCards) do
-          displayString = displayString .. "\n" .. curCard
-        end
-        showDataString(displayString)
-      elseif ("!show_dispossessed" == string.sub(message, 1, 18)) then
-        displayString = "Dispossessed cards:\n"
-        for _, curCard in ipairs(shared.curDispossessedDeckCards) do
-          displayString = displayString .. "\n" .. curCard
-        end
-        showDataString(displayString)
-      elseif ("!show_pieces" == string.sub(message, 1, 12)) then
-        -- Undocumented command that shows game pieces.
+function Callback.OnCommand_Repair(chatPlayer)
+  SanityCheckAndRepair()
+end
 
-        for _, curColor in ipairs(shared.playerColors) do
-          showPieces(curColor)
-        end
+-- Chat Command to show contents of the world deck
+function Callback.OnCommand_ShowWorldDeck(chatPlayer)
+  displayString = "World deck:\n"
+  for _, curCard in ipairs(shared.curWorldDeckCards) do
+    displayString = displayString .. "\n" .. curCard
+  end
+  showDataString(displayString)
+end
 
-        showGeneralPieces()
-      elseif ("!hide_pieces" == string.sub(message, 1, 12)) then
-        -- Undocumented command that hides game pieces.
+-- Chat Command to show contents of the relic deck.
+function Callback.OnCommand_ShowRelicDeck(chatPlayer)
+  displayString = "Relic deck:\n"
+  for _, curCard in ipairs(shared.curRelicDeckCards) do
+    displayString = displayString .. "\n" .. curCard
+  end
+  showDataString(displayString)
+end
 
-        for _, curColor in ipairs(shared.playerColors) do
-          hidePieces(curColor)
-        end
+-- Chat Command to show contents of the relic deck.
+function Callback.OnCommand_ShowDispossessed(chatPlayer)
+  displayString = "Dispossessed cards:\n"
+  for _, curCard in ipairs(shared.curDispossessedDeckCards) do
+    displayString = displayString .. "\n" .. curCard
+  end
+  showDataString(displayString)
+end
 
-        hideGeneralPieces()
-      elseif ("!name" == string.sub(message, 1, 5)) then
-        showChronicleNameDialog()
-      elseif ("!finish_load" == string.sub(message, 1, 12)) then
-        printToAll("Attempting to manually finish module load process.", { 1, 1, 1 })
-        finishOnLoad()
-      elseif ("!reset_chronicle" == string.sub(message, 1, 16)) then
-        if (false == shared.isGameInProgress) then
-          if (false == shared.isChronicleInProgress) then
-            shared.pendingEraseType = "reset"
-            Global.UI.setAttribute("panel_erase_chronicle_check", "active", true)
-          else
-            printToAll("Error, please wait until the Chronicle phase is finished.", { 1, 0, 0 })
-          end
-        else
-          printToAll("Error, please wait until the game is finished.", { 1, 0, 0 })
-        end
-      elseif ("!repair" == string.sub(message, 1, 7)) then
-        SanityCheckAndRepair()
-      elseif ("!" == string.sub(message, 1, 1)) then
-        printToAll("Error, unknown command.", { 1, 0, 0 })
-      else
-        -- Not a command.  Nothing needs done.
-      end
-    end -- end if (true == chatPlayer.host)
-  end -- end processing other commands
+-- Chat Command to make all game pieces visible
+function Callback.OnCommand_ShowPieces(chatPlayer)
+  for _, curColor in ipairs(shared.playerColors) do
+    showPieces(curColor)
+  end
+  showGeneralPieces()
+end
+
+-- Chat Command to make all game pieces invisible
+function Callback.OnCommand_HidePieces(chatPlayer)
+  for _, curColor in ipairs(shared.playerColors) do
+    hidePieces(curColor)
+  end
+
+  hideGeneralPieces()
 end
 
 function importChronicleButtonClicked(buttonObject, playerColor, altClick)
@@ -2217,11 +2239,25 @@ function showChronicleNameDialog()
   Global.UI.setAttribute("panel_text", "active", true)
 end
 
-function runPilgrimageCommand(player)
+function Method.OpenDataEditor(text, description, onCloseMethod, methodOwner)
+  shared.pendingDataString = text
+  shared.renamingChronicle = false
+  
+  onDataEditorConfirm = function(...) InvokeMethod(onCloseMethod, methodOwner, ...) end
+
+  Global.UI.setAttribute("panel_text_description", "text", description)
+  Global.UI.setAttribute("panel_text_data", "text", text)
+  Global.UI.setAttribute("ok_panel_text", "active", false)
+  Global.UI.setAttribute("ok_panel_text", "textColor", "#FFFFFFFF")
+  Global.UI.setAttribute("cancel_panel_text", "active", true)
+  Global.UI.setAttribute("confirm_panel_text", "active", true)
+  Global.UI.setAttribute("panel_text", "active", true)
+end
+
+function Callback.OnCommand_Pilgrimage(player)
   local availableSites = {}
   local chosenSites = {}
   local removeSiteIndex = 0
-  local numAvailableSites = 0
   local siteUsed = false
   local siteName
 
@@ -2239,18 +2275,11 @@ function runPilgrimageCommand(player)
 
     if (false == siteUsed) then
       table.insert(availableSites, siteName)
-      numAvailableSites = (numAvailableSites + 1)
     end
   end
 
   -- Choose 3 random available sites.
-  chosenSites = {}
-  for spawnCount = 1, 3 do
-    removeSiteIndex = math.random(1, numAvailableSites)
-    table.insert(chosenSites, availableSites[removeSiteIndex])
-    table.remove(availableSites, removeSiteIndex)
-    numAvailableSites = (numAvailableSites - 1)
-  end
+  chosenSites = DrawRandomCardsWeighted(availableSites, 3)
 
   -- Spawn 3 random available sites to the player's hand with a slight delay to allow them to adjust and not stack.
   Wait.time(function()
@@ -2904,9 +2933,15 @@ function closePanelText(player, value, id)
     elseif ("cancel" == value) then
       -- Nothing needs done.
     elseif ("confirm" == value) then
-      -- This is only used for the import case.  Since this erases the chronicle, double check first.
-      shared.pendingEraseType = "import"
-      Global.UI.setAttribute("panel_erase_chronicle_check", "active", true)
+      if onDataEditorConfirm then
+        onDataEditorConfirm(shared.pendingDataString)
+        onDataEditorConfirm = nil
+      else
+        -- This is only happens for the import case.  Since this erases the chronicle, double check first.
+        shared.pendingEraseType = "import"
+        Global.UI.setAttribute("panel_erase_chronicle_check", "active", true)
+      end
+      
     else
       -- This should never happen.
       printToAll("Error, invalid state.", { 1, 0, 0 })
@@ -3051,23 +3086,21 @@ function SpawnDispossessedBag()
     end
 
     -- Create a copy of the dispossessed cards.
-    for cardIndex = 1, shared.curDispossessedDeckCardCount do
-      dispossessedUnshuffled[cardIndex] = shared.curDispossessedDeckCards[cardIndex]
-    end
+    table.shallowCopy(shared.curDispossessedDeckCards, dispossessedUnshuffled)
 
     -- Create a shuffled list of dispossessed cards.
-    for cardIndex = 1, shared.curDispossessedDeckCardCount do
+    for cardIndex = 1, #shared.dispossessedUnshuffled do
       removeCardIndex = math.random(1, #dispossessedUnshuffled)
       dispossessedShuffled[cardIndex] = dispossessedUnshuffled[removeCardIndex]
       table.remove(dispossessedUnshuffled, removeCardIndex)
     end
 
     -- Spawn the shuffled dispossessed cards in a bag.
-    if (0 == shared.curDispossessedDeckCardCount) then
+    if (0 == #shared.curDispossessedDeckCards) then
       shared.bagJSON.ContainedObjects = nil
     else
       shared.bagJSON.ContainedObjects = {}
-      for cardIndex = 1, shared.curDispossessedDeckCardCount do
+      for cardIndex = 1, #shared.dispossessedShuffled do
         addCardToContainerJSON(shared.bagJSON, dispossessedShuffled[cardIndex])
       end
     end
@@ -3139,7 +3172,6 @@ function removeDispossessedBag()
       dispossessedBag = getObjectFromGUID(shared.dispossessedBagGuid)
       if (nil ~= dispossessedBag) then
         -- Scan the dispossessed bag.
-        shared.curDispossessedDeckCardCount = 0
         shared.curDispossessedDeckCards = {}
         -- Note that since this is a bag, getData() is needed rather than getObjects().
         bagObjects = dispossessedBag.getData().ContainedObjects
@@ -3154,7 +3186,6 @@ function removeDispossessedBag()
                 if (nil ~= cardInfo) then
                   if ("Denizen" == cardInfo.cardtype) then
                     table.insert(shared.curDispossessedDeckCards, cardName)
-                    shared.curDispossessedDeckCardCount = (shared.curDispossessedDeckCardCount + 1)
                   else
                     printToAll("Warning, found unknown card \"" .. cardName .. "\" in the dispossessed bag.", { 1, 0, 0 })
                   end
@@ -3169,7 +3200,6 @@ function removeDispossessedBag()
               if (nil ~= cardInfo) then
                 if ("Denizen" == cardInfo.cardtype) then
                   table.insert(shared.curDispossessedDeckCards, cardName)
-                  shared.curDispossessedDeckCardCount = (shared.curDispossessedDeckCardCount + 1)
                 else
                   printToAll("Warning, found unknown card \"" .. cardName .. "\" in the dispossessed bag.", { 1, 0, 0 })
                 end
@@ -3182,7 +3212,7 @@ function removeDispossessedBag()
           end
         end
 
-        printToAll("The dispossessed deck now has " .. shared.curDispossessedDeckCardCount .. " cards.", { 0, 0.8, 0 })
+        printToAll("The dispossessed deck now has " .. #shared.curDispossessedDeckCards .. " cards.", { 0, 0.8, 0 })
 
         -- Destroy the dispossessed bag.
         destroyObject(dispossessedBag)
@@ -3664,13 +3694,6 @@ function cancelSelectOath(player, value, id)
 end
 
 function randomizeChronicle()
-  local availableSites
-  local numAvailableSites = 0
-  local removeSiteIndex = 0
-  local availableDenizens
-  local availableDenizenIndex
-  local numAvailableDenizens = 0
-  local removeDenizenIndex = 0
 
   printToAll("Randomizing chronicle.", { 1, 1, 1 })
 
@@ -3679,19 +3702,16 @@ function randomizeChronicle()
   --
 
   -- First, make a list of all site names.
-  availableSites = {}
-  numAvailableSites = 0
+  local availableSites = {}
   for siteCode = 0, (shared.NUM_TOTAL_SITES - 1) do
     -- Copy into 1-based array.
     availableSites[siteCode + 1] = shared.sitesBySaveID[siteCode]
-    numAvailableSites = (numAvailableSites + 1)
   end
   -- Next, assign random available sites.
   for siteIndex = 1, 8 do
-    local removeSiteIndex = math.random(1, numAvailableSites)
+    local removeSiteIndex = PickRandomCardWeighted(availableSites)
     shared.curMapSites[siteIndex][1] = availableSites[removeSiteIndex]
     table.remove(availableSites, removeSiteIndex)
-    numAvailableSites = (numAvailableSites - 1)
   end
   -- Next, reset the facedown status of all sites to default.
   shared.curMapSites[1][2] = false
@@ -3716,19 +3736,11 @@ function randomizeChronicle()
   --
 
   -- First, make a list of all denizen card names.
-  availableDenizens = {}
-  numAvailableDenizens = 0
-  availableDenizenIndex = 1
-  for denizenCode = 0, (shared.NUM_TOTAL_DENIZENS - 1) do
-    -- Copy into 1-based array.
-    availableDenizens[availableDenizenIndex] = shared.normalCardsBySaveID[denizenCode]
-    availableDenizenIndex = (availableDenizenIndex + 1)
-    numAvailableDenizens = (numAvailableDenizens + 1)
-  end
+  local availableDenizens = {}
+  table.shallowCopy(shared.normalCardsBySaveID[denizenCode], availableDenizens, shared.MIN_DENIZEN, shared.MAX_DENIZEN)
   -- Now, generate a randomized world deck using the denizens as card options, and 54 denizens as the number to choose.
-  generateRandomWorldDeck(availableDenizens, numAvailableDenizens, 54)
+  generateRandomWorldDeck(availableDenizens, 54)
   -- Generate randomized relic deck.
-  shared.curRelicDeckCardCount = 0
   shared.curRelicDeckCards = {}
   generateRandomRelicDeck()
 
@@ -3736,7 +3748,6 @@ function randomizeChronicle()
   -- Reset dispossessed deck.
   --
 
-  shared.curDispossessedDeckCardCount = 0
   shared.curDispossessedDeckCards = {}
 
   -- Finally, generate the chronicle state string.
@@ -4036,8 +4047,8 @@ function generateSaveString()
   -- Generate world deck data string.
   --
   if (shared.STATUS_SUCCESS == shared.saveStatus) then
-    worldDeckDataString = BaseEncode(shared.curWorldDeckCardCount, MaximumBase, 2)
-    for cardIndex = 1, shared.curWorldDeckCardCount do
+    worldDeckDataString = BaseEncode(#shared.curWorldDeckCards, MaximumBase, 2)
+    for cardIndex = 1, #shared.curWorldDeckCards do
       deckCardID = shared.cardsTable[shared.curWorldDeckCards[cardIndex]].saveid
       worldDeckDataString = worldDeckDataString .. BaseEncode(deckCardID, MaximumBase, 2)   -- Card ID for denizen card or vision
     end
@@ -4047,8 +4058,8 @@ function generateSaveString()
   -- Generate dispossessed data string.
   --
   if (shared.STATUS_SUCCESS == shared.saveStatus) then
-    dispossessedDataString = BaseEncode(shared.curDispossessedDeckCardCount, MaximumBase, 2)
-    for cardIndex = 1, shared.curDispossessedDeckCardCount do
+    dispossessedDataString = BaseEncode(#shared.curDispossessedDeckCards, MaximumBase, 2)
+    for cardIndex = 1, #shared.curDispossessedDeckCards do
       deckCardID = shared.cardsTable[shared.curDispossessedDeckCards[cardIndex]].saveid
       dispossessedDataString = dispossessedDataString .. BaseEncode(deckCardID, MaximumBase, 2)   -- Card ID for denizen card or vision
     end
@@ -4058,8 +4069,8 @@ function generateSaveString()
   -- Generate relic deck data string.
   --
   if (shared.STATUS_SUCCESS == shared.saveStatus) then
-    relicDeckDataString = BaseEncode(shared.curRelicDeckCardCount, MaximumBase, 2)
-    for cardIndex = 1, shared.curRelicDeckCardCount do
+    relicDeckDataString = BaseEncode(#shared.curRelicDeckCards, MaximumBase, 2)
+    for cardIndex = 1, #shared.curRelicDeckCards do
       deckCardID = shared.cardsTable[shared.curRelicDeckCards[cardIndex]].saveid
       relicDeckDataString = relicDeckDataString .. BaseEncode(deckCardID, MaximumBase, 2)   -- Card ID for relic card
     end
@@ -4458,23 +4469,14 @@ function setupLoadedState(setupGameAfter)
     shared.curMapNormalCards[loopIndex][3][2] = loopValue[3][2]
   end
 
-  shared.curWorldDeckCardCount = shared.loadWorldDeckInitCardCount
   shared.curWorldDeckCards = {}
-  for cardIndex = 1, shared.curWorldDeckCardCount do
-    shared.curWorldDeckCards[cardIndex] = shared.loadWorldDeckInitCards[cardIndex]
-  end
+  table.shallowCopy(shared.loadWorldDeckInitCards, shared.curWorldDeckCards)
 
-  shared.curDispossessedDeckCardCount = shared.loadDispossessedDeckInitCardCount
   shared.curDispossessedDeckCards = {}
-  for cardIndex = 1, shared.curDispossessedDeckCardCount do
-    shared.curDispossessedDeckCards[cardIndex] = shared.loadDispossessedDeckInitCards[cardIndex]
-  end
+  table.shallowCopy(shared.loadDispossessedDeckInitCards, shared.curDispossessedDeckCards)
 
-  shared.curRelicDeckCardCount = shared.loadRelicDeckInitCardCount
   shared.curRelicDeckCards = {}
-  for cardIndex = 1, shared.curRelicDeckCardCount do
-    shared.curRelicDeckCards[cardIndex] = shared.loadRelicDeckInitCards[cardIndex]
-  end
+  table.shallowCopy(shared.loadRelicDeckInitCards, shared.curRelicDeckCards)
 
   -- Update player board exile/citizen flipping status.
   for i, curColor in ipairs(shared.playerColors) do
@@ -4677,8 +4679,6 @@ function setupGame()
   InvokeEvent("SetupTurnOrder")
   InvokeEvent("BeforeGameStart")
   
-  local availableSites
-  local numAvailableSites = 0
   local curSiteName
   local siteCardName
   local siteCardInfo
@@ -4720,25 +4720,20 @@ function setupGame()
   if (false == shared.isManualControlEnabled) then
     -- If needed, generate randomized relic deck.  This is done now before relics are dealt.
     if ((1 == shared.curGameCount) and (false == tutorialEnabled)) then
-      shared.curRelicDeckCardCount = 0
       shared.curRelicDeckCards = {}
       generateRandomRelicDeck()
 
       -- This is the first game of a chronicle.  First, make a list of all site names.
-      availableSites = {}
-      for siteCode = 0, (shared.NUM_TOTAL_SITES - 1) do
-        -- Copy into 1-based array.
-        availableSites[siteCode + 1] = shared.sitesBySaveID[siteCode]
-      end
-      numAvailableSites = shared.NUM_TOTAL_SITES
+      local availableSites = {}
+      table.shallowCopy(shared.sitesBySaveID, availableSites, shared.MIN_SITE, shared.MAX_SITE)
+      
       -- Next, determine which sites are being used and remove them from the available list.
       for siteIndex = 1, 8 do
         curSiteName = shared.curMapSites[siteIndex][1]
         if ("NONE" ~= curSiteName) then
-          for removeSiteIndex = 1, numAvailableSites do
+          for removeSiteIndex = 1, #availableSites do
             if (curSiteName == availableSites[removeSiteIndex]) then
               table.remove(availableSites, removeSiteIndex)
-              numAvailableSites = (numAvailableSites - 1)
               break
             end
           end
@@ -4748,7 +4743,7 @@ function setupGame()
       for siteIndex = 1, 8 do
         if ("NONE" == shared.curMapSites[siteIndex][1]) then
           -- Pick a random site from the available list.
-          newSiteIndex = math.random(1, numAvailableSites)
+          newSiteIndex = PickRandomCardWeighted(availableSites)
 
           -- Add site card facedown.
           shared.curMapSites[siteIndex][1] = availableSites[newSiteIndex]
@@ -4759,7 +4754,6 @@ function setupGame()
 
           -- Remove the site from the available list.
           table.remove(availableSites, newSiteIndex)
-          numAvailableSites = (numAvailableSites - 1)
         else
           -- Spawn the physical site card faceup or facedown depending on the state.
           spawnSingleCard(shared.curMapSites[siteIndex][1], shared.curMapSites[siteIndex][2], shared.siteCardSpawnPositions[siteIndex], 180, false)
@@ -4808,13 +4802,12 @@ function setupGame()
                     cardSpawnPosition[3] = shared.normalCardBaseSpawnPositions[siteIndex][3]
 
                     -- This is an empty slot, so deal a relic facedown.
-                    if (shared.curRelicDeckCardCount > 0) then
-                      shared.curMapNormalCards[siteIndex][normalCardIndex][1] = shared.curRelicDeckCards[shared.curRelicDeckCardCount]
+                    if (#shared.curRelicDeckCards > 0) then
+                      shared.curMapNormalCards[siteIndex][normalCardIndex][1] = shared.curRelicDeckCards[#shared.curRelicDeckCards]
                       shared.curMapNormalCards[siteIndex][normalCardIndex][2] = true
                       spawnSingleCard(shared.curMapNormalCards[siteIndex][normalCardIndex][1], shared.curMapNormalCards[siteIndex][normalCardIndex][2], cardSpawnPosition, 180, false)
 
-                      table.remove(shared.curRelicDeckCards, shared.curRelicDeckCardCount)
-                      shared.curRelicDeckCardCount = (shared.curRelicDeckCardCount - 1)
+                      table.remove(shared.curRelicDeckCards)
                     else
                       -- This should never happen, but avoids problems with old chronicles that had missing relics.
                       printToAll("Error, ran out of relics while dealing.", { 1, 0, 0 })
@@ -4838,7 +4831,7 @@ function setupGame()
 
       if (false == shared.randomEnabled) then
         -- This is the normal case for the first game, so create a randomized default world deck with visions included.
-        generateRandomWorldDeck({}, 0, 0)
+        generateRandomWorldDeck({}, 0)
       else
         -- For random setup, actually DO NOT generate a randomized world deck, since a random world deck was already generated
         -- that specifically has 3 denizens on the bottom which are compatible with the map (not player-only).
@@ -4908,7 +4901,7 @@ function setupGame()
               cardSpawnPosition[2] = shared.normalCardBaseSpawnPositions[siteIndex][2]
               cardSpawnPosition[3] = shared.normalCardBaseSpawnPositions[siteIndex][3]
 
-              shared.curMapNormalCards[siteIndex][1][1] = shared.curWorldDeckCards[shared.curWorldDeckCardCount - deckOffset]
+              shared.curMapNormalCards[siteIndex][1][1] = shared.curWorldDeckCards[#shared.curWorldDeckCards - deckOffset]
               deckOffset = (deckOffset + 1)
 
               spawnSingleCard(shared.curMapNormalCards[siteIndex][1][1], shared.curMapNormalCards[siteIndex][1][2], cardSpawnPosition, 180, false)
@@ -4921,7 +4914,7 @@ function setupGame()
     if (false == tutorialEnabled) then
       -- Spawn the bottom 3 world deck cards on the discard piles, facedown.
       for discardIndex = 1, 3 do
-        spawnSingleCard(shared.curWorldDeckCards[shared.curWorldDeckCardCount - deckOffset], true, shared.discardPileSpawnPositions[discardIndex], 90, false)
+        spawnSingleCard(shared.curWorldDeckCards[#shared.curWorldDeckCards - deckOffset], true, shared.discardPileSpawnPositions[discardIndex], 90, false)
         deckOffset = (deckOffset + 1)
       end
 
@@ -4930,7 +4923,7 @@ function setupGame()
         -- Check if the player is active before dealing to them.
         if (true == shared.curPlayerStatus[curColor][2]) then
           for cardIndex = 1, 3 do
-            spawnSingleCard(shared.curWorldDeckCards[shared.curWorldDeckCardCount - deckOffset], false, shared.handCardSpawnPositions[curColor][cardIndex], shared.handCardYRotations[curColor], true)
+            spawnSingleCard(shared.curWorldDeckCards[#shared.curWorldDeckCards - deckOffset], false, shared.handCardSpawnPositions[curColor][cardIndex], shared.handCardYRotations[curColor], true)
             deckOffset = (deckOffset + 1)
           end
         end
@@ -4946,46 +4939,46 @@ function setupGame()
       local hinterlandDiscards = {}
       local curColor
 
-      table.insert(cradleDiscards, shared.curWorldDeckCards[shared.curWorldDeckCardCount - deckOffset])
+      table.insert(cradleDiscards, shared.curWorldDeckCards[#shared.curWorldDeckCards - deckOffset])
       deckOffset = (deckOffset + 1)
-      table.insert(provincesDiscards, shared.curWorldDeckCards[shared.curWorldDeckCardCount - deckOffset])
+      table.insert(provincesDiscards, shared.curWorldDeckCards[#shared.curWorldDeckCards - deckOffset])
       deckOffset = (deckOffset + 1)
-      table.insert(hinterlandDiscards, shared.curWorldDeckCards[shared.curWorldDeckCardCount - deckOffset])
+      table.insert(hinterlandDiscards, shared.curWorldDeckCards[#shared.curWorldDeckCards - deckOffset])
       deckOffset = (deckOffset + 1)
 
       -- Spawn a facedown adviser for each player, adding the other hand cards for that player to the various discard decks.
 
       curColor = "Purple"
-      spawnSingleCard(shared.curWorldDeckCards[shared.curWorldDeckCardCount - deckOffset], true, shared.tutorialAdviserPositions[curColor], shared.handCardYRotations[curColor], false)
+      spawnSingleCard(shared.curWorldDeckCards[#shared.curWorldDeckCards - deckOffset], true, shared.tutorialAdviserPositions[curColor], shared.handCardYRotations[curColor], false)
       deckOffset = (deckOffset + 1)
       
-      table.insert(provincesDiscards, shared.curWorldDeckCards[shared.curWorldDeckCardCount - deckOffset])
+      table.insert(provincesDiscards, shared.curWorldDeckCards[#shared.curWorldDeckCards - deckOffset])
       deckOffset = (deckOffset + 1)
-      table.insert(provincesDiscards, shared.curWorldDeckCards[shared.curWorldDeckCardCount - deckOffset])
+      table.insert(provincesDiscards, shared.curWorldDeckCards[#shared.curWorldDeckCards - deckOffset])
       deckOffset = (deckOffset + 1)
 
       curColor = "Red"
-      spawnSingleCard(shared.curWorldDeckCards[shared.curWorldDeckCardCount - deckOffset], true, shared.tutorialAdviserPositions[curColor], shared.handCardYRotations[curColor], false)
+      spawnSingleCard(shared.curWorldDeckCards[#shared.curWorldDeckCards - deckOffset], true, shared.tutorialAdviserPositions[curColor], shared.handCardYRotations[curColor], false)
       deckOffset = (deckOffset + 1)
-      table.insert(hinterlandDiscards, shared.curWorldDeckCards[shared.curWorldDeckCardCount - deckOffset])
+      table.insert(hinterlandDiscards, shared.curWorldDeckCards[#shared.curWorldDeckCards - deckOffset])
       deckOffset = (deckOffset + 1)
-      table.insert(hinterlandDiscards, shared.curWorldDeckCards[shared.curWorldDeckCardCount - deckOffset])
+      table.insert(hinterlandDiscards, shared.curWorldDeckCards[#shared.curWorldDeckCards - deckOffset])
       deckOffset = (deckOffset + 1)
 
       curColor = "Blue"
-      spawnSingleCard(shared.curWorldDeckCards[shared.curWorldDeckCardCount - deckOffset], true, shared.tutorialAdviserPositions[curColor], shared.handCardYRotations[curColor], false)
+      spawnSingleCard(shared.curWorldDeckCards[#shared.curWorldDeckCards - deckOffset], true, shared.tutorialAdviserPositions[curColor], shared.handCardYRotations[curColor], false)
       deckOffset = (deckOffset + 1)
-      table.insert(hinterlandDiscards, shared.curWorldDeckCards[shared.curWorldDeckCardCount - deckOffset])
+      table.insert(hinterlandDiscards, shared.curWorldDeckCards[#shared.curWorldDeckCards - deckOffset])
       deckOffset = (deckOffset + 1)
-      table.insert(hinterlandDiscards, shared.curWorldDeckCards[shared.curWorldDeckCardCount - deckOffset])
+      table.insert(hinterlandDiscards, shared.curWorldDeckCards[#shared.curWorldDeckCards - deckOffset])
       deckOffset = (deckOffset + 1)
 
       curColor = "Yellow"
-      spawnSingleCard(shared.curWorldDeckCards[shared.curWorldDeckCardCount - deckOffset], true, shared.tutorialAdviserPositions[curColor], shared.handCardYRotations[curColor], false)
+      spawnSingleCard(shared.curWorldDeckCards[#shared.curWorldDeckCards - deckOffset], true, shared.tutorialAdviserPositions[curColor], shared.handCardYRotations[curColor], false)
       deckOffset = (deckOffset + 1)
-      table.insert(cradleDiscards, shared.curWorldDeckCards[shared.curWorldDeckCardCount - deckOffset])
+      table.insert(cradleDiscards, shared.curWorldDeckCards[#shared.curWorldDeckCards - deckOffset])
       deckOffset = (deckOffset + 1)
-      table.insert(cradleDiscards, shared.curWorldDeckCards[shared.curWorldDeckCardCount - deckOffset])
+      table.insert(cradleDiscards, shared.curWorldDeckCards[#shared.curWorldDeckCards - deckOffset])
       deckOffset = (deckOffset + 1)
 
       -- Spawn discard decks.
@@ -5003,11 +4996,10 @@ function setupGame()
 
     -- Deal facedown relics to the reliquary slots.
     for reliquaryIndex = 1, 4 do
-      if (shared.curRelicDeckCardCount > 0) then
-        spawnSingleCard(shared.curRelicDeckCards[shared.curRelicDeckCardCount], true, shared.reliquaryCardPositions[reliquaryIndex], 0, false)
+      if (#shared.curRelicDeckCards > 0) then
+        spawnSingleCard(shared.curRelicDeckCards[#shared.curRelicDeckCards], true, shared.reliquaryCardPositions[reliquaryIndex], 0, false)
 
-        table.remove(shared.curRelicDeckCards, shared.curRelicDeckCardCount)
-        shared.curRelicDeckCardCount = (shared.curRelicDeckCardCount - 1)
+        table.remove(shared.curRelicDeckCards)
       else
         -- This should never happen, but avoids problems with old chronicles that had missing relics.
         printToAll("Error, ran out of relics while dealing.", { 1, 0, 0 })
@@ -5255,145 +5247,157 @@ function hidePieces(playerColor)
   shared.playerWarbandBags[playerColor].tooltip = false
 end
 
-function generateRandomWorldDeck(cardsForWorldDeck, cardsForWorldDeckCount, numCardsToChoose)
-  local visionsAvailable = {}
-  for saveId = shared.MIN_VISION, shared.MAX_VISION do
-    table.insert(visionsAvailable, shared.normalCardsBySaveID[saveId])
+local cardWeights = nil
+
+local function CalculateCardDrawWeight(cardName)
+  if cardWeights == nil then
+    cardWeights = {}
+    for cardName, oathCardData in pairs(shared.cardsTable) do
+      local cardWeight = 1
+      if oathCardData.metatags then
+        for _, metatag in ipairs(oathCardData.metatags) do
+          -- a card's weight is the product of all it's metatag weights
+          cardWeight = cardWeight * shared.cardWeights[metatag]
+        end
+      end
+      cardWeights[cardName] = cardWeight
+    end
   end
   
-  local numVisionsAvailable = 5
-  local copyCardName
-  local sourceSubset = {}
-  local numSubsetCardsAvailable = 0
-  local chosenIndex
-  local cardValid = true
+  return cardWeights[cardName]
+end
+
+---@param availableCards string[]
+---@return number
+function PickRandomCardWeighted(availableCards, cachedWeightSum)
+  --return math.random(#availableCards)
+
+  if cachedWeightSum == nil then
+    cachedWeightSum = 0
+    for _, cardName in ipairs(availableCards) do
+      cachedWeightSum = cachedWeightSum + CalculateCardDrawWeight(cardName)
+    end
+  end
+  
+
+  -- if all cards have a weight of zero, just do a traditional ramdom selection
+  if cachedWeightSum == 0 then
+    return math.random(#availableCards)
+  end
+
+  local r = math.random(cachedWeightSum)
+  local sum = 0
+  for i, cardName in ipairs(availableCards) do
+    local cardWeight = CalculateCardDrawWeight(cardName)
+    sum = sum + cardWeight
+    if r <= sum then
+      return i, cachedWeightSum - cardWeight
+    end
+  end
+end
+
+---@param availableCards string[]
+---@return number
+function DrawRandomCardsWeighted(availableCards, count)
+  local result = {}
+  local cachedWeightSum
+  for i = 1, count do
+    local chosenIndex
+    chosenIndex, cachedWeightSum = PickRandomCardWeighted(availableCards, cachedWeightSum)
+    if not chosenIndex then
+      -- not enough cards
+      return result
+    end
+    table.insert(result, availableCards[chosenIndex])
+    table.removeSwap(availableCards, chosenIndex)
+  end
+  return result
+end
+
+function generateRandomWorldDeck(cardsForWorldDeck, numCardsToChoose)
+  local allVisions = {}
+  table.shallowCopy(shared.normalCardsBySaveID[saveId], allVisions, shared.MIN_VISION, shared.MAX_VISION)
 
   -- If no card options were provided, determine which cards are options to add to the world deck.
-  if (0 == cardsForWorldDeckCount) then
+  if (0 == #cardsForWorldDeck) then
     cardsForWorldDeck = {}
 
-    if (shared.curWorldDeckCardCount > 0) then
+    if (#shared.curWorldDeckCards > 0) then
       -- This is the normal case.  Use known non-Vision world deck cards as the source.
-      for cardSourceIndex = 1, shared.curWorldDeckCardCount do
+      for cardSourceIndex = 1, #shared.curWorldDeckCards do
         if ("Vision" ~= shared.cardsTable[shared.curWorldDeckCards[cardSourceIndex]].cardtype) then
           table.insert(cardsForWorldDeck, shared.curWorldDeckCards[cardSourceIndex])
-          cardsForWorldDeckCount = (cardsForWorldDeckCount + 1)
         end
       end
     else
       -- There are no cards in the world deck.  Select default non-archive cards that are not the 3 starting locations.
       -- Sanity check to make sure there are no dispossessed cards.
-      if (shared.curDispossessedDeckCardCount > 0) then
+      if (#shared.curDispossessedDeckCards > 0) then
         printToAll("Warning, there are dispossessed card(s) but no world deck.", { 1, 0, 0 })
       end
 
       for cardSaveID = shared.MIN_DENIZEN, shared.MIN_DENIZEN + 53 do
-        copyCardName = shared.normalCardsBySaveID[cardSaveID]
+        local copyCardName = shared.normalCardsBySaveID[cardSaveID]
 
         if (("Longbows" ~= copyCardName) and
             ("Taming Charm" ~= copyCardName) and
             ("Elders" ~= copyCardName)) then
           table.insert(cardsForWorldDeck, copyCardName)
-          cardsForWorldDeckCount = (cardsForWorldDeckCount + 1)
         end
       end -- end for cardSaveID = 0,53
-    end -- end if (curWorldDeckCardCount > 0)
+    end -- end if (#shared.curWorldDeckCards > 0)
 
     -- If the number of cards to choose as not provided, use them all.
     if (0 == numCardsToChoose) then
-      numCardsToChoose = cardsForWorldDeckCount
+      numCardsToChoose = #cardsForWorldDeck
     end
-  end -- end if (0 == cardsForWorldDeckCount)
+  end -- end if (0 == #cardsForWorldDeck)
+
+
+  -- do a weighted selection of 5 visions to include in the world deck
+  local visionsAvailable = DrawRandomCardsWeighted(allVisions, 5)
+  
+  -- do a weighted selection of (probably 54) denizens to include in the world deck
+  local denizensAvailable = DrawRandomCardsWeighted(cardsForWorldDeck, numCardsToChoose)
 
   -- Clear world deck.
   shared.curWorldDeckCards = {}
-  shared.curWorldDeckCardCount = 0
-
-  -- Form subset of 10 random denizen cards with 2 random visions.
-  sourceSubset = {}
-  for subsetIndex = 1, 10 do
-    chosenIndex = math.random(1, cardsForWorldDeckCount)
-    sourceSubset[subsetIndex] = cardsForWorldDeck[chosenIndex]
-    -- Remove the chosen card from the source cards.
-    table.remove(cardsForWorldDeck, chosenIndex)
-    cardsForWorldDeckCount = (cardsForWorldDeckCount - 1)
-    numCardsToChoose = (numCardsToChoose - 1)
-  end
-  for subsetIndex = 11, 12 do
-    chosenIndex = math.random(1, numVisionsAvailable)
-    sourceSubset[subsetIndex] = visionsAvailable[chosenIndex]
-    -- Remove the chosen vision from the available visions.
-    table.remove(visionsAvailable, chosenIndex)
-    numVisionsAvailable = (numVisionsAvailable - 1)
-  end
-  -- Randomly choose from the 12 cards and add them to the overall deck.
-  numSubsetCardsAvailable = 12
-  for cardDestIndex = 1, 12 do
-    chosenIndex = math.random(1, numSubsetCardsAvailable)
-    shared.curWorldDeckCards[cardDestIndex] = sourceSubset[chosenIndex]
-    table.remove(sourceSubset, chosenIndex)
-    shared.curWorldDeckCardCount = (shared.curWorldDeckCardCount + 1)
-    numSubsetCardsAvailable = (numSubsetCardsAvailable - 1)
-  end
-
-  -- Form subset of 15 random denizen cards with 3 random visions.
-  sourceSubset = {}
-  for subsetIndex = 1, 15 do
-    chosenIndex = math.random(1, cardsForWorldDeckCount)
-    sourceSubset[subsetIndex] = cardsForWorldDeck[chosenIndex]
-    -- Remove the chosen card from the source cards.
-    table.remove(cardsForWorldDeck, chosenIndex)
-    cardsForWorldDeckCount = (cardsForWorldDeckCount - 1)
-    numCardsToChoose = (numCardsToChoose - 1)
-  end
-  for subsetIndex = 16, 18 do
-    chosenIndex = math.random(1, numVisionsAvailable)
-    sourceSubset[subsetIndex] = visionsAvailable[chosenIndex]
-    -- Remove the chosen vision from the available visions.
-    table.remove(visionsAvailable, chosenIndex)
-    numVisionsAvailable = (numVisionsAvailable - 1)
-  end
-  -- Randomly choose from the 18 cards and add them to the overall deck.
-  numSubsetCardsAvailable = 18
-  for cardDestIndex = 13, 30 do
-    chosenIndex = math.random(1, numSubsetCardsAvailable)
-    shared.curWorldDeckCards[cardDestIndex] = sourceSubset[chosenIndex]
-    table.remove(sourceSubset, chosenIndex)
-    shared.curWorldDeckCardCount = (shared.curWorldDeckCardCount + 1)
-    numSubsetCardsAvailable = (numSubsetCardsAvailable - 1)
-  end
-
-  -- Finally, randomly add all the remaining source cards to the bottom of the world deck, limiting if needed.
-  local cardDestIndex = 31
-  while (numCardsToChoose > 0) do
-    chosenIndex = math.random(1, cardsForWorldDeckCount)
-
-    cardValid = true
-
-    -- If doing random setup, the bottom 3 cards in the deck must be non-player-only cards so they can be placed onto the map.
-    if (true == shared.randomEnabled) then
-      if (numCardsToChoose <= 3) then
-        if (true == shared.cardsTable[cardsForWorldDeck[chosenIndex]].playerOnly) then
-          cardValid = false
-        end
-      end
-    end
-
-    if (true == cardValid) then
-      shared.curWorldDeckCards[cardDestIndex] = cardsForWorldDeck[chosenIndex]
-      table.remove(cardsForWorldDeck, chosenIndex)
-      shared.curWorldDeckCardCount = (shared.curWorldDeckCardCount + 1)
-      cardsForWorldDeckCount = (cardsForWorldDeckCount - 1)
+  
+  local function ShuffleSubset(denizenCount, visionCount)
+    local sourceSubset = {}
+    for i = 1, denizenCount do
+      local chosenIndex = math.random(1, #denizensAvailable)
+      table.insert(sourceSubset, denizensAvailable[chosenIndex])
+      -- Remove the chosen card from the source cards.
+      table.removeSwap(denizensAvailable, chosenIndex)
       numCardsToChoose = (numCardsToChoose - 1)
-      cardDestIndex = (cardDestIndex + 1)
+    end
+    for i = 1, visionCount do
+      local chosenIndex = math.random(1, #visionsAvailable)
+      table.insert(sourceSubset, visionsAvailable[chosenIndex])
+      -- Remove the chosen vision from the available visions.
+      table.removeSwap(visionsAvailable, chosenIndex)
+    end
+
+    while (#sourceSubset > 0) do
+      local chosenIndex = math.random(1, #sourceSubset)
+      table.insert(shared.curWorldDeckCards, sourceSubset[chosenIndex])
+      table.removeSwap(sourceSubset, chosenIndex)
     end
   end
+  
+  -- top of deck gets 10 denizens and 2 visions
+  ShuffleSubset(10, 2)
+  -- next add 15 denizens and 3 visions
+  ShuffleSubset(15, 3)
+  -- finish off by adding the remaining denizens
+  ShuffleSubset(#denizensAvailable, 0)
+  
 end
 
 function generateRandomRelicDeck()
   local copyCardName
   local cardsForRelicDeck = {}
-  local cardsForRelicDeckCount = 0
   local numCardsToChoose = 0
   local chosenIndex
 
@@ -5402,23 +5406,19 @@ function generateRandomRelicDeck()
     copyCardName = shared.normalCardsBySaveID[cardSaveID]
 
     table.insert(cardsForRelicDeck, copyCardName)
-    cardsForRelicDeckCount = (cardsForRelicDeckCount + 1)
   end -- end for cardSaveID = 218,237
 
-  numCardsToChoose = cardsForRelicDeckCount
+  numCardsToChoose = #cardsForRelicDeck
 
   -- Clear relic deck.
   shared.curRelicDeckCards = {}
-  shared.curRelicDeckCardCount = 0
 
   -- Randomly add all available relic cards to the relic deck strucutre.
   local cardDestIndex = 1
   while (numCardsToChoose > 0) do
-    chosenIndex = math.random(1, cardsForRelicDeckCount)
+    chosenIndex = PickRandomCardWeighted(cardsForRelicDeck)
     shared.curRelicDeckCards[cardDestIndex] = cardsForRelicDeck[chosenIndex]
     table.remove(cardsForRelicDeck, chosenIndex)
-    shared.curRelicDeckCardCount = (shared.curRelicDeckCardCount + 1)
-    cardsForRelicDeckCount = (cardsForRelicDeckCount - 1)
     numCardsToChoose = (numCardsToChoose - 1)
     cardDestIndex = (cardDestIndex + 1)
   end
@@ -5533,7 +5533,7 @@ function spawnWorldDeck(removedFromUnderneathCount)
   }
 
   -- Iterate over all cards except those removed from underneath the world deck.
-  for cardIndex = 1, (shared.curWorldDeckCardCount - removedFromUnderneathCount) do
+  for cardIndex = 1, (#shared.curWorldDeckCards - removedFromUnderneathCount) do
     curCardName = shared.curWorldDeckCards[cardIndex]
     curCardInfo = shared.cardsTable[curCardName]
 
@@ -5814,7 +5814,7 @@ function spawnRelicDeck()
   local curCardDeckID
   local curCardTTSDeckInfo
 
-  if (shared.curRelicDeckCardCount >= 1) then
+  if (#shared.curRelicDeckCards >= 1) then
     deckJSON = {
       Name = "Deck",
       Transform = {
@@ -5854,7 +5854,7 @@ function spawnRelicDeck()
     }
 
     -- Iterate over all cards in relic deck, starting from the end of the array which represents the top card of the deck.
-    for cardIndex = shared.curRelicDeckCardCount, 1, -1 do
+    for cardIndex = #shared.curRelicDeckCards, 1, -1 do
       curCardName = shared.curRelicDeckCards[cardIndex]
       curCardInfo = shared.cardsTable[curCardName]
 
@@ -5957,7 +5957,7 @@ function spawnRelicDeck()
       spawnObjectJSON(spawnParams)
     end
   else
-    -- end if (curRelicDeckCardCount >= 1)
+    -- end if (#shared.curRelicDeckCards >= 1)
     -- This should never happen, since corrupted relic decks are fixed when the chronicle string is loaded.
     printToAll("Error, no cards left for relic deck.", { 1, 0, 0 })
   end
@@ -6007,9 +6007,8 @@ function loadFromSaveString(saveDataString, setupGameAfter)
       -- Create a random relic deck.
       generateRandomRelicDeck({}, 0, 0)
       -- Copy it into the load structure so that setupLoadedState() will work correctly.
-      shared.loadRelicDeckInitCardCount = shared.curRelicDeckCardCount
       shared.loadRelicDeckInitCards = {}
-      for cardIndex = 1, shared.curRelicDeckCardCount do
+      for cardIndex = 1, #shared.curRelicDeckCards do
         shared.loadRelicDeckInitCards[cardIndex] = shared.curRelicDeckCards[cardIndex]
       end
 
@@ -6330,15 +6329,13 @@ function loadFromSaveString_1_6_0(saveDataString)
     cardCountEncoded = string.sub(saveDataString, nextParseIndex, (nextParseIndex + 1))
 
     -- Reset world deck, attempting to release memory.
-    shared.loadWorldDeckInitCardCount = 0
-    shared.loadWorldDeckInitCards = nil
     shared.loadWorldDeckInitCards = {}
 
     if (nil ~= cardCountEncoded) then
-      shared.loadWorldDeckInitCardCount = BaseDecode(cardCountEncoded, cardBase)
+      local loadWorldDeckInitCardCount = BaseDecode(cardCountEncoded, cardBase)
       nextParseIndex = (nextParseIndex + 2)
 
-      for cardIndex = 1, shared.loadWorldDeckInitCardCount do
+      for _ = 1, loadWorldDeckInitCardCount do
         parseCodeEncoded = string.sub(saveDataString, nextParseIndex, (nextParseIndex + 1))
 
         if (nil ~= parseCodeEncoded) then
@@ -6346,7 +6343,7 @@ function loadFromSaveString_1_6_0(saveDataString)
           nextParseIndex = (nextParseIndex + 2)
 
           if (nil ~= shared.normalCardsBySaveID[parseCode]) then
-            shared.loadWorldDeckInitCards[cardIndex] = shared.normalCardsBySaveID[parseCode]
+            table.insert(shared.loadWorldDeckInitCards, shared.normalCardsBySaveID[parseCode])
           else
             printToAll("Error, invalid normal card code 0x" .. parseCodeEncoded .. ".", { 1, 0, 0 })
             shared.loadStatus = shared.STATUS_FAILURE
@@ -6371,9 +6368,9 @@ function loadFromSaveString_1_6_0(saveDataString)
   --if (shared.STATUS_SUCCESS == shared.loadStatus) then
   --  printToAll("World deck:", {1,1,1})
   --  printToAll("===========", {1,1,1})
-  --  printToAll(shared.loadWorldDeckInitCardCount .. " cards", {1,1,1})
+  --  printToAll(#shared.loadWorldDeckInitCards .. " cards", {1,1,1})
   --  printToAll("===========", {1,1,1})
-  --  for cardIndex = 1,shared.loadWorldDeckInitCardCount do
+  --  for cardIndex = 1,#shared.loadWorldDeckInitCards do
   --    printToAll(shared.loadWorldDeckInitCards[cardIndex], {1,1,1})
   --  end
   --end
@@ -6382,15 +6379,13 @@ function loadFromSaveString_1_6_0(saveDataString)
     cardCountEncoded = string.sub(saveDataString, nextParseIndex, (nextParseIndex + 1))
 
     -- Reset deck of dispossessed cards, attempting to release memory.
-    shared.loadDispossessedDeckInitCardCount = 0
-    shared.loadDispossessedDeckInitCards = nil
     shared.loadDispossessedDeckInitCards = {}
 
     if (nil ~= cardCountEncoded) then
-      shared.loadDispossessedDeckInitCardCount = BaseDecode(cardCountEncoded, cardBase)
+      local loadDispossessedDeckInitCardCount = BaseDecode(cardCountEncoded, cardBase)
       nextParseIndex = (nextParseIndex + 2)
 
-      for cardIndex = 1, shared.loadDispossessedDeckInitCardCount do
+      for _ = 1, loadDispossessedDeckInitCardCount do
         parseCodeEncoded = string.sub(saveDataString, nextParseIndex, (nextParseIndex + 1))
 
         if (nil ~= parseCodeEncoded) then
@@ -6398,7 +6393,7 @@ function loadFromSaveString_1_6_0(saveDataString)
           nextParseIndex = (nextParseIndex + 2)
 
           if (nil ~= shared.normalCardsBySaveID[parseCode]) then
-            shared.loadDispossessedDeckInitCards[cardIndex] = shared.normalCardsBySaveID[parseCode]
+            table.insert(shared.loadDispossessedDeckInitCards, shared.normalCardsBySaveID[parseCode])
           else
             printToAll("Error, invalid normal card code 0x" .. parseCodeEncoded .. ".", { 1, 0, 0 })
             shared.loadStatus = shared.STATUS_FAILURE
@@ -6423,9 +6418,9 @@ function loadFromSaveString_1_6_0(saveDataString)
   -- if (STATUS_SUCCESS == loadStatus) then
   --   printToAll("Dispossessed deck:", {1,1,1})
   --   printToAll("==================", {1,1,1})
-  --   printToAll(shared.loadDispossessedDeckInitCardCount .. " cards", {1,1,1})
+  --   printToAll(#shared.loadDispossessedDeckInitCards .. " cards", {1,1,1})
   --   printToAll("===========", {1,1,1})
-  --   for cardIndex = 1,shared.loadDispossessedDeckInitCardCount do
+  --   for cardIndex = 1,#shared.loadDispossessedDeckInitCards do
   --     printToAll(shared.loadDispossessedDeckInitCards[cardIndex], {1,1,1})
   --   end
   -- end
@@ -6454,15 +6449,14 @@ function loadFromSaveString_3_1_0(saveDataString)
     cardCountHex = string.sub(saveDataString, nextParseIndex, (nextParseIndex + 1))
 
     -- Reset relic deck, attempting to release memory.
-    shared.loadRelicDeckInitCardCount = 0
     shared.loadRelicDeckInitCards = nil
     shared.loadRelicDeckInitCards = {}
 
     if (nil ~= cardCountHex) then
-      shared.loadRelicDeckInitCardCount = BaseDecode(cardCountHex, cardBase)
+      local loadRelicDeckInitCardCount = BaseDecode(cardCountHex, cardBase)
       nextParseIndex = (nextParseIndex + 2)
 
-      for cardIndex = 1, shared.loadRelicDeckInitCardCount do
+      for _ = 1, loadRelicDeckInitCardCount do
         parseCodeHex = string.sub(saveDataString, nextParseIndex, (nextParseIndex + 1))
 
         if (nil ~= parseCodeHex) then
@@ -6470,7 +6464,7 @@ function loadFromSaveString_3_1_0(saveDataString)
           nextParseIndex = (nextParseIndex + 2)
 
           if (nil ~= shared.normalCardsBySaveID[parseCode]) then
-            shared.loadRelicDeckInitCards[cardIndex] = shared.normalCardsBySaveID[parseCode]
+            table.insert(shared.loadRelicDeckInitCards, shared.normalCardsBySaveID[parseCode])
           else
             printToAll("Error, invalid normal card code 0x" .. parseCodeHex .. ".", { 1, 0, 0 })
             shared.loadStatus = shared.STATUS_FAILURE
@@ -6540,7 +6534,7 @@ function loadFromSaveString_3_1_0(saveDataString)
     -- Delete any card(s) from the relic deck which are duplicate of map relic card(s).
     -- An array copy is used to avoid problems when the array shifts down, adjusting indices.
     updatedRelicDeck = {}
-    for sourceRelicDeckIndex = 1, shared.loadRelicDeckInitCardCount do
+    for sourceRelicDeckIndex = 1, #shared.loadRelicDeckInitCards do
       cardFound = false
       sourceCardName = shared.loadRelicDeckInitCards[sourceRelicDeckIndex]
 
@@ -6568,17 +6562,16 @@ function loadFromSaveString_3_1_0(saveDataString)
       if (false == cardFound) then
         table.insert(updatedRelicDeck, shared.loadRelicDeckInitCards[sourceRelicDeckIndex])
       end
-    end -- end for sourceRelicDeckIndex = 1,loadRelicDeckInitCardCount do
+    end -- end for sourceRelicDeckIndex = 1,#shared.loadRelicDeckInitCards do
 
     shared.loadRelicDeckInitCards = updatedRelicDeck
-    shared.loadRelicDeckInitCardCount = #updatedRelicDeck
 
     -- Now, scan the relic deck itself.  Start at the end of the array which represents the top card.
     -- An array copy is used to avoid problems when the array shifts down, adjusting indices.  Note
     -- that this loop stops at 2 since with a topdown scan, there is nothing the bottom card can
     -- be a duplicate of.
     relicDeckDeleteIndices = {}
-    for cardIndex = shared.loadRelicDeckInitCardCount, 2, -1 do
+    for cardIndex = #shared.loadRelicDeckInitCards, 2, -1 do
       -- Check only for duplicates lower in the deck.
       for checkCardIndex = (cardIndex - 1), 1, -1 do
         if (shared.loadRelicDeckInitCards[cardIndex] == shared.loadRelicDeckInitCards[checkCardIndex]) then
@@ -6587,13 +6580,13 @@ function loadFromSaveString_3_1_0(saveDataString)
           printToAll("INFO:  Deleted duplicate relic \"" .. shared.loadRelicDeckInitCards[checkCardIndex] .. "\" from the relic deck.", { 1, 1, 0 })
           table.insert(relicDeckDeleteIndices, checkCardIndex)
         end -- end if (loadRelicDeckInitCards[cardIndex] == loadRelicDeckInitCards[checkCardIndex])
-      end -- end for checkCardIndex = cardIndex,loadRelicDeckInitCardCount
-    end -- end for cardIndex = 1,loadRelicDeckInitCardCount
+      end -- end for checkCardIndex = (cardIndex - 1), 1, -1 do
+    end -- end cardIndex = #shared.loadRelicDeckInitCards, 2, -1 do
 
     -- Delete any newly found duplicate card(s) from the relic deck.
     -- An array copy is used to avoid problems when the array shifts down, adjusting indices.
     updatedRelicDeck = {}
-    for sourceRelicDeckIndex = 1, shared.loadRelicDeckInitCardCount do
+    for sourceRelicDeckIndex = 1, #shared.loadRelicDeckInitCards do
       cardFound = false
 
       for arrayIndex, indexToDelete in ipairs(relicDeckDeleteIndices) do
@@ -6606,10 +6599,9 @@ function loadFromSaveString_3_1_0(saveDataString)
       if (false == cardFound) then
         table.insert(updatedRelicDeck, shared.loadRelicDeckInitCards[sourceRelicDeckIndex])
       end
-    end -- end for sourceRelicDeckIndex = 1,loadRelicDeckInitCardCount
+    end
 
     shared.loadRelicDeckInitCards = updatedRelicDeck
-    shared.loadRelicDeckInitCardCount = #updatedRelicDeck
 
     -- Finally, if any relics do not exist on the map or the relic deck, add them to the relic deck.
     missingRelicCount = 0
@@ -6638,7 +6630,7 @@ function loadFromSaveString_3_1_0(saveDataString)
 
       -- Check the relic deck for the relic.
       if (false == cardFound) then
-        for checkCardIndex = 1, shared.loadRelicDeckInitCardCount do
+        for checkCardIndex = 1, #shared.loadRelicDeckInitCards do
           if (cardName == shared.loadRelicDeckInitCards[checkCardIndex]) then
             cardFound = true
             break
@@ -6649,7 +6641,6 @@ function loadFromSaveString_3_1_0(saveDataString)
       -- If the relic was not found, add it to the relic deck.
       if (false == cardFound) then
         table.insert(shared.loadRelicDeckInitCards, cardName)
-        shared.loadRelicDeckInitCardCount = (shared.loadRelicDeckInitCardCount + 1)
         missingRelicCount = (missingRelicCount + 1)
       end
     end -- end for cardSaveID = 218,237
@@ -6658,9 +6649,8 @@ function loadFromSaveString_3_1_0(saveDataString)
       -- This is the case for !reset_chronicle.  Create a random relic deck.
       generateRandomRelicDeck({}, 0, 0)
       -- Copy it into the load structure so that setupLoadedState() will work correctly.
-      shared.loadRelicDeckInitCardCount = shared.curRelicDeckCardCount
       shared.loadRelicDeckInitCards = {}
-      for cardIndex = 1, shared.curRelicDeckCardCount do
+      for cardIndex = 1, #shared.curRelicDeckCards do
         shared.loadRelicDeckInitCards[cardIndex] = shared.curRelicDeckCards[cardIndex]
       end
 
@@ -7600,7 +7590,6 @@ function handleChronicleAfterBuildRepair(player)
   local maxSuitCount = 0
   local availableSites = {}
   local removeSiteIndex = 0
-  local numAvailableSites = 0
   local siteUsed = false
   local siteName
   local wasEdificeFlipped = false
@@ -7728,7 +7717,6 @@ function handleChronicleAfterBuildRepair(player)
               elseif ("Relic" == cardInfo.cardtype) then
                 -- Discard relic cards back into the relic deck structure.
                 table.insert(shared.curRelicDeckCards, cardName)
-                shared.curRelicDeckCardCount = (shared.curRelicDeckCardCount + 1)
               else
                 -- Nothing needs done in the case of ruin cards.  They will automatically be detected as available in the future.
               end
@@ -8037,7 +8025,6 @@ function handleChronicleAfterBuildRepair(player)
 
   -- Make a list of unused sites.
   availableSites = {}
-  numAvailableSites = 0
   for siteCode = 0, (shared.NUM_TOTAL_SITES - 1) do
     siteName = shared.sitesBySaveID[siteCode]
     siteUsed = false
@@ -8051,20 +8038,18 @@ function handleChronicleAfterBuildRepair(player)
 
     if (false == siteUsed) then
       table.insert(availableSites, siteName)
-      numAvailableSites = (numAvailableSites + 1)
     end
   end -- end for siteCode = 0, (NUM_TOTAL_SITES - 1)
 
   -- Deal random available sites to fill vacant slots.
   for siteIndex = 1, 8 do
     if ("NONE" == shared.curMapSites[siteIndex][1]) then
-      removeSiteIndex = math.random(1, numAvailableSites)
+      removeSiteIndex = PickRandomCardWeighted(availableSites)
       -- Deal the site facedown.
       shared.curMapSites[siteIndex][1] = availableSites[removeSiteIndex]
       shared.curMapSites[siteIndex][2] = true
 
       table.remove(availableSites, removeSiteIndex)
-      numAvailableSites = (numAvailableSites - 1)
     end -- end if ("NONE" == curMapSites[siteIndex][1])
   end -- end for siteIndex = 1,8
 
@@ -8205,7 +8190,7 @@ function confirmSelectSuit(player, value, id)
 
         -- Add 3 cards from the first suit.
         for archivePullCount = 1, 3 do
-          chosenPullIndex = math.random(1, #(shared.archiveContentsBySuit[archivePullSuits[1]]))
+          chosenPullIndex = PickRandomCardWeighted(shared.archiveContentsBySuit[archivePullSuits[1]])
           table.insert(shared.remainingWorldDeck, shared.archiveContentsBySuit[archivePullSuits[1]][chosenPullIndex])
           table.insert(shared.cardsAddedToWorldDeck, shared.archiveContentsBySuit[archivePullSuits[1]][chosenPullIndex])
           table.remove(shared.archiveContentsBySuit[archivePullSuits[1]], chosenPullIndex)
@@ -8213,14 +8198,14 @@ function confirmSelectSuit(player, value, id)
 
         -- Add 2 cards from the next suit.
         for archivePullCount = 1, 2 do
-          chosenPullIndex = math.random(1, #(shared.archiveContentsBySuit[archivePullSuits[2]]))
+          chosenPullIndex = PickRandomCardWeighted(shared.archiveContentsBySuit[archivePullSuits[2]])
           table.insert(shared.remainingWorldDeck, shared.archiveContentsBySuit[archivePullSuits[2]][chosenPullIndex])
           table.insert(shared.cardsAddedToWorldDeck, shared.archiveContentsBySuit[archivePullSuits[2]][chosenPullIndex])
           table.remove(shared.archiveContentsBySuit[archivePullSuits[2]], chosenPullIndex)
         end
 
         -- Add 1 card from the last suit.
-        chosenPullIndex = math.random(1, #(shared.archiveContentsBySuit[archivePullSuits[3]]))
+        chosenPullIndex = PickRandomCardWeighted(shared.archiveContentsBySuit[archivePullSuits[3]])
         table.insert(shared.remainingWorldDeck, shared.archiveContentsBySuit[archivePullSuits[3]][chosenPullIndex])
         table.insert(shared.cardsAddedToWorldDeck, shared.archiveContentsBySuit[archivePullSuits[3]][chosenPullIndex])
         table.remove(shared.archiveContentsBySuit[archivePullSuits[3]], chosenPullIndex)
@@ -8237,14 +8222,13 @@ function confirmSelectSuit(player, value, id)
         if (#(shared.dispossessedContentsBySuit[shared.mostDispossessedSuit]) >= 6) then
           -- Take 6 cards of the chosen suit from the dispossessed deck and add them to the world deck.
           for dispossessedPullCount = 1, 6 do
-            chosenPullIndex = math.random(1, #(shared.dispossessedContentsBySuit[shared.mostDispossessedSuit]))
+            chosenPullIndex = PickRandomCardWeighted(shared.dispossessedContentsBySuit[shared.mostDispossessedSuit])
             table.insert(shared.remainingWorldDeck, shared.dispossessedContentsBySuit[shared.mostDispossessedSuit][chosenPullIndex])
             table.insert(shared.cardsAddedToWorldDeck, shared.dispossessedContentsBySuit[shared.mostDispossessedSuit][chosenPullIndex])
             table.remove(shared.dispossessedContentsBySuit[shared.mostDispossessedSuit], chosenPullIndex)
           end
 
           -- Clear the dispossessed deck, which effectively shuffles all dispossessed cards into the archive.
-          shared.curDispossessedDeckCardCount = 0
           shared.curDispossessedDeckCards = {}
 
           printToAll("The Dispossessed have returned to the land!", { 1, 1, 1 })
@@ -8443,7 +8427,6 @@ function handleChronicleAfterSelectSuit()
 
       -- Add the card to the dispossessed deck.
       table.insert(shared.curDispossessedDeckCards, cardName)
-      shared.curDispossessedDeckCardCount = (shared.curDispossessedDeckCardCount + 1)
 
       -- Add the card to the newly dispossessed list.
       table.insert(newDispossessedCards, cardName)
@@ -8637,13 +8620,11 @@ function handleChronicleAfterSelectSuit()
   -- For the last 3 categories above, only denizen cards are to be processed, and newly dispossessed cards are to be skipped.
 
   -- Reset world deck structure.
-  shared.curWorldDeckCardCount = 0
   shared.curWorldDeckCards = {}
 
   -- Add vision cards to the actual world deck structure so they do not need found elsewhere.
   for cardSaveID = shared.MIN_VISION, shared.MAX_VISION do
     table.insert(shared.curWorldDeckCards, shared.normalCardsBySaveID[cardSaveID])
-    shared.curWorldDeckCardCount = (shared.curWorldDeckCardCount + 1)
   end
 
   -- Reset world deck options structure.
@@ -8705,7 +8686,6 @@ function handleChronicleAfterSelectSuit()
 
         if (false == cardFound) then
           table.insert(shared.curWorldDeckCards, cardName)
-          shared.curWorldDeckCardCount = (shared.curWorldDeckCardCount + 1)
         end
       end -- end if ("Denizen" == cardInfo.cardtype)
     else
@@ -8714,11 +8694,10 @@ function handleChronicleAfterSelectSuit()
   end
 
   -- The generateRandomWorldDeck() function ignores Vision cards and generates the world deck for the next game from known available cards.
-  generateRandomWorldDeck({}, 0, 0)
+  generateRandomWorldDeck({}, 0)
 
   -- Copy the final relic deck directly into the relic deck structure for encoding.
   shared.curRelicDeckCards = {}
-  shared.curRelicDeckCardCount = finalDeckRelicCount
   for relicIndex = 1, finalDeckRelicCount do
     shared.curRelicDeckCards[relicIndex] = finalDeckRelics[relicIndex]
   end
@@ -8971,7 +8950,6 @@ function SanityCheckAndRepairCoroutine()
       table.insert(shared.curDispossessedDeckCards, cardName)
     end
   end
-  shared.curDispossessedDeckCardCount = #shared.curDispossessedDeckCards
   
   --if errorsFound and debug and debug.traceback then
   --  printToAll(debug.traceback(), {1, 0.8, 0})

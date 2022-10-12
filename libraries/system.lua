@@ -39,3 +39,22 @@ function table.removeSwap(list, pos)
   table.remove(list)
   return removed
 end
+
+function table.shallowCopy(source, destination, rangeBegin, rangeEnd)
+  if #source > 0 then
+    if rangeBegin == nil then
+      rangeBegin = 1
+    end
+    if rangeEnd == nil then
+      rangeEnd = #source
+    end
+    
+    for i = rangeBegin, rangeEnd do
+      table.insert(destination, source[i])
+    end
+  else
+    for k, v in pairs(source) do
+      destination[k] = v
+    end
+  end
+end

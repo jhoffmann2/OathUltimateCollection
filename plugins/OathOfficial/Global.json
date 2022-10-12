@@ -42,7 +42,6 @@
   "LuaScriptState": {
     "chronicleStateString": "020004000110Empire and Exile1F00000123450403FFFFFFFFFFFF0724FFFFFFFFFFFFFFFFFFFF0B19FFFFFFFFFFFFFFFFFFFF000000",
     "curChronicleName": "Empire and Exile",
-    "curDispossessedDeckCardCount": 0,
     "curDispossessedDeckCards": [],
     "curFavorValues": {
       "Arcane": 1,
@@ -246,7 +245,6 @@
       "White": "Exile",
       "Yellow": "Exile"
     },
-    "curRelicDeckCardCount": 0,
     "curRelicDeckCards": [],
     "curStartPlayerStatus": {
       "Blue": "Exile",
@@ -264,7 +262,6 @@
       "Order",
       "Beast"
     ],
-    "curWorldDeckCardCount": 0,
     "curWorldDeckCards": [],
     "ingameStateString": "",
     "isClockworkPrinceEnabled": false,
