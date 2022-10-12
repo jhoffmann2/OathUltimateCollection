@@ -3,16 +3,27 @@
   -- this deck inherits cards from the base deck
   InvokeEvent('OnEnsurePluginActive', 'BaseDeck')
 
+  -------------------------------------------------------------------------------------------
+  --- Sites
+  ---
+  
+
+  -------------------------------------------------------------------------------------------
+  --- Denizens
+  ---
+  
+  
+  --- HEARTH -------------------------------------------------------------------------------
   InvokeMethod('AddDeck', Global,
     { 
-      deckimage = "http://cloud-3.steamusercontent.com/ugc/1806529457279026191/1A8289CF00032FA77777D8E493A897A932876A1F/", 
+      deckimage = "https://cdn.discordapp.com/attachments/1019210076768178196/1026721115290206239/oath-denizen-for-tts_2.png", 
       backimage = "DENIZEN_BACK", 
       deckwidth = 10, 
       deckheight = 2, 
-      hasuniqueback = false 
+      hasuniqueback = false,
+      metatags = {'Custom', 'NaysayersDeck'}
     },
     {
-      {  }, -- skip template card
       {  }, -- skip template card
       {  }, -- skip template card
       { cardName = "BigHouse", suit = "Hearth", cardtype = "Denizen", siteOnly = true },
@@ -26,13 +37,16 @@
       { cardName = "Too Many Cooks", suit = "Hearth", cardtype = "Denizen", siteOnly = true }
     }
   )
+  
+  --- ORDER -------------------------------------------------------------------------------
   InvokeMethod('AddDeck', Global,
     { 
       deckimage = "https://cdn.discordapp.com/attachments/1019210076768178196/1025271975293231185/oath-denizen-for-tts_2.png", 
       backimage = "DENIZEN_BACK", 
       deckwidth = 10, 
       deckheight = 2, 
-      hasuniqueback = false 
+      hasuniqueback = false,
+      metatags = {'Custom', 'NaysayersDeck'}
     },
     {
       {  }, -- skip template card
@@ -48,14 +62,16 @@
       { cardName = "Trusted Entourage", suit = "Order", cardtype = "Denizen", playerOnly = true },
     }
   )
-  
+
+  --- ARCANE / BEAST ----------------------------------------------------------------------
   InvokeMethod('AddDeck', Global,
     { 
       deckimage = "http://cloud-3.steamusercontent.com/ugc/1794145495333391310/59C9BA82FB37DD410C40D8D9258FFD8E078DB615/", 
       backimage = "DENIZEN_BACK", 
       deckwidth = 10, 
       deckheight = 3, 
-      hasuniqueback = false 
+      hasuniqueback = false,
+      metatags = {'Custom', 'NaysayersDeck'}
     },
     {
       { cardName = "Alchemist's Professor", suit = "Arcane", cardtype = "Denizen" },
@@ -81,14 +97,16 @@
       { cardName = "Wild Berries", suit = "Beast", cardtype = "Denizen", siteOnly = true },
     }
   )
-  
+
+  --- DISCORD / NOMAD ---------------------------------------------------------------------
   InvokeMethod('AddDeck', Global,
     { 
       deckimage = "https://media.discordapp.net/attachments/1019210076768178196/1025283295216414750/oath-denizen-for-tts_2_but_better.png", 
       backimage = "DENIZEN_BACK", 
       deckwidth = 10, 
       deckheight = 3, 
-      hasuniqueback = false
+      hasuniqueback = false,
+      metatags = {'Custom', 'NaysayersDeck'}
     },
     {
       { cardName = "Alleyways", suit = "Discord", cardtype = "Denizen" },
@@ -118,5 +136,15 @@
       { cardName = "Wandering Laborers", suit = "Nomad", cardtype = "Denizen" },
     }
   )
+
+
+  -------------------------------------------------------------------------------------------
+  --- Edifices / Ruins
+  ---
+
+
+  -------------------------------------------------------------------------------------------
+  --- Relics
+  ---
   
 end
