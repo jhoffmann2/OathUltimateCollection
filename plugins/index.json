@@ -1,4 +1,11 @@
 ﻿{
+  "Chat Commands": {
+    "type": "toggle",
+    "hidden": true,
+    "value": true,
+    "plugin": "ChatCommands"
+  },
+  
   "Deck Data": {
     "type": "toggle",
     "hidden": true,

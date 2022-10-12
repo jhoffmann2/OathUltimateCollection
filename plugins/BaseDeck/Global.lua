@@ -13,7 +13,14 @@ function onLoad()
   ---
 
   InvokeMethod('AddDeck', Global,
-    { deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/lands.jpg", backimage = "SITE_BACK", deckwidth = 2, deckheight = 4, hasuniqueback = false },
+    { 
+      deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/lands.jpg", 
+      backimage = "SITE_BACK", 
+      deckwidth = 2, 
+      deckheight = 4, 
+      hasuniqueback = false,
+      metatags = {'Official', 'BaseDeck'}
+    },
     {
       { cardName = "Mine", cardtype = "Site", capacity = 1, relicCount = 1 },
       { cardName = "Salt Flats", cardtype = "Site", capacity = 2, relicCount = 0 },
@@ -27,7 +34,14 @@ function onLoad()
   )
 
   InvokeMethod('AddDeck', Global,
-    { deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/lands2.jpg", backimage = "SITE_BACK", deckwidth = 2, deckheight = 4, hasuniqueback = false },
+    { 
+      deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/lands2.jpg", 
+      backimage = "SITE_BACK", 
+      deckwidth = 2, 
+      deckheight = 4, 
+      hasuniqueback = false,
+      metatags = {'Official', 'BaseDeck'}
+    },
     {
       { cardName = "Lush Coast", cardtype = "Site", capacity = 3, relicCount = 0 },
       { cardName = "Marshes", cardtype = "Site", capacity = 2, relicCount = 1 },
@@ -41,7 +55,14 @@ function onLoad()
   )
 
   InvokeMethod('AddDeck', Global,
-    { deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/lands3.jpg", backimage = "SITE_BACK", deckwidth = 2, deckheight = 4, hasuniqueback = false },
+    { 
+      deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/lands3.jpg", 
+      backimage = "SITE_BACK", 
+      deckwidth = 2, 
+      deckheight = 4, 
+      hasuniqueback = false,
+      metatags = {'Official', 'BaseDeck'}
+    },
     {
       { cardName = "Ancient City", cardtype = "Site", capacity = 2, relicCount = 1 },
       { cardName = "Drowned City", cardtype = "Site", capacity = 0, relicCount = 2 },
@@ -59,7 +80,14 @@ function onLoad()
   ---
 
   InvokeMethod('AddDeck', Global,
-    { deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/cards.jpg", backimage = "DENIZEN_BACK", deckwidth = 5, deckheight = 4, hasuniqueback = false },
+    { 
+      deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/cards.jpg", 
+      backimage = "DENIZEN_BACK", 
+      deckwidth = 5, 
+      deckheight = 4, 
+      hasuniqueback = false,
+      metatags = {'Official', 'BaseDeck'}
+    },
     {
       { cardName = "Wrestlers", suit = "Order", cardtype = "Denizen" },
       { cardName = "Battle Honors", suit = "Order", cardtype = "Denizen" },
@@ -85,7 +113,14 @@ function onLoad()
   )
 
   InvokeMethod('AddDeck', Global,
-    { deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/cards2.jpg", backimage = "DENIZEN_BACK", deckwidth = 5, deckheight = 4, hasuniqueback = false },
+    { 
+      deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/cards2.jpg", 
+      backimage = "DENIZEN_BACK", 
+      deckwidth = 5, 
+      deckheight = 4,
+      hasuniqueback = false,
+      metatags = {'Official', 'BaseDeck'}
+    },
     {
       { cardName = "Naysayers", suit = "Discord", cardtype = "Denizen", playerOnly = true },
       { cardName = "Book Burning", suit = "Discord", cardtype = "Denizen" },
@@ -111,7 +146,14 @@ function onLoad()
   )
 
   InvokeMethod('AddDeck', Global,
-    { deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/cards3.jpg", backimage = "DENIZEN_BACK", deckwidth = 5, deckheight = 4, hasuniqueback = false },
+    { 
+      deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/cards3.jpg", 
+      backimage = "DENIZEN_BACK", 
+      deckwidth = 5, 
+      deckheight = 4, 
+      hasuniqueback = false,
+      metatags = {'Official', 'BaseDeck'}
+    },
     {
       { cardName = "True Names", suit = "Beast", cardtype = "Denizen", playerOnly = true },
       { cardName = "The Old Oak", suit = "Beast", cardtype = "Denizen" },
@@ -137,7 +179,14 @@ function onLoad()
   )
 
   InvokeMethod('AddDeck', Global,
-    { deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/cards4.jpg", backimage = "DENIZEN_BACK", deckwidth = 5, deckheight = 4, hasuniqueback = false },
+    { 
+      deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/cards4.jpg", 
+      backimage = "DENIZEN_BACK", 
+      deckwidth = 5, 
+      deckheight = 4, 
+      hasuniqueback = false,
+      metatags = {'Official', 'BaseDeck'}
+    },
     {
       { cardName = "Terror Spells", suit = "Arcane", cardtype = "Denizen" },
       { cardName = "Blood Pact", suit = "Arcane", cardtype = "Denizen" },
@@ -163,7 +212,14 @@ function onLoad()
   )
 
   InvokeMethod('AddDeck', Global,
-    { deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/cards5.jpg", backimage = "DENIZEN_BACK", deckwidth = 5, deckheight = 4, hasuniqueback = false },
+    { 
+      deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/cards5.jpg", 
+      backimage = "DENIZEN_BACK", 
+      deckwidth = 5, 
+      deckheight = 4, 
+      hasuniqueback = false,
+      metatags = {'Official', 'BaseDeck'}
+    },
     {
       { cardName = "Downtrodden", suit = "Discord", cardtype = "Denizen" },
       { cardName = "Blackmail", suit = "Discord", cardtype = "Denizen" },
@@ -189,7 +245,14 @@ function onLoad()
   )
 
   InvokeMethod('AddDeck', Global,
-    { deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/cards6.jpg", backimage = "DENIZEN_BACK", deckwidth = 5, deckheight = 4, hasuniqueback = false },
+    { 
+      deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/cards6.jpg", 
+      backimage = "DENIZEN_BACK", 
+      deckwidth = 5, 
+      deckheight = 4, 
+      hasuniqueback = false,
+      metatags = {'Official', 'BaseDeck'}
+    },
     {
       { cardName = "Chaos Cult", suit = "Discord", cardtype = "Denizen", playerOnly = true },
       { cardName = "Slander", suit = "Discord", cardtype = "Denizen" },
@@ -215,7 +278,14 @@ function onLoad()
   )
 
   InvokeMethod('AddDeck', Global,
-    { deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/cards7.jpg", backimage = "DENIZEN_BACK", deckwidth = 5, deckheight = 4, hasuniqueback = false },
+    { 
+      deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/cards7.jpg", 
+      backimage = "DENIZEN_BACK", 
+      deckwidth = 5, 
+      deckheight = 4, 
+      hasuniqueback = false,
+      metatags = {'Official', 'BaseDeck'}
+    },
     {
       { cardName = "Vow of Obedience", suit = "Order", cardtype = "Denizen", playerOnly = true },
       { cardName = "Hunting Party", suit = "Order", cardtype = "Denizen" },
@@ -241,7 +311,14 @@ function onLoad()
   )
 
   InvokeMethod('AddDeck', Global,
-    { deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/cards8.jpg", backimage = "DENIZEN_BACK", deckwidth = 5, deckheight = 4, hasuniqueback = false },
+    { 
+      deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/cards8.jpg", 
+      backimage = "DENIZEN_BACK", 
+      deckwidth = 5, 
+      deckheight = 4, 
+      hasuniqueback = false,
+      metatags = {'Official', 'BaseDeck'}
+    },
     {
       { cardName = "Ballot Box", suit = "Hearth", cardtype = "Denizen" },
       { cardName = "Saddle Makers", suit = "Hearth", cardtype = "Denizen", playerOnly = true },
@@ -267,7 +344,14 @@ function onLoad()
   )
 
   InvokeMethod('AddDeck', Global,
-    { deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/cards9.jpg", backimage = "DENIZEN_BACK", deckwidth = 5, deckheight = 4, hasuniqueback = false },
+    { 
+      deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/cards9.jpg", 
+      backimage = "DENIZEN_BACK", 
+      deckwidth = 5, 
+      deckheight = 4, 
+      hasuniqueback = false,
+      metatags = {'Official', 'BaseDeck'}
+    },
     {
       { cardName = "Pilgrimage", suit = "Nomad", cardtype = "Denizen", playerOnly = true },
       { cardName = "Spell Breaker", suit = "Nomad", cardtype = "Denizen" },
@@ -293,7 +377,14 @@ function onLoad()
   )
 
   InvokeMethod('AddDeck', Global,
-    { deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/cards10.jpg", backimage = "DENIZEN_BACK", deckwidth = 5, deckheight = 4, hasuniqueback = false },
+    { 
+      deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/cards10.jpg", 
+      backimage = "DENIZEN_BACK", 
+      deckwidth = 5, 
+      deckheight = 4, 
+      hasuniqueback = false,
+      metatags = {'Official', 'BaseDeck'}
+    },
     {
       { cardName = "Second Chance", suit = "Beast", cardtype = "Denizen" },
       { cardName = "Pied Piper", suit = "Beast", cardtype = "Denizen", playerOnly = true },
@@ -322,7 +413,14 @@ function onLoad()
   ---
 
   InvokeMethod('AddDeck', Global,
-    { deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/edificeFront.jpg", backimage = "http://tts.ledergames.com/Oath/cards/3_2_0/edificeBack.jpg", deckwidth = 3, deckheight = 2, hasuniqueback = true },
+    { 
+      deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/edificeFront.jpg", 
+      backimage = "http://tts.ledergames.com/Oath/cards/3_2_0/edificeBack.jpg", 
+      deckwidth = 3, 
+      deckheight = 2, 
+      hasuniqueback = true,
+      metatags = {'Official', 'BaseDeck'}
+    },
     {
       { cardName = "Sprawling Rampart / Bandit Rampart", suit = "Order", cardtype = "EdificeRuin" },
       { cardName = "Hall of Debate / Hall of Mockery", suit = "Hearth", cardtype = "EdificeRuin" },
@@ -339,7 +437,14 @@ function onLoad()
   ---
 
   InvokeMethod('AddDeck', Global,
-    { deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/visions.jpg", backimage = "http://tts.ledergames.com/Oath/cards/3_2_0/cardbackVision.jpg", deckwidth = 3, deckheight = 2, hasuniqueback = false },
+    { 
+      deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/visions.jpg", 
+      backimage = "http://tts.ledergames.com/Oath/cards/3_2_0/cardbackVision.jpg", 
+      deckwidth = 3, 
+      deckheight = 2, 
+      hasuniqueback = false,
+      metatags = {'Official', 'BaseDeck'}
+    },
     {
       { cardName = "Sanctuary", cardtype = "Vision" },
       { cardName = "Rebellion", cardtype = "Vision" },
@@ -382,7 +487,14 @@ function onLoad()
   ---
 
   InvokeMethod('AddDeck', Global,
-    { deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/relics.jpg", backimage = "RELIC_BACK", deckwidth = 5, deckheight = 5, hasuniqueback = false },
+    { 
+      deckimage = "http://tts.ledergames.com/Oath/cards/3_2_0/relics.jpg", 
+      backimage = "RELIC_BACK", 
+      deckwidth = 5, 
+      deckheight = 5, 
+      hasuniqueback = false,
+      metatags = {'Official', 'BaseDeck'}
+    },
     {
       { cardName = "Sticky Fire", cardtype = "Relic" },
       { cardName = "Cursed Cauldron", cardtype = "Relic" },
