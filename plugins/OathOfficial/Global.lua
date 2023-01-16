@@ -115,8 +115,8 @@ function onLoad(save_state)
   shared.favorBag = nil
   shared.numMarkers = 2
   shared.markerGuids = { "c1f67a", "a7e6d2" }
-  shared.markerPositions = { { -20.86, 1.38, -1.83 },
-                             { -17.44, 1.38, -2.09 } }
+  shared.markerPositions = { { -20.86, 1.06, -1.83 },
+                             { -17.44, 1.20, -2.09 } }
   shared.diceGuids = { "b70c54", "13e33b", "57c9c5", "8ce90c", "297ceb", "863691", -- defense dice
                        "1f96ec", "e24bff", "3ad8c2", "3d1a23", "94f013", "ca95ce", "7a1759", "199338", "07a097", "607e0c", -- attack dice
                        "8e1eb3" }    -- game end die
@@ -4314,12 +4314,12 @@ function cleanTable()
     shared.favorBag.reset()
   end
 
-  -- Reset markers to default locations.
+  -- Reset markers to default locations.`
   for markerIndex = 1, shared.numMarkers do
     curMarker = getObjectFromGUID(shared.markerGuids[markerIndex])
     if (nil ~= curMarker) then
       curMarker.setPosition({ shared.markerPositions[markerIndex][1], shared.markerPositions[markerIndex][2], shared.markerPositions[markerIndex][3] })
-      curMarker.setRotation({ 0, 0, 0 })
+      curMarker.setRotation({ 0, 270, 0 })
     else
       printToAll("Error finding object.", { 1, 0, 0 })
     end
