@@ -60,6 +60,12 @@
     "plugin": "RoundCounter",
     "tooltip": "quality of life plugin that will increment the round counter at the beginning of\n the chancellors turn. (Turns required)"
   },
+  "Auto Visions": {
+    "type": "toggle",
+    "value": true,
+    "plugin": "AutoVisions",
+    "tooltip": "quality of life plugin that will increment the visions drawn tracker automatically\n as well as keep players from drawing passed visions in the world deck"
+  },
   "Auto Tavern Songs": {
     "type": "toggle",
     "value": false,
