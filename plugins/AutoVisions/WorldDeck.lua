@@ -1,16 +1,19 @@
 ﻿local globalData
 local visionCounterGUID = "a7e6d2"
+local visionCounter
 local visionCounterPositions = {
-  {-17.45, 1.38, -2.09},
-  {-15.76, 1.38, -2.09},
-  {-14.73, 1.38, -2.09},
-  {-13.20, 1.38, -2.09},
-  {-12.16, 1.38, -2.09},
-  {-11.13, 1.38, -2.09}
+  {-17.45, 1.20, -2.09},
+  {-15.76, 1.20, -2.09},
+  {-14.73, 1.20, -2.09},
+  {-13.20, 1.20, -2.09},
+  {-12.16, 1.20, -2.09},
+  {-11.13, 1.20, -2.09}
 }
 
 function onLoad()
   globalData = Shared(Global)
+  visionCounter = getObjectFromGUID(visionCounterGUID)
+  visionCounter.setLock(true)
 end
 
 function Method.OnNumberTyped(player_color, number)
@@ -27,7 +30,6 @@ function Method.OnNumberTyped(player_color, number)
 end 
 
 function Callback.OnVisionDrawn(player_color, vision)
-  local visionCounter = getObjectFromGUID(visionCounterGUID)
   local visionCount = 5
   for _, card in ipairs(owner.getObjects()) do
     if globalData.cardsTable[card.name].cardtype == "Vision" then
