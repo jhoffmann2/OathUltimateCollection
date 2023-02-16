@@ -152,7 +152,7 @@ end
 -- return the amount of action supply that this player has
 function GetPlayerSupply()
   for i, zone in ipairs(shared.supplyZones) do
-    for j, object in ipairs(zone.getObjects()) do
+    for j, object in ipairs(zone.getObjects(true)) do
       if (object.guid == shared.supplyMarker.guid) then
         return i - 1;
       end
@@ -187,7 +187,7 @@ end
 function GetSecretReturnPosition(count)
   local secretHeight = 0.5
   local output = Vector(SecretStackPosition())
-  for _, object in ipairs(shared.secretZone.getObjects()) do
+  for _, object in ipairs(shared.secretZone.getObjects(true)) do
     output.y = math.max(output.y, object.getPosition().y + object.getScale().y / 2)
   end
   output.y = output.y + (count * secretHeight)
@@ -199,7 +199,7 @@ function GetFavorReturnPosition(suit, count)
   local zone = globalData.suitFavorZones[suit]
   local output = Vector(zone.getPosition())
   output.y = FavorStackPosition().y
-  for _, object in ipairs(zone.getObjects()) do
+  for _, object in ipairs(zone.getObjects(true)) do
     output.y = math.max(output.y, object.getPosition().y + object.getScale().y / 2)
   end
   output.y = output.y + (count * favorHeight)
@@ -229,7 +229,7 @@ function ReturnFavor()
       local favorOnCard = {}
       local cardSuit = nil
       ---@param object tts__Object
-      for i, object in ipairs(zone.getObjects()) do
+      for i, object in ipairs(zone.getObjects(true)) do
         if object.hasTag('Favor') then
           table.insert(favorOnCard, object)
         end
@@ -258,7 +258,7 @@ function ReturnFavor()
     local cardSuit = nil
     
     ---@param object tts__Object
-    for i, object in ipairs(zone.getObjects()) do
+    for i, object in ipairs(zone.getObjects(true)) do
       if object.hasTag('Favor') then
         table.insert(favorOnCard, object)
       end
@@ -288,7 +288,7 @@ function ReturnSecrets()
     ---@param zone tts__Object
     for _, zone in ipairs(denizenZones) do
       ---@param object tts__Object
-      for i, object in ipairs(zone.getObjects()) do
+      for i, object in ipairs(zone.getObjects(true)) do
         if object.hasTag('Secret') then
           foundSecretCount = foundSecretCount + 1
           object.setPositionSmooth(GetSecretReturnPosition(foundSecretCount))
@@ -300,7 +300,7 @@ function ReturnSecrets()
 
   for _, zone in ipairs(globalData.playerAdviserZones[shared.playerColor]) do
     ---@param object tts__Object
-    for i, object in ipairs(zone.getObjects()) do
+    for i, object in ipairs(zone.getObjects(true)) do
       if object.hasTag('Secret') then
         foundSecretCount = foundSecretCount + 1
         object.setPositionSmooth(GetSecretReturnPosition(foundSecretCount))

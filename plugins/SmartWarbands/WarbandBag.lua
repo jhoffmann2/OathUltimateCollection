@@ -119,7 +119,7 @@ function onSwapToExile()
   resetWarbandBag()
 
   -- turn all imperial warbands in players space into exile warbands
-  for i, object in pairs(globalData.playerOwnershipZones[shared.playerColor].getObjects()) do
+  for i, object in pairs(globalData.playerOwnershipZones[shared.playerColor].getObjects(true)) do
       if (object.hasTag("PurpleWarband")) then
           if (warbandSupplyCount(shared.warbandColor) > 0) then
               object = setWarbandColor(object, shared.playerColor)
