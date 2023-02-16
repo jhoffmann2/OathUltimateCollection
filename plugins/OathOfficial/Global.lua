@@ -4609,8 +4609,9 @@ function spawnSingleCard(cardName, spawnFacedown, spawnPosition, cardRotY, spawn
     local shouldUnlock = spawnInHand == true or "Site" ~= cardType
 
     local cardJSON = CreateCardJson(cardName, cardRotY)
+    cardJSON.Locked = true
 
-    -- Spawn the card underneath the table so it can be mvoed up instead of flashing white.
+    -- Spawn the card underneath the table so it can be moved up instead of flashing white.
     if (shared.STATUS_SUCCESS == spawnStatus) then
       spawnParams.json = JSON.encode(cardJSON)
       spawnParams.position = { spawnPositionLocal[1], 1000, spawnPositionLocal[3] }
