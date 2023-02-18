@@ -68,16 +68,22 @@
     "plugin": "AutoRest",
     "tooltip": "quality of life plugin that will add an 'Automate Rest Phase' button to player boards\n\n\t- Resets supply\n\t- Returns favor to favor banks\n\t- Returns secrets to player board\n\t- Advances turn if turns are enabled"
   },
-  "Auto Tavern Songs": {
-    "type": "toggle",
-    "value": true,
-    "plugin": "AutoTavernSongs",
-    "tooltip": "If you have Tavern Songs or Oracular Pig and hover over the respective deck/discard,\n UI will pop up showing you the top three cards"
-  },
   "Round Counter": {
     "type": "toggle",
     "value": true,
     "plugin": "RoundCounter",
     "tooltip": "quality of life plugin that will increment the round counter at the beginning of\n the chancellors turn. (Turns required)"
+  },
+  "Auto Visions": {
+    "type": "toggle",
+    "value": true,
+    "plugin": "AutoVisions",
+    "tooltip": "quality of life plugin that will increment the visions drawn tracker automatically\n as well as keep players from drawing passed visions in the world deck"
+  },
+  "Auto Tavern Songs": {
+    "type": "toggle",
+    "value": true,
+    "plugin": "AutoTavernSongs",
+    "tooltip": "If you have Tavern Songs or Oracular Pig and hover over the respective deck/discard,\n UI will pop up showing you the top three cards"
   }
 }

@@ -116,8 +116,8 @@ function onLoad(save_state)
   shared.favorBag = nil
   shared.numMarkers = 2
   shared.markerGuids = { "c1f67a", "a7e6d2" }
-  shared.markerPositions = { { -20.86, 1.38, -1.83 },
-                             { -17.44, 1.38, -2.09 } }
+  shared.markerPositions = { { -20.86, 1.06, -1.83 },
+                             { -17.44, 1.20, -2.09 } }
   shared.diceGuids = { "b70c54", "13e33b", "57c9c5", "8ce90c", "297ceb", "863691", -- defense dice
                        "1f96ec", "e24bff", "3ad8c2", "3d1a23", "94f013", "ca95ce", "7a1759", "199338", "07a097", "607e0c", -- attack dice
                        "8e1eb3" }    -- game end die
@@ -1115,7 +1115,7 @@ function onObjectDrop(_, droppedObject)
 end
 
 function rescanFavorZone(scanZone, suitName)
-  local scriptZoneObjects = scanZone.getObjects()
+  local scriptZoneObjects = scanZone.getObjects(true)
   local newFavorValue = 0
 
   -- Count favor in the zone.
@@ -3770,7 +3770,7 @@ function scanTable(alwaysScan)
     for discardZoneIndex = 1, 3 do
       shared.discardContents[discardZoneIndex] = {}
 
-      scriptZoneObjects = shared.discardZones[discardZoneIndex].getObjects()
+      scriptZoneObjects = shared.discardZones[discardZoneIndex].getObjects(true)
       for i, curObject in ipairs(scriptZoneObjects) do
         if ("Deck" == curObject.type) then
           -- Since a deck was encountered, scan it for Denizen or Vision cards.
@@ -3811,7 +3811,7 @@ function scanTable(alwaysScan)
 
       -- Find site card name.
 
-      scriptZoneObjects = shared.mapSiteCardZones[siteIndex].getObjects()
+      scriptZoneObjects = shared.mapSiteCardZones[siteIndex].getObjects(true)
       for i, curObject in ipairs(scriptZoneObjects) do
         if ("Card" == curObject.type) then
           siteInfo = shared.cardsTable[curObject.getName()]
@@ -3838,7 +3838,7 @@ function scanTable(alwaysScan)
       -- Find denizen card names.
 
       for normalCardIndex = 1, 3 do
-        scriptZoneObjects = shared.mapNormalCardZones[siteIndex][normalCardIndex].getObjects()
+        scriptZoneObjects = shared.mapNormalCardZones[siteIndex][normalCardIndex].getObjects(true)
         for i, curObject in ipairs(scriptZoneObjects) do
           if ("Card" == curObject.type) then
             cardName = curObject.getName()
@@ -3867,7 +3867,7 @@ function scanTable(alwaysScan)
 
     -- Get the remaining world deck contents.
     shared.remainingWorldDeck = {}
-    scriptZoneObjects = shared.worldDeckZone.getObjects()
+    scriptZoneObjects = shared.worldDeckZone.getObjects(true)
     for i, curObject in ipairs(scriptZoneObjects) do
       if ("Deck" == curObject.type) then
         for i, curCardInDeck in ipairs(curObject.getObjects()) do
@@ -3910,7 +3910,7 @@ function Method.ScanPlayerAdvisers()
     --
 
     for adviserSlotIndex = 1, 3 do
-      scriptZoneObjects = shared.playerAdviserZones[curColor][adviserSlotIndex].getObjects()
+      scriptZoneObjects = shared.playerAdviserZones[curColor][adviserSlotIndex].getObjects(true)
       for i, curObject in ipairs(scriptZoneObjects) do
         testRotation = curObject.getRotation()
 
@@ -4335,12 +4335,12 @@ function cleanTable()
     shared.favorBag.reset()
   end
 
-  -- Reset markers to default locations.
+  -- Reset markers to default locations.`
   for markerIndex = 1, shared.numMarkers do
     curMarker = getObjectFromGUID(shared.markerGuids[markerIndex])
     if (nil ~= curMarker) then
       curMarker.setPosition({ shared.markerPositions[markerIndex][1], shared.markerPositions[markerIndex][2], shared.markerPositions[markerIndex][3] })
-      curMarker.setRotation({ 0, 0, 0 })
+      curMarker.setRotation({ 0, 270, 0 })
     else
       printToAll("Error finding object.", { 1, 0, 0 })
     end
@@ -4621,8 +4621,9 @@ function spawnSingleCard(cardName, spawnFacedown, spawnPosition, cardRotY, spawn
     local shouldUnlock = spawnInHand == true or "Site" ~= cardType
 
     local cardJSON = CreateCardJson(cardName, cardRotY)
+    cardJSON.Locked = true
 
-    -- Spawn the card underneath the table so it can be mvoed up instead of flashing white.
+    -- Spawn the card underneath the table so it can be moved up instead of flashing white.
     if (shared.STATUS_SUCCESS == spawnStatus) then
       spawnParams.json = JSON.encode(cardJSON)
       spawnParams.position = { spawnPositionLocal[1], 1000, spawnPositionLocal[3] }
@@ -7219,7 +7220,7 @@ function handleChronicleAfterOfferCitizenship(player)
       -- NOTE:  Per Cole on 07/31/2020, chronicle rules have changed so that "your site" no longer matters.  This means if the winner's
       --        pawn is located on a site they do not rule, that site may be removed in the chronicle phase.  If the winner rules nothing,
       --        the map could end up entirely new.
-      scriptZoneObjects = shared.mapSiteCardZones[siteIndex].getObjects()
+      scriptZoneObjects = shared.mapSiteCardZones[siteIndex].getObjects(true)
       for i, curObject in ipairs(scriptZoneObjects) do
         curObjectName = curObject.getName()
         curObjectDescription = curObject.getDescription()
@@ -7631,7 +7632,7 @@ function handleChronicleAfterBuildRepair(player)
     -- NOTE:  Per Cole on 07/31/2020, chronicle rules have changed so that "your site" no longer matters.  This means if the winner's
     --        pawn is located on a site they do not rule, that site may be removed in the chronicle phase.  If the winner rules nothing,
     --        the map could end up entirely new.
-    scriptZoneObjects = shared.mapSiteCardZones[siteIndex].getObjects()
+    scriptZoneObjects = shared.mapSiteCardZones[siteIndex].getObjects(true)
     for i, curObject in ipairs(scriptZoneObjects) do
       curObjectName = curObject.getName()
       curObjectDescription = curObject.getDescription()
@@ -7687,7 +7688,7 @@ function handleChronicleAfterBuildRepair(player)
       shared.curMapSites[siteIndex][2] = false
 
       -- Delete the site card.
-      scriptZoneObjects = shared.mapSiteCardZones[siteIndex].getObjects()
+      scriptZoneObjects = shared.mapSiteCardZones[siteIndex].getObjects(true)
       for i, curObject in ipairs(scriptZoneObjects) do
         curObjectName = curObject.getName()
         if ("Card" == curObject.type) then
@@ -7697,7 +7698,7 @@ function handleChronicleAfterBuildRepair(player)
 
       -- Discard all denizen, relic, and ruin cards.
       for normalCardIndex = 1, 3 do
-        scriptZoneObjects = shared.mapNormalCardZones[siteIndex][normalCardIndex].getObjects()
+        scriptZoneObjects = shared.mapNormalCardZones[siteIndex][normalCardIndex].getObjects(true)
         for i, curObject in ipairs(scriptZoneObjects) do
           if ("Card" == curObject.type) then
             cardName = curObject.getName()
@@ -8469,7 +8470,7 @@ function handleChronicleAfterSelectSuit()
   -- Finally, make a list of relics in the reliquary.  These include relics already in the reliquary, as well as relics the winner moved to the reliquary.
   -- All of these relics will be saved to go on top of the next game's relic deck.
   saveRelicsBeforeShuffle = {}
-  scriptZoneObjects = shared.bigReliquaryZone.getObjects()
+  scriptZoneObjects = shared.bigReliquaryZone.getObjects(true)
   for i, curObject in ipairs(scriptZoneObjects) do
     curObjectName = curObject.getName()
     if ("Deck" == curObject.type) then
@@ -8802,7 +8803,7 @@ function SanityCheckAndRepairCoroutine()
   
   -- world deck
   local worldDeckMap = {}
-  for _, object in ipairs(shared.worldDeckZone.getObjects()) do
+  for _, object in ipairs(shared.worldDeckZone.getObjects(true)) do
     CardMultimapInsertDeckObject(worldDeckMap, object)
   end
 
@@ -8811,7 +8812,7 @@ function SanityCheckAndRepairCoroutine()
   local regionNames = {"Cradle", "Provinces", "Hinterland"}
   for zoneIndex, zone in ipairs(shared.discardZones) do
     discardDeckMaps[regionNames[zoneIndex]] = {}
-    for _, object in ipairs(zone.getObjects()) do
+    for _, object in ipairs(zone.getObjects(true)) do
       CardMultimapInsertDeckObject(discardDeckMaps[regionNames[zoneIndex]], object)
     end
   end
@@ -8825,7 +8826,7 @@ function SanityCheckAndRepairCoroutine()
     -- advisers
     adviserCardMaps[playerColor] = {}
     for _, zone in ipairs(zones) do
-      for _, object in ipairs(zone.getObjects()) do
+      for _, object in ipairs(zone.getObjects(true)) do
         CardMultimapInsertDeckObject(adviserCardMaps[playerColor], object)
       end
     end
@@ -8844,7 +8845,7 @@ function SanityCheckAndRepairCoroutine()
     local siteName = shared.curMapSites[siteIndex][1]
     mapCardMaps[siteName] = {}
     for cardIndex, zone in ipairs(siteZones) do
-      for _, object in ipairs(zone.getObjects()) do
+      for _, object in ipairs(zone.getObjects(true)) do
         CardMultimapInsertDeckObject(mapCardMaps[siteName], object)
       end
     end

@@ -1941,24 +1941,29 @@
     },
     {
       "Nickname": "Visions Drawn Marker",
-      "Name": "BlockSquare",
+      "Name": "Custom_Model",
       "GUID": "a7e6d2",
       "Transform": {
         "posX": -17.4418373,
         "posY": 1.37500012,
         "posZ": -2.08526421,
-        "rotX": 6.26632129E-07,
-        "rotY": -3.105781E-05,
-        "rotZ": 5.651779E-07,
-        "scaleX": 0.63,
-        "scaleY": 0.63,
-        "scaleZ": 0.63
+        "rotX": 0,
+        "rotY": 270,
+        "rotZ": 0,
+        "scaleX": 1.39999974,
+        "scaleY": 1.39999974,
+        "scaleZ": 1.39999974
       },
       "Description": "",
       "GMNotes": "",
+      "AltLookAngle": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
       "ColorDiffuse": {
-        "r": 0.0,
-        "g": 0.821560144,
+        "r": 1.0,
+        "g": 1.0,
         "b": 1.0
       },
       "LayoutGroupSortIndex": 0,
@@ -1975,44 +1980,56 @@
       "GridProjection": false,
       "HideWhenFaceDown": false,
       "Hands": false,
+      "CustomMesh": {
+        "MeshURL": "http://cloud-3.steamusercontent.com/ugc/1814394706279962634/B1C2F7CF534C38FDAD612106C07615D56E4FC95D/",
+        "DiffuseURL": "http://cloud-3.steamusercontent.com/ugc/1814394706279965756/2812EA8732473684BA5D43D5BB0884B42313F7C8/",
+        "NormalURL": "",
+        "ColliderURL": "",
+        "Convex": true,
+        "MaterialIndex": 1,
+        "TypeIndex": 0,
+        "CustomShader": {
+          "SpecularColor": {
+            "r": 0.875,
+            "g": 0.812880337,
+            "b": 0.7463235
+          },
+          "SpecularIntensity": 0.05,
+          "SpecularSharpness": 2.0,
+          "FresnelStrength": 0.0
+        },
+        "CastShadows": true
+      },
       "LuaScript": "",
       "LuaScriptState": "",
-      "XmlUI": "",
-      "PhysicsMaterial": {
-        "StaticFriction": 1.0,
-        "DynamicFriction": 0.7,
-        "Bounciness": 0.0,
-        "FrictionCombine": 0,
-        "BounceCombine": 0
-      },
-      "Rigidbody": {
-        "Mass": 0.1,
-        "Drag": 0.1,
-        "AngularDrag": 0.1,
-        "UseGravity": true
-      }
+      "XmlUI": ""
     },
     {
       "Nickname": "Round Marker",
-      "Name": "BlockSquare",
+      "Name": "Custom_Model",
       "GUID": "c1f67a",
       "Transform": {
         "posX": -20.86063,
         "posY": 1.37500024,
         "posZ": -1.83094335,
-        "rotX": -8.33944E-08,
-        "rotY": -8.58777E-05,
-        "rotZ": -1.20429081E-06,
-        "scaleX": 0.63,
-        "scaleY": 0.63,
-        "scaleZ": 0.63
+        "rotX": -1.19487981E-06,
+        "rotY": -1.05373533E-06,
+        "rotZ": 7.615752E-07,
+        "scaleX": 0.350000441,
+        "scaleY": 0.350000441,
+        "scaleZ": 0.350000441
       },
       "Description": "",
       "GMNotes": "",
+      "AltLookAngle": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
       "ColorDiffuse": {
-        "r": 0.876306534,
-        "g": 0.876306534,
-        "b": 0.876306534
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
@@ -2028,22 +2045,29 @@
       "GridProjection": false,
       "HideWhenFaceDown": false,
       "Hands": false,
+      "CustomMesh": {
+        "MeshURL": "http://cloud-3.steamusercontent.com/ugc/1814394706280098278/D3A4137294B8B3B29E25458ED645B19467D4B2C4/",
+        "DiffuseURL": "http://cloud-3.steamusercontent.com/ugc/1814394706280098927/D50186B3F65B08436CEC8EEF71302B7695AA7C56/",
+        "NormalURL": "",
+        "ColliderURL": "",
+        "Convex": true,
+        "MaterialIndex": 2,
+        "TypeIndex": 0,
+        "CustomShader": {
+          "SpecularColor": {
+            "r": 0.735294163,
+            "g": 0.735294163,
+            "b": 0.735294163
+          },
+          "SpecularIntensity": 1.0,
+          "SpecularSharpness": 8.0,
+          "FresnelStrength": 0.122222222
+        },
+        "CastShadows": true
+      },
       "LuaScript": "",
       "LuaScriptState": "",
-      "XmlUI": "",
-      "PhysicsMaterial": {
-        "StaticFriction": 1.0,
-        "DynamicFriction": 0.7,
-        "Bounciness": 0.0,
-        "FrictionCombine": 0,
-        "BounceCombine": 0
-      },
-      "Rigidbody": {
-        "Mass": 0.1,
-        "Drag": 0.1,
-        "AngularDrag": 0.1,
-        "UseGravity": true
-      }
+      "XmlUI": ""
     },
     {
       "Name": "Custom_Dice",
@@ -2157,8 +2181,8 @@
       ]
     },
     {
-      "Name": "Custom_Dice",
       "GUID": "8e1eb3",
+      "Name": "Custom_Model",
       "Transform": {
         "posX": -45.29,
         "posY": -3.5,
@@ -2166,52 +2190,59 @@
         "rotX": 270.0,
         "rotY": 0.0,
         "rotZ": 0.0,
-        "scaleX": 1.5,
-        "scaleY": 1.5,
-        "scaleZ": 1.5
+        "scaleX": 0.5,
+        "scaleY": 0.5,
+        "scaleZ": 0.5
       },
+      "Nickname": "",
       "Description": "",
       "GMNotes": "",
+      "AltLookAngle": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
       "ColorDiffuse": {
-        "r": 0.8384267,
-        "g": 0.5484314,
-        "b": 0.8867595
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0
       },
       "LayoutGroupSortIndex": 0,
       "Value": 0,
-      "Locked": true,
-      "Grid": true,
+      "Locked": false,
+      "Grid": false,
       "Snap": false,
       "IgnoreFoW": false,
       "MeasureMovement": false,
       "DragSelectable": true,
       "Autoraise": true,
       "Sticky": true,
-      "Tooltip": false,
+      "Tooltip": true,
       "GridProjection": false,
       "HideWhenFaceDown": false,
       "Hands": false,
-      "CustomImage": {
-        "ImageURL": "http://tts.ledergames.com/Oath/dice/3_2_0/d6_custom_3.jpg",
-        "ImageSecondaryURL": "",
-        "ImageScalar": 1.0,
-        "WidthScale": 0.0,
-        "CustomDice": {
-          "Type": 1
-        }
+      "CustomMesh": {
+        "MeshURL": "http://cloud-3.steamusercontent.com/ugc/990115005955072959/3212257FC08D45CCB80245F6EDDE3264140FBCC8/",
+        "DiffuseURL": "http://cloud-3.steamusercontent.com/ugc/1814394706280223100/34CE5DD31F8072FDC0E10010A8836A14F71CAF64/",
+        "NormalURL": "",
+        "ColliderURL": "",
+        "Convex": true,
+        "MaterialIndex": 0,
+        "TypeIndex": 2,
+        "CastShadows": true
       },
       "LuaScript": "",
       "LuaScriptState": "",
       "XmlUI": "",
       "PhysicsMaterial": {
-        "StaticFriction": 1.0,
-        "DynamicFriction": 0.7,
-        "Bounciness": 0.0,
+        "StaticFriction": 0.1,
+        "DynamicFriction": 0.5,
+        "Bounciness": 0.1,
         "FrictionCombine": 0,
         "BounceCombine": 0
       },
       "Rigidbody": {
-        "Mass": 0.1,
+        "Mass": 1.0,
         "Drag": 0.1,
         "AngularDrag": 0.1,
         "UseGravity": true
@@ -2220,7 +2251,7 @@
         {
           "Value": "1",
           "Rotation": {
-            "x": -90.0,
+            "x": 270.0,
             "y": 0.0,
             "z": 0.0
           }
@@ -2238,7 +2269,7 @@
           "Rotation": {
             "x": 0.0,
             "y": 0.0,
-            "z": -90.0
+            "z": 270.0
           }
         },
         {
@@ -2254,7 +2285,7 @@
           "Rotation": {
             "x": 0.0,
             "y": 0.0,
-            "z": -180.0
+            "z": 180.0
           }
         },
         {

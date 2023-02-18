@@ -2,37 +2,41 @@
 local uiCardWidth = 213.75
 local uiCardHeight = 337.5
 
-function onLoad(save_string)
-  local save_data = {}
-  if save_string then
-    save_data = JSON.decode(save_string)
-  end
-
-  -- deckZone must have either already been set or be in the save data
-  if not shared.deckZone then
-    shared.deckZone = getObjectFromGUID(save_data.deckZoneGuid)
-  end
-  
-  deckData = Shared(shared.deckZone) -- shared.deckZone was set in CardTagging/Global.lua
+function onLoad()
   globalData = Shared(Global)
-end
-
-function onSave()
-  local save_data = {
-    deckZoneGuid = shared.deckZone.guid
-  }
-  return JSON.encode(save_data)
 end
 
 function onDestroy()
   WhenGlobalUIMutable(DisableTavernSongsUI)
 end
 
-function Method.OnNumberTyped(player_color, number)
-  deckData.cardsBeingDrawn = true
+function GetDeck()
+  local allObjects = owner.getObjects(true)
+  local deckObjects = {}
+  for _, object in ipairs(allObjects) do
+    if object.type == 'Deck' then
+      table.insert(deckObjects, object)
+    elseif object.type == 'Card' then
+      -- ignore moving cards (they're likely being drawn)
+      if object.getVelocity():magnitude() == 0 and object.getAngularVelocity():magnitude() == 0 then
+        table.insert(deckObjects, object)
+      end
+    end
+  end
+  if #deckObjects > 1 then
+    deckObjects = group(deckObjects)
+  end
+  if #deckObjects > 1 then
+    printToAll("Error, deck failed to merge", {1,0,0})
+  end
+  return deckObjects[1]
+end
+
+function Method.OnNumberTyped_Zone(object, player_color, number)
+  shared.cardsBeingDrawn = true
   Wait.time(
     function()
-      deckData.cardsBeingDrawn = false
+      shared.cardsBeingDrawn = false
     end,
     0.5
   )
@@ -58,13 +62,13 @@ function WhenGlobalUIMutable(func, ...)
   )
 end
 
-function Method.HoveredInDeck(player_color)
+function Method.OnHover_Zone(object, player_color)
   -- you can only peak at cards on your turn
   if Turns.turn_color ~= player_color then
     return WhenGlobalUIMutable(DisableTavernSongsUI, player_color)
   end
   
-  if deckData.cardsBeingDrawn then
+  if shared.cardsBeingDrawn then
     return WhenGlobalUIMutable(DisableTavernSongsUI, player_color)
   end
 
@@ -73,7 +77,7 @@ function Method.HoveredInDeck(player_color)
   end
   
   local card_power
-  if (owner.hasTag('DiscardDeck')) then
+  if (owner.hasTag('DiscardDeckZone')) then
     if shared.regionNumber ~= GetRegionOfPlayerPawn(player_color) then
       return WhenGlobalUIMutable(DisableTavernSongsUI, player_color)
     end
@@ -82,7 +86,7 @@ function Method.HoveredInDeck(player_color)
     end
     card_power = 'TAVERN SONGS'
   end
-  if (owner.hasTag('WorldDeck')) then
+  if (owner.hasTag('WorldDeckZone')) then
     if not PlayerCanUseRelic(player_color, 'Oracular Pig') then
       return WhenGlobalUIMutable(DisableTavernSongsUI, player_color)
     end
@@ -91,7 +95,7 @@ function Method.HoveredInDeck(player_color)
   WhenGlobalUIMutable(EnableTavernSongsUI, player_color, card_power)
 end
 
-function Method.UnHoveredInDeck(player_color)
+function Method.OnUnHover_Zone(object, player_color)
   WhenGlobalUIMutable(DisableTavernSongsUI, player_color)
 end
 
@@ -141,7 +145,7 @@ end
 
 function CardIsAtSite(siteIndex, cardName)
   for normalCardIndex = 1, 3 do
-    scriptZoneObjects = globalData.mapNormalCardZones[siteIndex][normalCardIndex].getObjects()
+    scriptZoneObjects = globalData.mapNormalCardZones[siteIndex][normalCardIndex].getObjects(true)
     for i, curObject in ipairs(scriptZoneObjects) do
       if ("Card" == curObject.type) then
         if cardName == curObject.getName() then
@@ -170,7 +174,7 @@ end
 
 function GetSiteOfPlayerPawn(player_color)
   for siteIndex = 1, 8 do
-    local scriptZoneObjects = globalData.mapSiteCardZones[siteIndex].getObjects()
+    local scriptZoneObjects = globalData.mapSiteCardZones[siteIndex].getObjects(true)
     for i, curObject in ipairs(scriptZoneObjects) do
       local curObjectName = curObject.getName()
       local convertedObjectColor = curObject.getDescription()
@@ -195,7 +199,7 @@ function GetSitesRuledByPlayer(player_color)
   local sitesRuledByPlayer = {}
   
   for siteIndex = 1, 8 do
-    local scriptZoneObjects = globalData.mapSiteCardZones[siteIndex].getObjects()
+    local scriptZoneObjects = globalData.mapSiteCardZones[siteIndex].getObjects(true)
     for i, curObject in ipairs(scriptZoneObjects) do
       if ("Figurine" == curObject.type) then
         if ("Warband" == curObject.getName()) then
@@ -221,7 +225,7 @@ function GetSitesRuledByPlayer(player_color)
 end
 
 function PlayerCanUseRelic(player_color, relicName)
-  for _, object in ipairs(globalData.playerOwnershipZones[player_color].getObjects()) do
+  for _, object in ipairs(globalData.playerOwnershipZones[player_color].getObjects(true)) do
     if object.getName() == relicName then
       -- Check if the relic is faceup.
       testRotation = object.getRotation()
@@ -290,15 +294,21 @@ end
 
 function GetCardAssets(count)
   local cardAssets = {}
-  if (owner.type == 'Card') then
+  local deck = GetDeck()
+  if not deck then
+    -- case for no cards (shouldn't happen but supported anyway)
+    table.insert(cardAssets, GetCardAsset(nil))
+    table.insert(cardAssets, GetCardAsset(nil))
+    table.insert(cardAssets, GetCardAsset(nil))
+  elseif (deck.type == 'Card') then
     -- case for a single card
-    local cardData = owner.getData()
+    local cardData = deck.getData()
     table.insert(cardAssets, GetCardAsset(cardData.CardID, cardData.CustomDeck))
     table.insert(cardAssets, GetCardAsset(nil))
     table.insert(cardAssets, GetCardAsset(nil))
   else
     -- case for an entire deck
-    local deckData = owner.getData()
+    local deckData = deck.getData()
     for i = 1, 3 do
       local cardData = deckData.ContainedObjects[i]
       if cardData then

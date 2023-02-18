@@ -295,9 +295,19 @@ function ProxyObject(object)
     return mt.ttsObject.editInput(UnSharedRecursive(parameters))
   end
 
+  ---@param ignore_tags boolean
   ---@return nil | ProxyObject[] | tts__IndexedSimpleObjectState[]
-  function mt.getObjects()
-    return MaybeProxyObjectTable(mt.ttsObject.getObjects())
+  function mt.getObjects(ignore_tags)
+    local result = mt.ttsObject.getObjects(ignore_tags)
+    -- tts includes other scripting zones and garbage objects if ignore_tags is true. cull those out.
+    if ignore_tags and result then
+      for i = #result, 1, -1 do
+        if (not result[i]) or (not result[i].guid) or (result[i].type == 'Scripting') then
+          table.removeSwap(result, i)
+        end
+      end
+    end
+    return MaybeProxyObjectTable(result)
   end
 
   ---@param color tts__Color
@@ -646,6 +656,31 @@ local _jsonEncodePretty = JSON.encode_pretty
 function JSON.encode_pretty(value, etc, options)
   return _jsonEncodePretty(UnSharedRecursive(value), etc, UnSharedRecursive(options))
 end
+
+
+local _Hands = Hands
+local handsOverloads = {}
+local handsMetatable = {}
+
+function handsMetatable.__index(t,k)
+  v = handsOverloads[k]
+  if v then
+    return v
+  end
+
+  return _Hands[k]
+end
+
+function handsMetatable.__newindex(t,k,v)
+  _Hands[k] = v
+end
+
+---@return ProxyObject[]
+function handsOverloads.getHands()
+  return ProxyObjectTable(_Hands.getHands())
+end
+
+Hands = setmetatable({}, handsMetatable)
 
 local _Lighting = Lighting
 local lightingOverloads = {}
