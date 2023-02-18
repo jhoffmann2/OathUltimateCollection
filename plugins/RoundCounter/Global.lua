@@ -1,12 +1,12 @@
 ﻿local roundMarkerPositions = {
-  {-20.86, 1.38, -1.83},
-  {-19.70, 1.38, -2.70},
-  {-19.77, 1.38, -4.11},
-  {-20.86, 1.38, -5.19},
-  {-22.14, 1.38, -5.19},
-  {-23.49, 1.38, -4.21},
-  {-23.46, 1.38, -2.66},
-  {-22.15, 1.38, -1.70}
+  {-20.86, 1.06, -1.83},
+  {-19.70, 1.06, -2.70},
+  {-19.77, 1.06, -4.11},
+  {-20.86, 1.06, -5.19},
+  {-22.14, 1.06, -5.19},
+  {-23.49, 1.06, -4.21},
+  {-23.46, 1.06, -2.66},
+  {-22.15, 1.06, -1.70}
 }
 
 local roundMarkerGuid = "c1f67a"
@@ -30,6 +30,7 @@ local purpleDie = nil
 
 function onLoad()
   roundMarker = getObjectFromGUID(roundMarkerGuid)
+  roundMarker.setLock(true)
 end
 
 function Callback.OnGameStart()
