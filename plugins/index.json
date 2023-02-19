@@ -117,5 +117,11 @@
     "value": true,
     "plugin": "AutoTavernSongs",
     "tooltip": "If you have Tavern Songs or Oracular Pig and hover over the respective deck/discard,\n UI will pop up showing you the top three cards"
+  },
+  "Forced Card Restrictions": {
+    "type": "toggle",
+    "value": true,
+    "plugin": "ForcedCardRestrictions",
+    "tooltip": "Don't let players play site cards to advisors, play advisor cards to sites, or discard locked cards"
   }
 }

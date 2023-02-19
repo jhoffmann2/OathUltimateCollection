@@ -3910,7 +3910,7 @@ function Method.ScanPlayerAdvisers()
     --
 
     for adviserSlotIndex = 1, 3 do
-      scriptZoneObjects = shared.playerAdviserZones[curColor][adviserSlotIndex].getObjects(true)
+      local scriptZoneObjects = shared.playerAdviserZones[curColor][adviserSlotIndex].getObjects(true)
       for i, curObject in ipairs(scriptZoneObjects) do
         testRotation = curObject.getRotation()
 
@@ -7231,7 +7231,7 @@ function handleChronicleAfterOfferCitizenship(player)
       -- NOTE:  Per Cole on 07/31/2020, chronicle rules have changed so that "your site" no longer matters.  This means if the winner's
       --        pawn is located on a site they do not rule, that site may be removed in the chronicle phase.  If the winner rules nothing,
       --        the map could end up entirely new.
-      scriptZoneObjects = shared.mapSiteCardZones[siteIndex].getObjects(true)
+      local scriptZoneObjects = shared.mapSiteCardZones[siteIndex].getObjects(true)
       for i, curObject in ipairs(scriptZoneObjects) do
         curObjectName = curObject.getName()
         curObjectDescription = curObject.getDescription()

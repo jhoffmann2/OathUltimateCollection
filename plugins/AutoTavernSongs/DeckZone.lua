@@ -145,7 +145,7 @@ end
 
 function CardIsAtSite(siteIndex, cardName)
   for normalCardIndex = 1, 3 do
-    scriptZoneObjects = globalData.mapNormalCardZones[siteIndex][normalCardIndex].getObjects(true)
+    local scriptZoneObjects = globalData.mapNormalCardZones[siteIndex][normalCardIndex].getObjects(true)
     for i, curObject in ipairs(scriptZoneObjects) do
       if ("Card" == curObject.type) then
         if cardName == curObject.getName() then
