@@ -13,7 +13,7 @@ local roundMarkerGuid = "c1f67a"
 --- @type tts__Object
 local roundMarker = nil
 local lastRememberedRound = 1
-local lastTurnWasDrafting = true
+local lastTurnWasDrafting = false
 
 local purpleDiePos = {-21.60, 1.56, -3.46}
 local purpleDieRotations = {
@@ -34,7 +34,7 @@ function onLoad()
 end
 
 function Callback.OnGameStart()
-  lastTurnWasDrafting = CardsInHands()
+  lastTurnWasDrafting = true
 
   --purpleDie = getObjectFromGUID(purpleDieGuid)
   --purpleDie.setPosition(purpleDiePos)
@@ -50,10 +50,9 @@ function onPlayerTurn(player, previous_player)
       --  RollPurpleDie()
       --end 
     end
+  else
+    lastTurnWasDrafting = CardsInHands()
   end
-  
-  
-  lastTurnWasDrafting = CardsInHands()
 end
 
 function RollPurpleDie()
