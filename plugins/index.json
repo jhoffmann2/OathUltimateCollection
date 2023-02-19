@@ -14,17 +14,49 @@
   },
   
   "Deck": {
-    "type": "radio",
-    "value": "BaseDeck",
+    "type": "toggle-group",
     "hidden": false,
     "options": [
       {
-        "name": "Official",
-        "plugin": "BaseDeck",
-        "tooltip": "play with all the cards found in the official base game!"
+        "name": "Official Sites",
+        "value": true,
+        "plugin": "BaseDeckSites",
+        "tooltip": "play with all the sites found in the official base game!"
+      },
+      {
+        "name": "Official Denizens",
+        "value": true,
+        "plugin": "BaseDeckDenizens",
+        "tooltip": "play with all the denizens found in the official base game!"
+      },
+      {
+        "name": "Official Edifices / Ruins",
+        "value": true,
+        "plugin": "BaseDeckEdifices",
+        "tooltip": "play with all the edifices found in the official base game!"
+      },
+      {
+        "name": "Official Visions",
+        "value": true,
+        "plugin": "BaseDeckVisions",
+        "tooltip": "play with all the visions found in the official base game!"
+      },
+      {
+        "name": "Official Banners",
+        "value": true,
+        "hidden": true,
+        "plugin": "BaseDeckSuperRelics",
+        "tooltip": "LEGACY"
+      },
+      {
+        "name": "Official Relics",
+        "value": true,
+        "plugin": "BaseDeckRelics",
+        "tooltip": "play with all the relics found in the official base game!"
       },
       {
         "name": "Naysayers",
+        "value": false,
         "plugin": "NaysayersDeck",
         "tooltip": "Add extra cards to the deck designed by The Naysayers (in development)"
       }

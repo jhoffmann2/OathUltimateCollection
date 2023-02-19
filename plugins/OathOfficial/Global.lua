@@ -1555,18 +1555,18 @@ function spawnManualFullDecks(chatPlayer)
 
   -- Wait slightly so the message can print after the command.
   Wait.time(function()
-    spawnManualFullDecksB(chatPlayer)
+    spawnAllDecksAfterDelay()
   end, 0.05)
 end
 
-function spawnManualFullDecksB(chatPlayer)
+function spawnManualFullDecksB()
   broadcastToAll("Please wait, spawning decks...", { 0, 0.8, 0 })
   Wait.time(function()
-    spawnManualFullDecksAfterDelay(chatPlayer)
+    spawnManualFullDecksAfterDelay()
   end, 0.30)
 end
 
-function spawnManualFullDecksAfterDelay(chatPlayer)
+function spawnManualFullDecksAfterDelay()
   -- Note that since this is a bag, getData() is needed rather than getObjects().
   local bagObjects = shared.manualFullDecksBag.getData().ContainedObjects
 
@@ -3089,7 +3089,7 @@ function SpawnDispossessedBag()
     table.shallowCopy(shared.curDispossessedDeckCards, dispossessedUnshuffled)
 
     -- Create a shuffled list of dispossessed cards.
-    for cardIndex = 1, #shared.dispossessedUnshuffled do
+    for cardIndex = 1, #dispossessedUnshuffled do
       removeCardIndex = math.random(1, #dispossessedUnshuffled)
       dispossessedShuffled[cardIndex] = dispossessedUnshuffled[removeCardIndex]
       table.remove(dispossessedUnshuffled, removeCardIndex)
@@ -3100,7 +3100,7 @@ function SpawnDispossessedBag()
       shared.bagJSON.ContainedObjects = nil
     else
       shared.bagJSON.ContainedObjects = {}
-      for cardIndex = 1, #shared.dispossessedShuffled do
+      for cardIndex = 1, #dispossessedShuffled do
         addCardToContainerJSON(shared.bagJSON, dispossessedShuffled[cardIndex])
       end
     end
@@ -5393,6 +5393,17 @@ function generateRandomWorldDeck(cardsForWorldDeck, numCardsToChoose)
   ShuffleSubset(15, 3)
   -- finish off by adding the remaining denizens
   ShuffleSubset(#denizensAvailable, 0)
+
+  -- in a random setup, the last three cards can't be adviser only cards. if any of them are, fix it.
+  if (shared.randomEnabled) then
+    for i = #shared.curWorldDeckCards, #shared.curWorldDeckCards - 2, -1 do
+      -- until we find a site-acceptable card, search for new cards to replace it with
+      while(shared.cardsTable[shared.curWorldDeckCards[i]].playerOnly) do
+        -- draw a new random card to replace this one
+        shared.curWorldDeckCards[i] = DrawRandomCardsWeighted(cardsForWorldDeck, 1)[1]
+      end
+    end
+  end
   
 end
 
@@ -8183,6 +8194,7 @@ function confirmSelectSuit(player, value, id)
       archivePullSuits[3] = shared.chronicleNextSuits[archivePullSuits[2]]
 
       shared.cardsAddedToWorldDeck = {}
+      local cancel_dispossess = false
 
       -- Check whether the archive has enough cards to pull from these suits.  Otherwise, heal the archive.
       if (((#(shared.archiveContentsBySuit[archivePullSuits[1]])) >= 3) and
@@ -8238,13 +8250,24 @@ function confirmSelectSuit(player, value, id)
         else
           -- end if (#(dispossessedContentsBySuit[mostDispossessedSuit]) >= 6)
           -- This should never happen, since there should either be enough cards in the archive or enough cards in the dispossessed for this suit.
-          printToAll("Error, insufficient " .. shared.mostDispossessedSuit .. " cards to heal the Archive.", { 1, 0, 0 })
+          
+          -- edit: it can happen if someone is playing with a custom archive that doesn't have enough cards
+          if (shared.mostDispossessedSuit) then
+            printToAll("Error, insufficient " .. shared.mostDispossessedSuit .. " cards to heal the Archive.", { 1, 0, 0 })
+          else
+            printToAll("Error, insufficient cards to heal the Archive.", { 1, 0, 0 })
+          end
+          printToAll("Leaving the world deck the same and clearing dispossessed.", { 1, 1, 1 })
+          -- Clear the dispossessed deck, which effectively shuffles all dispossessed cards into the archive.
+          shared.curDispossessedDeckCards = {}
+          -- Don't dispossess new cards
+          cancel_dispossess = true
         end
       end
 
       -- Continue with the chronicle phase.
       Global.UI.setAttribute("panel_select_suit", "active", false)
-      handleChronicleAfterSelectSuit()
+      handleChronicleAfterSelectSuit(cancel_dispossess)
     else
       -- end if (nil ~= selectedSuit)
       printToAll("Error, no suit selected.", { 1, 0, 0 })
@@ -8336,7 +8359,7 @@ function calculateMostDispossessedSuit()
   return returnSuit
 end
 
-function handleChronicleAfterSelectSuit()
+function handleChronicleAfterSelectSuit(cancel_dispossess)
   local newSuitOrderString
   local discardCount = 0
   local dispossessOptions = {}
@@ -8403,43 +8426,45 @@ function handleChronicleAfterSelectSuit()
   end
 
   -- Choose 6 cards from dispossessed options.  The chosen cards will be added to the dispossessed deck.
-  for removeCount = 1, 6 do
-    if ((#dispossessOptions) > 0) then
-      dispossessIndex = math.random(1, #dispossessOptions)
-      cardName = dispossessOptions[dispossessIndex]
+  if not cancel_dispossess then
+    for removeCount = 1, 6 do
+      if ((#dispossessOptions) > 0) then
+        dispossessIndex = math.random(1, #dispossessOptions)
+        cardName = dispossessOptions[dispossessIndex]
 
-      -- As a sanity check, confirm that the card does not exist on the map.
-      for siteIndex = 1, 8 do
-        for normalCardIndex = 1, 3 do
-          if (cardName == shared.curMapNormalCards[siteIndex][normalCardIndex][1]) then
-            -- This should never happen since any discarded denizens should not be in the map structure.
-            printToAll("Error, dispossessed card " .. cardName .. " was tracked as being on the map.  Please report this to AgentElrond!", { 1, 0, 0 })
+        -- As a sanity check, confirm that the card does not exist on the map.
+        for siteIndex = 1, 8 do
+          for normalCardIndex = 1, 3 do
+            if (cardName == shared.curMapNormalCards[siteIndex][normalCardIndex][1]) then
+              -- This should never happen since any discarded denizens should not be in the map structure.
+              printToAll("Error, dispossessed card " .. cardName .. " was tracked as being on the map.  Please report this to AgentElrond!", { 1, 0, 0 })
+            end
           end
         end
-      end
 
-      -- As a sanity check, confirm that the card does not exist in the remaining world deck.
-      for worldDeckIndex = 1, #shared.remainingWorldDeck do
-        if (cardName == shared.remainingWorldDeck[worldDeckIndex]) then
-          -- This should never happen since any discarded denizens should not be in the remaining world deck structure.
-          printToAll("Error, dispossessed card " .. cardName .. " was tracked as being in the remaining world deck.  Please report this to AgentElrond!", { 1, 0, 0 })
+        -- As a sanity check, confirm that the card does not exist in the remaining world deck.
+        for worldDeckIndex = 1, #shared.remainingWorldDeck do
+          if (cardName == shared.remainingWorldDeck[worldDeckIndex]) then
+            -- This should never happen since any discarded denizens should not be in the remaining world deck structure.
+            printToAll("Error, dispossessed card " .. cardName .. " was tracked as being in the remaining world deck.  Please report this to AgentElrond!", { 1, 0, 0 })
+          end
         end
+
+        -- Add the card to the dispossessed deck.
+        table.insert(shared.curDispossessedDeckCards, cardName)
+
+        -- Add the card to the newly dispossessed list.
+        table.insert(newDispossessedCards, cardName)
+
+        -- Remove the card from the dispossessed options list.
+        table.remove(dispossessOptions, dispossessIndex)
+      else
+        -- end if ((#dispossessOptions) > 0)
+        -- It should be impossible or nearly impossible for this game state to ever occur, since players will typically play and discard enough denizens.
+        printToAll("Not enough cards were available to dispossess.", { 1, 0, 0 })
       end
-
-      -- Add the card to the dispossessed deck.
-      table.insert(shared.curDispossessedDeckCards, cardName)
-
-      -- Add the card to the newly dispossessed list.
-      table.insert(newDispossessedCards, cardName)
-
-      -- Remove the card from the dispossessed options list.
-      table.remove(dispossessOptions, dispossessIndex)
-    else
-      -- end if ((#dispossessOptions) > 0)
-      -- It should be impossible or nearly impossible for this game state to ever occur, since players will typically play and discard enough denizens.
-      printToAll("Not enough cards were available to dispossess.", { 1, 0, 0 })
-    end
-  end -- end for removeCount = 1,6
+    end -- end for removeCount = 1,6
+  end
 
   --
   -- Step 8.6:  Clean up relics.

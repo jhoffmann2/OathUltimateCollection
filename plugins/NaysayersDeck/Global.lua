@@ -1,7 +1,4 @@
 ﻿function onLoad()
-  
-  -- this deck inherits cards from the base deck
-  InvokeEvent('OnEnsurePluginActive', 'BaseDeck')
 
   -------------------------------------------------------------------------------------------
   --- Sites
