@@ -7,6 +7,11 @@
     "Studio": "Leder Games"
   },
 
+  "Custom Cards": {
+    "Naysayers": "The Naysayers",
+    "Legends": "DomV"
+  },
+
   "Scripting": {
     "Engine": "Jordan Hoffmann",
     "Base Game": "AgentElrond",
@@ -16,6 +21,7 @@
     "Auto Rest": "Jordan Hoffmann",
     "Auto Tavern Songs": "Jordan Hoffmann",
     "Round Counter": "Jordan Hoffmann",
+    "Forced Card Restrictions": "Jordan Hoffmann",
     "Realistic Component Models": "AngryPony"
   }
 }
