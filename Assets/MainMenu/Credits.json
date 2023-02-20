@@ -4,7 +4,8 @@
   {
     "Game": "Cole Wehrle",
     "Art": "Kyle Ferrin",
-    "Studio": "Leder Games"
+    "Studio": "Leder Games",
+    "Realistic Component Models": "AngryPony"
   },
 
   "Custom Cards": {
@@ -21,7 +22,6 @@
     "Auto Rest": "Jordan Hoffmann",
     "Auto Tavern Songs": "Jordan Hoffmann",
     "Round Counter": "Jordan Hoffmann",
-    "Forced Card Restrictions": "Jordan Hoffmann",
-    "Realistic Component Models": "AngryPony"
+    "Forced Card Restrictions": "Jordan Hoffmann"
   }
 }
