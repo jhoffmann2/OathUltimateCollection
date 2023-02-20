@@ -18,7 +18,8 @@
       deckwidth = 10, 
       deckheight = 2, 
       hasuniqueback = false,
-      metatags = {'Custom', 'NaysayersDeck'}
+      metatags = {'Custom', 'NaysayersDeck'},
+      plugin = "NaysayersDeck"
     },
     {
       {  }, -- skip template card
@@ -43,7 +44,8 @@
       deckwidth = 10, 
       deckheight = 2, 
       hasuniqueback = false,
-      metatags = {'Custom', 'NaysayersDeck'}
+      metatags = {'Custom', 'NaysayersDeck'},
+      plugin = "NaysayersDeck"
     },
     {
       {  }, -- skip template card
@@ -68,7 +70,8 @@
       deckwidth = 10, 
       deckheight = 3, 
       hasuniqueback = false,
-      metatags = {'Custom', 'NaysayersDeck'}
+      metatags = {'Custom', 'NaysayersDeck'},
+      plugin = "NaysayersDeck"
     },
     {
       { cardName = "Alchemist's Professor", suit = "Arcane", cardtype = "Denizen" },
@@ -80,7 +83,7 @@
       { cardName = "Translocation", suit = "Arcane", cardtype = "Denizen", siteOnly = true },
       { cardName = "Truth Serum", suit = "Arcane", cardtype = "Denizen" },
       { cardName = "Wizard Mine", suit = "Arcane", cardtype = "Denizen", siteOnly = true },
-      {}, -- Alpha Female isn't a denizen
+      { cardName = "Alpha Female", suit = "Beast", cardType = "Extra", adviserOnly = true, locked = true},
       { cardName = "Bone Marrow", suit = "Beast", cardtype = "Denizen" },
       { cardName = "Fountain of Youth", suit = "Beast", cardtype = "Denizen", siteOnly = true },
       { cardName = "Lonely Alpha", suit = "Beast", cardtype = "Denizen", playerOnly = true },
@@ -88,7 +91,7 @@
       { cardName = "Seeking Guidance", suit = "Beast", cardtype = "Denizen", siteOnly = true },
       { cardName = "Shape Shifter", suit = "Beast", cardtype = "Denizen" },
       { cardName = "Territorial", suit = "Beast", cardtype = "Denizen", siteOnly = true },
-      {}, -- The Whole Pack isn't a denizen
+      { cardName = "The Whole Pack", suit = "Beast", cardType = "Extra", adviserOnly = true, locked = true},
       { cardName = "Transplant", suit = "Beast", cardtype = "Denizen" },
       { cardName = "Underdog", suit = "Beast", cardtype = "Denizen" },
       { cardName = "Wild Berries", suit = "Beast", cardtype = "Denizen", siteOnly = true },
@@ -103,7 +106,8 @@
       deckwidth = 10, 
       deckheight = 3, 
       hasuniqueback = false,
-      metatags = {'Custom', 'NaysayersDeck'}
+      metatags = {'Custom', 'NaysayersDeck'},
+      plugin = "NaysayersDeck"
     },
     {
       { cardName = "Alleyways", suit = "Discord", cardtype = "Denizen" },

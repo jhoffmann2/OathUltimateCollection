@@ -14,21 +14,27 @@ function onLoad()
 
   -- DS and PF added for legacy reasons
   InvokeMethod('AddDeck', Global,
-    {},
+    {
+      plugin = "BaseDeckSuperRelics"},
     {
       { cardName = "The Darkest Secret", cardtype = "SuperRelic" },
-      { cardName = "The People's Favor / The Mob's Favor", cardtype = "SuperRelic" },
-      { cardName = "The Grand Scepter", cardtype = "SuperRelic" }
+      { cardName = "The People's Favor / The Mob's Favor", cardtype = "SuperRelic" }
     }
   )
-
 
   -------------------------------------------------------------------------------------------
   --- Grand Scepter
   ---
   
   InvokeMethod('AddDeck', Global,
-    { deckimage = "http://tts.ledergames.com/Oath/cards/3_3_2/grandScepterBack.png", backimage = "http://tts.ledergames.com/Oath/cards/3_3_2/grandScepterFront.png", deckwidth = 1, deckheight = 1, hasuniqueback = true },
+    { 
+      deckimage = "http://tts.ledergames.com/Oath/cards/3_3_2/grandScepterBack.png", 
+      backimage = "http://tts.ledergames.com/Oath/cards/3_3_2/grandScepterFront.png", 
+      deckwidth = 1, 
+      deckheight = 1, 
+      hasuniqueback = true,
+      plugin = "BaseDeckSuperRelics",
+    },
     {
       { cardName = "The Grand Scepter", cardtype = "SuperRelic" }
     }

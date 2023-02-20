@@ -28,7 +28,20 @@
 ---@field SuperRelic OathCardData[]
 local cardLists
 
+local seenPluginsSet
+
 function onLoad(saveString)
+  Method.ResetDecks()
+
+  InvokeMethod("AddCommand", Global, {
+    identifier = '!card_weights',
+    description = 'Open an editor to change how likely cards are to show up in random games',
+    hostOnly = true,
+    eventName = 'OnCommand_CardWeights',
+  })
+end
+
+function Method.ResetDecks()
   shared.dataIsAvailable = false
 
   cardLists = {
@@ -40,8 +53,11 @@ function onLoad(saveString)
     SuperRelic = {},
     Extra = {}
   }
+  seenPluginsSet = {}
+  shared.deckPlugins = {}
 
-  shared.cardWeights = {}
+  shared.cardMetatagWeights = {}
+  shared.cardWeightsCache = nil
 
   shared.sitesBySaveID = { [-1] = "NONE" }
   shared.normalCardsBySaveID = { [-1] = "NONE" }
@@ -58,17 +74,6 @@ function onLoad(saveString)
     ["Banner of the Darkest Secret"] = "The Darkest Secret"
   }
   shared.edificeSaveIDs = {}
-
-  InvokeMethod("AddCommand", Global, {
-    identifier = '!card_weights',
-    description = 'Open an editor to change how likely cards are to show up in random games',
-    hostOnly = true,
-    eventName = 'OnCommand_CardWeights',
-  })
-end
-
-function Method.ResetDecks()
-  onLoad()
 end
 
 ---@param deckInfo OathDeckInfo
@@ -82,6 +87,18 @@ function Method.AddDeck(deckInfo, cards)
     deckInfo.backimage = "http://tts.ledergames.com/Oath/cards/3_2_0/cardbackVision.jpg"
   elseif deckInfo.backimage == "RELIC_BACK" then
     deckInfo.backimage = "http://tts.ledergames.com/Oath/cards/3_2_0/relicBack.jpg"
+  end
+  
+  -- if we haven't seen this plugin before, record it
+  if deckInfo.plugin then
+    if not seenPluginsSet[deckInfo.plugin] then
+      seenPluginsSet[deckInfo.plugin] = true
+
+      if not shared.deckPlugins then
+        shared.deckPlugins = {}
+      end
+      table.insert(shared.deckPlugins, deckInfo.plugin)
+    end
   end
 
   table.insert(shared.ttsDeckInfo, deckInfo)
@@ -100,8 +117,8 @@ function Method.AddDeck(deckInfo, cards)
     
     -- if we haven't seen a metatag before, add it's weight
     for _, metatag in ipairs(oathCardData.metatags) do
-      if not shared.cardWeights[metatag] then
-        shared.cardWeights[metatag] = 1 -- default weight is 1
+      if not shared.cardMetatagWeights[metatag] then
+        shared.cardMetatagWeights[metatag] = 1 -- default weight is 1
       end
     end
     
@@ -112,6 +129,59 @@ function Method.AddDeck(deckInfo, cards)
 
       table.insert(cardLists[oathCardData.cardtype], oathCardData.cardName)
       shared.cardsTable[oathCardData.cardName] = oathCardData
+    end
+  end
+end
+
+function Method.SetDeckPluginsList(pluginList)
+  if waitingForPlugins ~= nil then
+    printToAll("Error: Tried to SetDeckPluginsList while the previous plugin list was still loading", {1,0,0})
+    return
+  end
+  
+  if #pluginList == #shared.deckPlugins then
+    local pluginsUnchanged = true
+    for i, plugin in ipairs(pluginList) do
+      if plugin ~= shared.deckPlugins[i] then
+        pluginsUnchanged = false
+        break
+      end
+    end
+    if pluginsUnchanged then
+      InvokeEvent("OnFinishSetDeckPluginsList")
+      return
+    end
+  end
+
+  waitingForPlugins = {}
+  for _, plugin in ipairs(pluginList) do
+    waitingForPlugins[plugin] = true
+  end
+  
+  for _, plugin in ipairs(shared.deckPlugins) do
+    InvokeEvent("OnDeactivatePlugin", plugin)
+  end
+
+  Method.ResetDecks()
+  for _, plugin in ipairs(pluginList) do
+    InvokeEvent("OnActivatePlugin", plugin)
+  end
+end
+
+function Callback.OnPluginActivated(pluginName)
+  if waitingForPlugins ~= nil then
+    waitingForPlugins[pluginName] = nil
+    
+    -- because sets don't have an isEmpty operator, use pairs() to check if there's at least one element
+    local stillWaiting = false
+    for plugin,_ in pairs(waitingForPlugins) do
+      stillWaiting = true
+      break
+    end
+    if not stillWaiting then
+      waitingForPlugins = nil
+      Method.UpdateDeckData()
+      InvokeEvent("OnFinishSetDeckPluginsList")
     end
   end
 end
@@ -158,7 +228,9 @@ function Method.UpdateDeckData()
   shared.MIN_EXTRA_CARD = normalCardCount
   normalCardCount = AppendCardList(shared.normalCardsBySaveID, cardLists.Extra, normalCardCount)
   shared.MAX_EXTRA_CARD = normalCardCount - 1
-
+  
+  shared.MAX_CARD_ID = normalCardCount - 1
+  
   -- update site save ids in the cardsTable
   for index, cardName in ipairs(cardLists.Site) do
     shared.cardsTable[cardName].saveid = index - 1
@@ -216,7 +288,7 @@ function AppendEdificeRuins(len)
 end
 
 function Callback.OnCommand_CardWeights()
-  local asJson = JSON.encode_pretty(shared.cardWeights)
+  local asJson = JSON.encode_pretty(shared.cardMetatagWeights)
   
   -- open a data editor to edit the weights
   InvokeMethod("OpenDataEditor", Global,
@@ -225,6 +297,23 @@ function Callback.OnCommand_CardWeights()
 end
 
 function Method.SetCardWeights(asJson)
-  print(asJson)
-  shared.cardWeights = JSON.decode(asJson)
+  shared.cardMetatagWeights = JSON.decode(asJson)
+end
+
+function Method.CalculateCardDrawWeight(cardName)
+  if shared.cardWeightsCache == nil then
+    shared.cardWeightsCache = {}
+    for cardName, oathCardData in pairs(shared.cardsTable) do
+      local cardWeight = 1
+      if oathCardData.metatags then
+        for _, metatag in ipairs(oathCardData.metatags) do
+          -- a card's weight is the product of all it's metatag weights
+          cardWeight = cardWeight * shared.cardMetatagWeights[metatag]
+        end
+      end
+      shared.cardWeightsCache[cardName] = cardWeight
+    end
+  end
+
+  return shared.cardWeightsCache[cardName]
 end

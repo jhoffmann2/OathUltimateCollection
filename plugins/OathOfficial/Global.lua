@@ -28,6 +28,7 @@ function onLoad(save_state)
 
   shared.STATUS_SUCCESS = 0
   shared.STATUS_FAILURE = 1
+  shared.STATUS_DEFERRED = 2
 
   shared.MIN_NAME_LENGTH = 1
   shared.MAX_NAME_LENGTH = 255
@@ -3963,11 +3964,14 @@ end
 function generateSaveString()
   local basicDataString
   local mapDataString
+  local versionDataString
   local basicDataString
   local worldDeckDataString
   local dispossessedDataString
   local relicDeckDataString
   local previousGameInfoString
+  local pluginListString = ""
+  local cardWeightString = ""
   local saveString
   local scriptZoneObjects
   local siteInfo
@@ -3977,18 +3981,45 @@ function generateSaveString()
   local curSiteSaveIDs = { nil, nil, nil, nil }
   local deckCardID
 
+  local cardBase = 16 -- store in hex if it fits
+  if shared.MAX_CARD_ID >= 256 then
+    -- otherwise store in the smallest base possible
+    cardBase = math.ceil(math.sqrt(shared.MAX_CARD_ID))
+  end
+
   -- Set the global save status.
   shared.saveStatus = shared.STATUS_SUCCESS
+  
+  local MAJOR_VERSION = shared.OATH_MAJOR_VERSION
+  local MINOR_VERSION = shared.OATH_MINOR_VERSION
+  local PATCH_VERSION = shared.OATH_PATCH_VERSION
+
+  local isBaseDeck = true
+  local baseDeckPlugins = { "BaseDeckSites", "BaseDeckDenizens", "BaseDeckEdifices", "BaseDeckVisions", "BaseDeckSuperRelics", "BaseDeckRelics"}
+  for i, plugin in ipairs(shared.deckPlugins) do
+    if plugin ~= baseDeckPlugins[i] then
+      isBaseDeck = false
+    end
+  end
 
   --
   -- Generate basic data string.
   --
   if (shared.STATUS_SUCCESS == shared.saveStatus) then
-    basicDataString = string.format(
-        "%02X%02X%02X%04X%02X%s%02X%02X%02X%01X%01X%01X%01X%01X%01X",
+
+    if isBaseDeck then
+      -- if only the official cards are loaded, use the latest official safe format instead
+      versionDataString = string.format("%02X%02X%02X",3,3,1)
+    else
+      versionDataString = string.format(
+        "%02X%02X%02X",
         shared.OATH_MAJOR_VERSION,
         shared.OATH_MINOR_VERSION,
-        shared.OATH_PATCH_VERSION,
+        shared.OATH_PATCH_VERSION)
+    end
+    
+    basicDataString = string.format(
+        "%04X%02X%s%02X%02X%02X%01X%01X%01X%01X%01X%01X",
         shared.curGameCount,
         string.len(shared.curChronicleName),
         shared.curChronicleName,
@@ -4037,7 +4068,7 @@ function generateSaveString()
 
       -- write all cards for this site out to the string
       for i = 1, 4 do
-        mapDataString = mapDataString..BaseEncode(curSiteSaveIDs[i], MaximumBase, 2)
+        mapDataString = mapDataString..BaseEncode(curSiteSaveIDs[i], cardBase, 2)
       end
       
     end -- end for siteIndex = 1,8
@@ -4047,10 +4078,10 @@ function generateSaveString()
   -- Generate world deck data string.
   --
   if (shared.STATUS_SUCCESS == shared.saveStatus) then
-    worldDeckDataString = BaseEncode(#shared.curWorldDeckCards, MaximumBase, 2)
+    worldDeckDataString = BaseEncode(#shared.curWorldDeckCards, cardBase, 2)
     for cardIndex = 1, #shared.curWorldDeckCards do
       deckCardID = shared.cardsTable[shared.curWorldDeckCards[cardIndex]].saveid
-      worldDeckDataString = worldDeckDataString .. BaseEncode(deckCardID, MaximumBase, 2)   -- Card ID for denizen card or vision
+      worldDeckDataString = worldDeckDataString .. BaseEncode(deckCardID, cardBase, 2)   -- Card ID for denizen card or vision
     end
   end -- end if (STATUS_SUCCESS == saveStatus)
 
@@ -4058,10 +4089,10 @@ function generateSaveString()
   -- Generate dispossessed data string.
   --
   if (shared.STATUS_SUCCESS == shared.saveStatus) then
-    dispossessedDataString = BaseEncode(#shared.curDispossessedDeckCards, MaximumBase, 2)
+    dispossessedDataString = BaseEncode(#shared.curDispossessedDeckCards, cardBase, 2)
     for cardIndex = 1, #shared.curDispossessedDeckCards do
       deckCardID = shared.cardsTable[shared.curDispossessedDeckCards[cardIndex]].saveid
-      dispossessedDataString = dispossessedDataString .. BaseEncode(deckCardID, MaximumBase, 2)   -- Card ID for denizen card or vision
+      dispossessedDataString = dispossessedDataString .. BaseEncode(deckCardID, cardBase, 2)   -- Card ID for denizen card or vision
     end
   end -- end if (STATUS_SUCCESS == saveStatus)
 
@@ -4069,10 +4100,10 @@ function generateSaveString()
   -- Generate relic deck data string.
   --
   if (shared.STATUS_SUCCESS == shared.saveStatus) then
-    relicDeckDataString = BaseEncode(#shared.curRelicDeckCards, MaximumBase, 2)
+    relicDeckDataString = BaseEncode(#shared.curRelicDeckCards, cardBase, 2)
     for cardIndex = 1, #shared.curRelicDeckCards do
       deckCardID = shared.cardsTable[shared.curRelicDeckCards[cardIndex]].saveid
-      relicDeckDataString = relicDeckDataString .. BaseEncode(deckCardID, MaximumBase, 2)   -- Card ID for relic card
+      relicDeckDataString = relicDeckDataString .. BaseEncode(deckCardID, cardBase, 2)   -- Card ID for relic card
     end
   end -- end if (STATUS_SUCCESS == saveStatus)
 
@@ -4094,14 +4125,50 @@ function generateSaveString()
         string.len(trimmedSteamName),
         trimmedSteamName)
   end
+  
+  if (shared.STATUS_SUCCESS == shared.saveStatus) and (not isBaseDeck) then
+    -- insert a jump index to the new data after the version number
+    local pluginListIndex = #versionDataString + 4 + #basicDataString + #mapDataString + #worldDeckDataString + #dispossessedDataString + #relicDeckDataString + #previousGameInfoString + 1
+    basicDataString = BaseEncode(pluginListIndex, 16, 4)..basicDataString
+
+    pluginListString = string.format("%02X",#shared.deckPlugins)
+    for _, plugin in ipairs(shared.deckPlugins) do
+      pluginListString = pluginListString..string.format(
+        "%02X%s",
+        string.len(plugin),
+        plugin)
+    end
+
+    local cardWeightCount = 0
+    for metatag, weight in pairs(shared.cardMetatagWeights) do
+      if cardWeight ~= 1 then -- only include non-default weights
+        cardWeightCount = cardWeightCount + 1
+        cardWeightString = cardWeightString..string.format(
+          "%02X%s%04X",
+          string.len(metatag),
+          metatag,
+          math.floor(weight * 100)) -- store weight as fixed point
+      end
+    end
+    cardWeightString = string.format("%02X",cardWeightCount)..cardWeightString
+  end
 
   --
   -- Generate save string.
   --
   if (shared.STATUS_SUCCESS == shared.saveStatus) then
-    saveString = (basicDataString .. mapDataString .. worldDeckDataString .. dispossessedDataString .. relicDeckDataString .. previousGameInfoString)
+    saveString = (
+        versionDataString .. 
+        basicDataString .. 
+        mapDataString .. 
+        worldDeckDataString .. 
+        dispossessedDataString .. 
+        relicDeckDataString .. 
+        previousGameInfoString .. 
+        pluginListString ..
+        cardWeightString)
   end -- end if (STATUS_SUCCESS == saveStatus)
-
+  
   return saveString
 end
 
@@ -5248,24 +5315,8 @@ function hidePieces(playerColor)
   shared.playerWarbandBags[playerColor].tooltip = false
 end
 
-local cardWeights = nil
-
 local function CalculateCardDrawWeight(cardName)
-  if cardWeights == nil then
-    cardWeights = {}
-    for cardName, oathCardData in pairs(shared.cardsTable) do
-      local cardWeight = 1
-      if oathCardData.metatags then
-        for _, metatag in ipairs(oathCardData.metatags) do
-          -- a card's weight is the product of all it's metatag weights
-          cardWeight = cardWeight * shared.cardWeights[metatag]
-        end
-      end
-      cardWeights[cardName] = cardWeight
-    end
-  end
-  
-  return cardWeights[cardName]
+  return InvokeMethod("CalculateCardDrawWeight", Global, cardName)
 end
 
 ---@param availableCards string[]
@@ -6742,8 +6793,59 @@ function loadFromSaveString_3_3_1(saveDataString)
 end
 
 function loadFromSaveString_3_4_0(saveDataString)
-  cardBase = MaximumBase -- rather than storing in hexadecimal, store in the most compact way possible
-  loadFromSaveString_3_3_1(saveDataString)
+  
+  -- remove new data from string so that we can process it seperately from legacy data
+  local pluginListIndex = BaseDecode(string.sub(saveDataString, 7,10), 16)
+  local saveDataString_4_4_1 = string.sub(saveDataString, pluginListIndex, #saveDataString)
+  saveDataString_3_3_1 = string.sub(saveDataString, 1, 6)..string.sub(saveDataString, 11, pluginListIndex-1)
+  
+  local parseIndex = 1
+  
+  local function decode(digits, base)
+    local encoded = string.sub(saveDataString_4_4_1, parseIndex, (parseIndex + digits - 1))
+    local result = BaseDecode(encoded, base)
+    parseIndex = parseIndex + digits
+    return result
+  end
+
+  -- Read all the plugins that need to be loaded
+  local pluginNames = {}
+  local pluginCount = tonumber(decode(2,16))
+  for i = 1, pluginCount do
+    local pluginLen = tonumber(decode(2,16))
+    local pluginName = string.sub(saveDataString_4_4_1, parseIndex, (parseIndex + pluginLen - 1))
+    parseIndex = parseIndex + pluginLen
+    table.insert(pluginNames, pluginName)
+  end
+  
+  print("Reloading Plugins")
+  shared.loadStatus = shared.STATUS_DEFERRED
+  InvokeMethod("SetDeckPluginsList", Global, pluginNames)
+
+  -- Adjust card weights of the loaded decks
+  local cardWeightCount = tonumber(decode(2,16))
+  for i = 1, cardWeightCount do
+    local metatagLen = tonumber(decode(2,16))
+    local metatagName = string.sub(saveDataString_4_4_1, parseIndex, (parseIndex + metatagLen - 1))
+    parseIndex = parseIndex + metatagLen
+    local weight = tonumber(decode(4,16)) / 100.
+    shared.cardMetatagWeights[metatagName] = weight
+  end
+  
+  -- note: the rest of the save string will be loaded in Callback.OnFinishSetDeckPluginsList after the plugins are reloaded
+end
+
+function Callback.OnFinishSetDeckPluginsList()
+  cardBase = 16 -- store in hex if it fits
+  if shared.MAX_CARD_ID >= 256 then
+    -- otherwise store in the smallest base possible
+    cardBase = math.ceil(math.sqrt(shared.MAX_CARD_ID))
+  end
+  
+  shared.loadStatus = shared.STATUS_SUCCESS
+  
+  loadFromSaveString_3_3_1(saveDataString_3_3_1)
+  setupLoadedState(setupGameAfter)
 end
 
 function parseExileCitizenStatusByte(statusByte)

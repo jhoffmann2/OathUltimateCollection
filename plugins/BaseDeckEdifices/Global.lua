@@ -15,7 +15,8 @@ function onLoad()
       deckwidth = 3, 
       deckheight = 2, 
       hasuniqueback = true,
-      metatags = {'Official', 'BaseDeck'}
+      metatags = {'Official', 'BaseDeck'},
+      plugin = "BaseDeckEdifices"
     },
     {
       { cardName = "Sprawling Rampart / Bandit Rampart", suit = "Order", cardtype = "EdificeRuin" },
