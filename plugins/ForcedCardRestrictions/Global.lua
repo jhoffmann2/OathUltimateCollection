@@ -27,7 +27,7 @@ function CheckRestrictions(card, player_color, flip)
       return
     end
 
-    if (not CardIsFacedown(card, flip)) then
+    if (CardIsFaceup(card, flip)) then
       if (cardInfo.playerOnly) then
         if (CardIsAtSite(card)) then
           HideCardFromOtherPlayers(card, player_color)
@@ -45,12 +45,14 @@ function CheckRestrictions(card, player_color, flip)
     end
     
     if (cardInfo.locked) then
-      -- the object needs time to fall to the table before locking it
-      Wait.time(function()
-        if (not CardIsFacedown(card, flip)) then
-          card.setLock(true)
-        end
-      end, 1)
+        -- the object needs time to fall to the table before locking it
+        Wait.time(function()
+          if (CardIsFaceup(card, flip)) then
+            if (CardIsAtSite(card) or CardIsInPlayerAdvisers(card)) then
+              card.setLock(true)
+            end
+          end
+        end, 3)
     end
   end
 end
@@ -75,11 +77,11 @@ function HideCardFromOtherPlayers(card, player_color)
   card.setHiddenFrom(other_players)
 end
 
-function CardIsFacedown(card, flip)
+function CardIsFaceup(card, flip)
   if not flip then
     flip = card.getRotation().z
   end
-  return 175 < flip and 185 > flip
+  return not(175 < flip and 185 > flip)
 end
 
 function FlipCardFacedown(card)
