@@ -55,10 +55,16 @@
         "tooltip": "play with all the relics found in the official base game!"
       },
       {
-        "name": "Naysayers",
+        "name": "Legends",
+        "value": false,
+        "plugin": "LegendsDeck",
+        "tooltip": "A collection of denizens designed by DomV"
+      },
+      {
+        "name": "Naysayers (Beta)",
         "value": false,
         "plugin": "NaysayersDeck",
-        "tooltip": "Add extra cards to the deck designed by The Naysayers (in development)"
+        "tooltip": "Add denizens designed by The Naysayers (in development)\nwhile this deck is in beta, your chronicle may break when we update it"
       }
     ]
   },

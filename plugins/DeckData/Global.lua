@@ -298,6 +298,7 @@ end
 
 function Method.SetCardWeights(asJson)
   shared.cardMetatagWeights = JSON.decode(asJson)
+  shared.cardWeightsCache = nil
 end
 
 function Method.CalculateCardDrawWeight(cardName)
