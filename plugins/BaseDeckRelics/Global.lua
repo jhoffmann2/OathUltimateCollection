@@ -15,8 +15,7 @@ function onLoad()
       deckwidth = 5, 
       deckheight = 5, 
       hasuniqueback = false,
-      metatags = {'Official', 'BaseDeck'},
-      plugin = "BaseDeckRelics"
+      metatags = {'Official', 'BaseDeck'}
     },
     {
       { cardName = "Sticky Fire", cardtype = "Relic" },

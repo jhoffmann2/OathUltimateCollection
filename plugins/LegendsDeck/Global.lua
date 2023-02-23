@@ -16,8 +16,7 @@
       deckwidth = 9,
       deckheight = 6,
       hasuniqueback = false,
-      metatags = {'Custom', 'LegendsDeck'},
-      plugin = "LegendsDeck"
+      metatags = {'Custom', 'LegendsDeck'}
     },
     {
       { cardName = "Anarchy", suit = "Discord", cardtype = "Denizen", siteOnly = true },

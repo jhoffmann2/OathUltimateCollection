@@ -15,8 +15,7 @@ function onLoad()
       deckwidth = 5, 
       deckheight = 4, 
       hasuniqueback = false,
-      metatags = {'Official', 'BaseDeck'},
-      plugin = "BaseDeckDenizens"
+      metatags = {'Official', 'BaseDeck'}
     },
     {
       { cardName = "Wrestlers", suit = "Order", cardtype = "Denizen" },
@@ -49,8 +48,7 @@ function onLoad()
       deckwidth = 5, 
       deckheight = 4,
       hasuniqueback = false,
-      metatags = {'Official', 'BaseDeck'},
-      plugin = "BaseDeckDenizens"
+      metatags = {'Official', 'BaseDeck'}
     },
     {
       { cardName = "Naysayers", suit = "Discord", cardtype = "Denizen", playerOnly = true },
@@ -83,8 +81,7 @@ function onLoad()
       deckwidth = 5, 
       deckheight = 4, 
       hasuniqueback = false,
-      metatags = {'Official', 'BaseDeck'},
-      plugin = "BaseDeckDenizens"
+      metatags = {'Official', 'BaseDeck'}
     },
     {
       { cardName = "True Names", suit = "Beast", cardtype = "Denizen", playerOnly = true },
@@ -117,8 +114,7 @@ function onLoad()
       deckwidth = 5, 
       deckheight = 4, 
       hasuniqueback = false,
-      metatags = {'Official', 'BaseDeck'},
-      plugin = "BaseDeckDenizens"
+      metatags = {'Official', 'BaseDeck'}
     },
     {
       { cardName = "Terror Spells", suit = "Arcane", cardtype = "Denizen" },
@@ -151,8 +147,7 @@ function onLoad()
       deckwidth = 5, 
       deckheight = 4, 
       hasuniqueback = false,
-      metatags = {'Official', 'BaseDeck'},
-      plugin = "BaseDeckDenizens"
+      metatags = {'Official', 'BaseDeck'}
     },
     {
       { cardName = "Downtrodden", suit = "Discord", cardtype = "Denizen" },
@@ -185,8 +180,7 @@ function onLoad()
       deckwidth = 5, 
       deckheight = 4, 
       hasuniqueback = false,
-      metatags = {'Official', 'BaseDeck'},
-      plugin = "BaseDeckDenizens"
+      metatags = {'Official', 'BaseDeck'}
     },
     {
       { cardName = "Chaos Cult", suit = "Discord", cardtype = "Denizen", playerOnly = true },
@@ -219,8 +213,7 @@ function onLoad()
       deckwidth = 5, 
       deckheight = 4, 
       hasuniqueback = false,
-      metatags = {'Official', 'BaseDeck'},
-      plugin = "BaseDeckDenizens"
+      metatags = {'Official', 'BaseDeck'}
     },
     {
       { cardName = "Vow of Obedience", suit = "Order", cardtype = "Denizen", playerOnly = true, locked = true },
@@ -253,8 +246,7 @@ function onLoad()
       deckwidth = 5, 
       deckheight = 4, 
       hasuniqueback = false,
-      metatags = {'Official', 'BaseDeck'},
-      plugin = "BaseDeckDenizens"
+      metatags = {'Official', 'BaseDeck'}
     },
     {
       { cardName = "Ballot Box", suit = "Hearth", cardtype = "Denizen", siteOnly = true },
@@ -287,8 +279,7 @@ function onLoad()
       deckwidth = 5, 
       deckheight = 4, 
       hasuniqueback = false,
-      metatags = {'Official', 'BaseDeck'},
-      plugin = "BaseDeckDenizens"
+      metatags = {'Official', 'BaseDeck'}
     },
     {
       { cardName = "Pilgrimage", suit = "Nomad", cardtype = "Denizen", playerOnly = true },
@@ -321,8 +312,7 @@ function onLoad()
       deckwidth = 5, 
       deckheight = 4, 
       hasuniqueback = false,
-      metatags = {'Official', 'BaseDeck'},
-      plugin = "BaseDeckDenizens"
+      metatags = {'Official', 'BaseDeck'}
     },
     {
       { cardName = "Second Chance", suit = "Beast", cardtype = "Denizen" },

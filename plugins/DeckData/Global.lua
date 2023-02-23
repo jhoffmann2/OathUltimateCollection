@@ -29,6 +29,7 @@
 local cardLists
 
 local seenPluginsSet
+local pluginBeingLoaded = nil
 
 function onLoad(saveString)
   Method.ResetDecks()
@@ -90,15 +91,13 @@ function Method.AddDeck(deckInfo, cards)
   end
   
   -- if we haven't seen this plugin before, record it
-  if deckInfo.plugin then
-    if not seenPluginsSet[deckInfo.plugin] then
-      seenPluginsSet[deckInfo.plugin] = true
+  if not seenPluginsSet[pluginBeingLoaded] then
+    seenPluginsSet[pluginBeingLoaded] = true
 
-      if not shared.deckPlugins then
-        shared.deckPlugins = {}
-      end
-      table.insert(shared.deckPlugins, deckInfo.plugin)
+    if not shared.deckPlugins then
+      shared.deckPlugins = {}
     end
+    table.insert(shared.deckPlugins, pluginBeingLoaded)
   end
 
   table.insert(shared.ttsDeckInfo, deckInfo)
@@ -168,6 +167,10 @@ function Method.SetDeckPluginsList(pluginList)
   end
 end
 
+function Callback.OnPluginStartup(pluginName)
+  pluginBeingLoaded = pluginName
+end
+
 function Callback.OnPluginActivated(pluginName)
   if waitingForPlugins ~= nil then
     waitingForPlugins[pluginName] = nil
@@ -184,6 +187,7 @@ function Callback.OnPluginActivated(pluginName)
       InvokeEvent("OnFinishSetDeckPluginsList")
     end
   end
+  pluginBeingLoaded = nil
 end
 
 function Method.UpdateDeckData()
@@ -297,7 +301,33 @@ function Callback.OnCommand_CardWeights()
 end
 
 function Method.SetCardWeights(asJson)
-  shared.cardMetatagWeights = JSON.decode(asJson)
+  local result = JSON.decode(asJson)
+  
+  if not result then
+    printToAll("Invalid JSON provided", {1,0,0})
+    return
+  end
+  
+  for tag, weight in pairs(shared.cardMetatagWeights) do
+    if result[tag] == nil then
+      printToAll(tag.." missing from JSON", {1,0,0})
+      return
+    end
+  end
+
+  for tag, weight in pairs(result) do
+    if weight > 655.35 then
+      printToAll("weights cannot exceed 655.35", {1,0,0})
+      return
+    end
+
+    if weight < 0 then
+      printToAll("weights must be positive", {1,0,0})
+      return
+    end
+  end
+  
+  shared.cardMetatagWeights = result
   shared.cardWeightsCache = nil
 end
 

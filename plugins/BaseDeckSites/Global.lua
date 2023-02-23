@@ -19,8 +19,7 @@ function onLoad()
       deckwidth = 2, 
       deckheight = 4, 
       hasuniqueback = false,
-      metatags = {'Official', 'BaseDeck'},
-      plugin = "BaseDeckSites"
+      metatags = {'Official', 'BaseDeck'}
     },
     {
       { cardName = "Mine", cardtype = "Site", capacity = 1, relicCount = 1 },
@@ -41,8 +40,7 @@ function onLoad()
       deckwidth = 2, 
       deckheight = 4, 
       hasuniqueback = false,
-      metatags = {'Official', 'BaseDeck'},
-      plugin = "BaseDeckSites"
+      metatags = {'Official', 'BaseDeck'}
     },
     {
       { cardName = "Lush Coast", cardtype = "Site", capacity = 3, relicCount = 0 },
@@ -63,8 +61,7 @@ function onLoad()
       deckwidth = 2, 
       deckheight = 4, 
       hasuniqueback = false,
-      metatags = {'Official', 'BaseDeck'},
-      plugin = "BaseDeckSites"
+      metatags = {'Official', 'BaseDeck'}
     },
     {
       { cardName = "Ancient City", cardtype = "Site", capacity = 2, relicCount = 1 },

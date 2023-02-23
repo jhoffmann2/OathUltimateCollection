@@ -3,6 +3,7 @@
 --
 -- Created and maintained by AgentElrond.  Latest update:  2021
 --
+local baseDeckPlugins = { "BaseDeckSites", "BaseDeckDenizens", "BaseDeckEdifices", "BaseDeckVisions", "BaseDeckSuperRelics", "BaseDeckRelics"}
 
 function onLoad(save_state)
 
@@ -3995,7 +3996,6 @@ function generateSaveString()
   local PATCH_VERSION = shared.OATH_PATCH_VERSION
 
   local isBaseDeck = true
-  local baseDeckPlugins = { "BaseDeckSites", "BaseDeckDenizens", "BaseDeckEdifices", "BaseDeckVisions", "BaseDeckSuperRelics", "BaseDeckRelics"}
   for i, plugin in ipairs(shared.deckPlugins) do
     if plugin ~= baseDeckPlugins[i] then
       isBaseDeck = false
@@ -4131,23 +4131,45 @@ function generateSaveString()
     local pluginListIndex = #versionDataString + 4 + #basicDataString + #mapDataString + #worldDeckDataString + #dispossessedDataString + #relicDeckDataString + #previousGameInfoString + 1
     basicDataString = BaseEncode(pluginListIndex, 16, 4)..basicDataString
 
-    pluginListString = string.format("%02X",#shared.deckPlugins)
-    for _, plugin in ipairs(shared.deckPlugins) do
+    -- if all baseDeckPlugins are active AND adjacent to one another, replace them with 'BaseDeck' for shorter save strings
+    local beginIndex, endIndex = table.findSubArray(shared.deckPlugins, baseDeckPlugins)
+    
+    local outputPlugins = {}
+    for i, plugin in ipairs(shared.deckPlugins) do
+      local outputPlugin = plugin
+      if beginIndex ~= nil and beginIndex ~= nil then
+        if i == beginIndex then
+          outputPlugin = "BaseDeck"
+        end
+        if i > beginIndex and i <= endIndex then
+          outputPlugin = nil
+        end
+      end
+
+      if outputPlugin then
+        table.insert(outputPlugins, outputPlugin)
+      end
+    end
+    
+    pluginListString = string.format("%02X",#outputPlugins)
+    for i, plugin in ipairs(outputPlugins) do
       pluginListString = pluginListString..string.format(
         "%02X%s",
         string.len(plugin),
         plugin)
     end
+    
 
     local cardWeightCount = 0
     for metatag, weight in pairs(shared.cardMetatagWeights) do
-      if cardWeight ~= 1 then -- only include non-default weights
+      fixedPointWeight = math.floor(weight * 100)
+      if fixedPointWeight ~= 100 then -- only include non-default weights
         cardWeightCount = cardWeightCount + 1
         cardWeightString = cardWeightString..string.format(
           "%02X%s%04X",
           string.len(metatag),
           metatag,
-          math.floor(weight * 100)) -- store weight as fixed point
+          fixedPointWeight) -- store weight as fixed point
       end
     end
     cardWeightString = string.format("%02X",cardWeightCount)..cardWeightString
@@ -6815,14 +6837,28 @@ function loadFromSaveString_3_4_0(saveDataString)
     local pluginLen = tonumber(decode(2,16))
     local pluginName = string.sub(saveDataString_4_4_1, parseIndex, (parseIndex + pluginLen - 1))
     parseIndex = parseIndex + pluginLen
-    table.insert(pluginNames, pluginName)
+
+    if pluginName == 'BaseDeck' then
+      -- edge case for "BaseDeck" keyword that represents all 6 baseDeckPlugins
+      for _, plugin in ipairs(baseDeckPlugins) do
+        table.insert(pluginNames, plugin)
+      end
+    else
+      table.insert(pluginNames, pluginName)
+    end
+    
   end
   
   print("Reloading Plugins")
   shared.loadStatus = shared.STATUS_DEFERRED
   InvokeMethod("SetDeckPluginsList", Global, pluginNames)
 
-  -- Adjust card weights of the loaded decks
+  -- reset card weights to default
+  for key, _ in pairs(shared.cardMetatagWeights) do
+    shared.cardMetatagWeights[key] = 1
+  end
+
+  -- Adjust card weights to saved values
   local cardWeightCount = tonumber(decode(2,16))
   for i = 1, cardWeightCount do
     local metatagLen = tonumber(decode(2,16))

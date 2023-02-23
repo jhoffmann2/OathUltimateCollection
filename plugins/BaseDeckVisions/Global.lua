@@ -20,7 +20,6 @@ function onLoad()
       deckheight = 2, 
       hasuniqueback = false,
       metatags = {'Official', 'BaseDeck'},
-      plugin = "BaseDeckVisions",
     },
     {
       { cardName = "Sanctuary", cardtype = "Vision" },

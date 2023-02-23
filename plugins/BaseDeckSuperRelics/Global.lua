@@ -33,7 +33,6 @@ function onLoad()
       deckwidth = 1, 
       deckheight = 1, 
       hasuniqueback = true,
-      plugin = "BaseDeckSuperRelics",
     },
     {
       { cardName = "The Grand Scepter", cardtype = "SuperRelic" }

@@ -18,8 +18,7 @@
       deckwidth = 10, 
       deckheight = 2, 
       hasuniqueback = false,
-      metatags = {'Custom', 'NaysayersDeck'},
-      plugin = "NaysayersDeck"
+      metatags = {'Custom', 'NaysayersDeck'}
     },
     {
       {  }, -- skip template card
@@ -44,8 +43,7 @@
       deckwidth = 10, 
       deckheight = 2, 
       hasuniqueback = false,
-      metatags = {'Custom', 'NaysayersDeck'},
-      plugin = "NaysayersDeck"
+      metatags = {'Custom', 'NaysayersDeck'}
     },
     {
       {  }, -- skip template card
@@ -70,8 +68,7 @@
       deckwidth = 10, 
       deckheight = 3, 
       hasuniqueback = false,
-      metatags = {'Custom', 'NaysayersDeck'},
-      plugin = "NaysayersDeck"
+      metatags = {'Custom', 'NaysayersDeck'}
     },
     {
       { cardName = "Alchemist's Professor", suit = "Arcane", cardtype = "Denizen" },
@@ -86,7 +83,7 @@
       { cardName = "Alpha Female", suit = "Beast", cardType = "Extra", adviserOnly = true, locked = true},
       { cardName = "Bone Marrow", suit = "Beast", cardtype = "Denizen" },
       { cardName = "Fountain of Youth", suit = "Beast", cardtype = "Denizen", siteOnly = true },
-      { cardName = "Lonely Alpha", suit = "Beast", cardtype = "Denizen", playerOnly = true },
+      { cardName = "Lonely Alpha", suit = "Beast", cardtype = "Extra", playerOnly = true }, -- todo: make denizen and fix extra card spawning
       { cardName = "Nocturnal", suit = "Beast", cardtype = "Denizen", playerOnly = true },
       { cardName = "Seeking Guidance", suit = "Beast", cardtype = "Denizen", siteOnly = true },
       { cardName = "Shape Shifter", suit = "Beast", cardtype = "Denizen" },
@@ -106,8 +103,7 @@
       deckwidth = 10, 
       deckheight = 3, 
       hasuniqueback = false,
-      metatags = {'Custom', 'NaysayersDeck'},
-      plugin = "NaysayersDeck"
+      metatags = {'Custom', 'NaysayersDeck'}
     },
     {
       { cardName = "Alleyways", suit = "Discord", cardtype = "Denizen" },

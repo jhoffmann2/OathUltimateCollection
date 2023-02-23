@@ -58,3 +58,35 @@ function table.shallowCopy(source, destination, rangeBegin, rangeEnd)
     end
   end
 end
+
+function table.indexOf(table, element)
+  for i, item in ipairs(table) do
+    if item == element then
+      return i
+    end
+  end
+  return nil
+end
+
+function table.findSubArray(array, subArray)
+  local begin = table.indexOf(array, subArray[1])
+  
+  -- if subTable[1] isn't in table, then subTable isn't in table
+  if not begin then
+    return nil
+  end
+  
+  begin = begin - 1 -- zero index for easier math
+  
+  -- if there aren't enough elements after begin, then subTable isn't in table
+  if (#array - begin) < #subArray then
+    return nil
+  end
+
+  for i, element in ipairs(subArray) do
+    if element ~= array[begin + i] then
+      return nil
+    end
+  end
+  return begin + 1, begin + #subArray
+end
