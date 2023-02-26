@@ -120,26 +120,6 @@ function onLoad(save_state)
   shared.markerGuids = { "c1f67a", "a7e6d2" }
   shared.markerPositions = { { -20.86, 1.06, -1.83 },
                              { -17.44, 1.20, -2.09 } }
-  shared.diceGuids = { "b70c54", "13e33b", "57c9c5", "8ce90c", "297ceb", "863691", -- defense dice
-                       "1f96ec", "e24bff", "3ad8c2", "3d1a23", "94f013", "ca95ce", "7a1759", "199338", "07a097", "607e0c", -- attack dice
-                       "8e1eb3" }    -- game end die
-  shared.dicePositions = { { -42.98, 1.46, 17.26 }, -- defense dice
-                           { -41.35, 1.46, 17.26 },
-                           { -39.62, 1.46, 17.26 },
-                           { -43.03, 1.46, 15.57 },
-                           { -41.34, 1.46, 15.57 },
-                           { -39.64, 1.46, 15.57 },
-                           { -42.75, 1.46, 12.32 }, -- attack dice
-                           { -41.12, 1.46, 12.32 },
-                           { -39.39, 1.46, 12.32 },
-                           { -37.60, 1.46, 12.32 },
-                           { -42.80, 1.46, 10.63 },
-                           { -41.11, 1.46, 10.63 },
-                           { -39.41, 1.46, 10.63 },
-                           { -37.62, 1.46, 10.63 },
-                           { -35.82, 1.46, 12.32 },
-                           { -35.82, 1.46, 10.63 },
-                           { -45.29, 1.46, 16.32 } } -- game end die
   shared.favorSpawnPositions = { ["Discord"] = { -3.75, 1.06, -5.64 },
                                  ["Arcane"] = { -0.25, 1.06, -5.64 },
                                  ["Order"] = { 3.24, 1.06, -5.64 },
@@ -2779,7 +2759,7 @@ function configGeneralButtons(buttonConfig)
         label = dispossessedButtonLabel,
         click_function = "spawnDispossessedButtonClicked",
         function_owner = self,
-        position = { 19.4, 5.0, -40.0 },
+        position = { 19.4, 5.0, -41.0 },
         scale = { 4.0, 4.0, 4.0 },
         rotation = { 0.0, 180.0, 0.0 },
         width = 900,
@@ -4439,51 +4419,6 @@ function cleanTable()
   for i, curColor in ipairs(shared.playerColors) do
     hidePieces(curColor)
   end
-
-  -- Hide dice.
-  hideDice()
-end
-
-function showDice()
-  local curDie
-
-  for dieIndex = 1, #shared.diceGuids do
-    curDie = getObjectFromGUID(shared.diceGuids[dieIndex])
-    if (nil ~= curDie) then
-      curDie.setPosition({ shared.dicePositions[dieIndex][1], shared.dicePositions[dieIndex][2], shared.dicePositions[dieIndex][3] })
-      if (#shared.diceGuids == dieIndex) then
-        curDie.setRotation({ 270, 0, 0 })
-      else
-        curDie.setRotation({ 90, 0, 0 })
-      end
-
-      curDie.locked = false
-      curDie.interactable = true
-    else
-      printToAll("Error finding die.", { 1, 0, 0 })
-    end
-  end
-end
-
-function hideDice()
-  local curDie
-
-  for dieIndex = 1, #shared.diceGuids do
-    curDie = getObjectFromGUID(shared.diceGuids[dieIndex])
-    if (nil ~= curDie) then
-      curDie.setPosition({ shared.dicePositions[dieIndex][1], 1000, shared.dicePositions[dieIndex][3] })
-      if (#shared.diceGuids == dieIndex) then
-        curDie.setRotation({ 270, 0, 0 })
-      else
-        curDie.setRotation({ 90, 0, 0 })
-      end
-
-      curDie.locked = true
-      curDie.interactable = false
-    else
-      printToAll("Error finding die.", { 1, 0, 0 })
-    end
-  end
 end
 
 function setWarbandBagsMuted(muteBags)
@@ -5229,8 +5164,6 @@ function showGeneralPieces()
     shared.peoplesFavor.interactable = true
     shared.peoplesFavor.tooltip = true
   end
-
-  showDice()
 end
 
 function hideGeneralPieces()
@@ -5259,8 +5192,6 @@ function hideGeneralPieces()
   shared.peoplesFavor.locked = true
   shared.peoplesFavor.interactable = false
   shared.peoplesFavor.tooltip = false
-
-  hideDice()
 end
 
 function showPieces(playerColor)
