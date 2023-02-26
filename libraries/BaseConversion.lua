@@ -43,6 +43,12 @@ end
 function BaseDecode(str, base)
   val = 0
   for i = 1, #str do
+    local digitVal = decoder[str:byte(i)]
+    if not digitVal or digitVal > base then
+      printToAll("BaseDecode included a character outside the bounds of the provided base", {1,0,0})
+      return -1
+    end
+    
     val = (val * base) + decoder[str:byte(i)]
   end
   return val

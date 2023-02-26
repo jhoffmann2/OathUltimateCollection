@@ -1,6 +1,7 @@
 ﻿
 local uiCardWidth = 213.75
 local uiCardHeight = 337.5
+local globalData
 
 function onLoad()
   globalData = Shared(Global)
@@ -122,7 +123,8 @@ function PlayerCanUseCard(player_color, cardName)
     return true
   end
   
-  if CardIsAtSite(GetSiteOfPlayerPawn(player_color), cardName) then
+  local playerSite = GetSiteOfPlayerPawn(player_color)
+  if playerSite and CardIsAtSite(playerSite, cardName) then
     return true
   end
 
@@ -158,15 +160,19 @@ end
 
 function CardIsAtSite(siteIndex, cardName)
   for normalCardIndex = 1, 3 do
-    local scriptZoneObjects = globalData.mapNormalCardZones[siteIndex][normalCardIndex].getObjects(true)
-    for i, curObject in ipairs(scriptZoneObjects) do
-      if ("Card" == curObject.type) then
-        if cardName == curObject.getName() then
-          return true
+    local zone = globalData.mapNormalCardZones[siteIndex][normalCardIndex]
+    if zone ~= nil then
+      local scriptZoneObjects = zone.getObjects(true)
+      for i, curObject in ipairs(scriptZoneObjects) do
+        if ("Card" == curObject.type) then
+          if cardName == curObject.getName() then
+            return true
+          end
         end
       end
     end
   end
+    
   return false
 end
 

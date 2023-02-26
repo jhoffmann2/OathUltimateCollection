@@ -30,8 +30,19 @@ local cardLists
 
 local seenPluginsSet
 local pluginBeingLoaded = nil
+local cachedPluginLookup = {}
+local addDeckCallCounter = 0
 
-function onLoad(saveString)
+function onLoad(save_string)
+  local save_data = {}
+  if save_string and save_string ~= '' then
+    save_data = JSON.decode(save_string)
+  end
+
+  if save_data.cachedPluginLookup then
+    cachedPluginLookup = save_data.cachedPluginLookup
+  end
+  
   Method.ResetDecks()
 
   InvokeMethod("AddCommand", Global, {
@@ -42,8 +53,15 @@ function onLoad(saveString)
   })
 end
 
+function onSave()
+  local save_data = {}
+  save_data.cachedPluginLookup = cachedPluginLookup
+  return JSON.encode(save_data)
+end
+
 function Method.ResetDecks()
   shared.dataIsAvailable = false
+  addDeckCallCounter = 0
 
   cardLists = {
     Site = {},
@@ -80,6 +98,14 @@ end
 ---@param deckInfo OathDeckInfo
 ---@param cards OathCardData[]
 function Method.AddDeck(deckInfo, cards)
+  addDeckCallCounter = addDeckCallCounter + 1
+
+  if cachedPluginLookup[addDeckCallCounter] ~= nil then
+    pluginBeingLoaded = cachedPluginLookup[addDeckCallCounter]
+  else
+    cachedPluginLookup[addDeckCallCounter] = pluginBeingLoaded
+  end
+  
   if deckInfo.backimage == "SITE_BACK" then
     deckInfo.backimage = "http://tts.ledergames.com/Oath/cards/3_2_0/landBack.jpg"
   elseif deckInfo.backimage == "DENIZEN_BACK" or deckInfo.backimage == nil then
@@ -162,6 +188,8 @@ function Method.SetDeckPluginsList(pluginList)
   end
 
   Method.ResetDecks()
+  cachedPluginLookup = {}
+  
   for _, plugin in ipairs(pluginList) do
     InvokeEvent("OnActivatePlugin", plugin)
   end

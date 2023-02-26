@@ -14,8 +14,7 @@ function onLoad()
 
   -- DS and PF added for legacy reasons
   InvokeMethod('AddDeck', Global,
-    {
-      plugin = "BaseDeckSuperRelics"},
+    {},
     {
       { cardName = "The Darkest Secret", cardtype = "SuperRelic" },
       { cardName = "The People's Favor / The Mob's Favor", cardtype = "SuperRelic" }

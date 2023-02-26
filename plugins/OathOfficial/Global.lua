@@ -1147,7 +1147,7 @@ function updateCardsWithFAQ()
         shared.cardsTable[curCardName].faqText = curFAQText
       end
     else
-      printToAll("Found FAQ entry for unknown card \"" .. curCardName .. "\".", { 1, 0, 0 })
+      --printToAll("Found FAQ entry for unknown card \"" .. curCardName .. "\".", { 1, 0, 0 })
     end
   end
 end
@@ -6304,7 +6304,7 @@ function loadFromSaveString_1_6_0(saveDataString)
                 shared.loadMapNormalCards[parseMapSiteIndex][parseCardIndex][2] = false
               end
             else
-              printToAll("Error, invalid normal card code 0x" .. parseCodeEncoded .. ".", { 1, 0, 0 })
+              printToAll("Error, invalid normal card code " .. parseCode .. ".", { 1, 0, 0 })
               shared.loadStatus = shared.STATUS_FAILURE
               break
             end
@@ -6361,7 +6361,7 @@ function loadFromSaveString_1_6_0(saveDataString)
           if (nil ~= shared.normalCardsBySaveID[parseCode]) then
             table.insert(shared.loadWorldDeckInitCards, shared.normalCardsBySaveID[parseCode])
           else
-            printToAll("Error, invalid normal card code 0x" .. parseCodeEncoded .. ".", { 1, 0, 0 })
+            printToAll("Error, invalid normal card code " .. parseCode .. ".", { 1, 0, 0 })
             shared.loadStatus = shared.STATUS_FAILURE
             break
           end
@@ -6411,7 +6411,7 @@ function loadFromSaveString_1_6_0(saveDataString)
           if (nil ~= shared.normalCardsBySaveID[parseCode]) then
             table.insert(shared.loadDispossessedDeckInitCards, shared.normalCardsBySaveID[parseCode])
           else
-            printToAll("Error, invalid normal card code 0x" .. parseCodeEncoded .. ".", { 1, 0, 0 })
+            printToAll("Error, invalid normal card code " .. parseCode .. ".", { 1, 0, 0 })
             shared.loadStatus = shared.STATUS_FAILURE
             break
           end
@@ -6473,16 +6473,16 @@ function loadFromSaveString_3_1_0(saveDataString)
       nextParseIndex = (nextParseIndex + 2)
 
       for _ = 1, loadRelicDeckInitCardCount do
-        parseCodeHex = string.sub(saveDataString, nextParseIndex, (nextParseIndex + 1))
+        parseCodeEncoded = string.sub(saveDataString, nextParseIndex, (nextParseIndex + 1))
 
-        if (nil ~= parseCodeHex) then
-          parseCode = BaseDecode(parseCodeHex, cardBase)
+        if (nil ~= parseCodeEncoded) then
+          parseCode = BaseDecode(parseCodeEncoded, cardBase)
           nextParseIndex = (nextParseIndex + 2)
 
           if (nil ~= shared.normalCardsBySaveID[parseCode]) then
             table.insert(shared.loadRelicDeckInitCards, shared.normalCardsBySaveID[parseCode])
           else
-            printToAll("Error, invalid normal card code 0x" .. parseCodeHex .. ".", { 1, 0, 0 })
+            printToAll("Error, invalid normal card code " .. parseCode .. ".", { 1, 0, 0 })
             shared.loadStatus = shared.STATUS_FAILURE
             break
           end
@@ -6780,7 +6780,6 @@ function loadFromSaveString_3_4_0(saveDataString)
     
   end
   
-  print("Reloading Plugins")
   shared.loadStatus = shared.STATUS_DEFERRED
   InvokeMethod("SetDeckPluginsList", Global, pluginNames)
 
