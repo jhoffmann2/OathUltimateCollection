@@ -80,3 +80,9 @@ function _CallMethod(msg)
     return result
   end
 end
+
+function ExternMethod(methodName)
+  _G[methodName] = function(...)
+    return InvokeMethod(methodName, owner, ...)
+  end
+end

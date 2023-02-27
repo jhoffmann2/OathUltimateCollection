@@ -129,5 +129,11 @@
     "value": true,
     "plugin": "ForcedCardRestrictions",
     "tooltip": "Don't let players play site cards to advisors, play advisor cards to sites, or discard locked cards"
+  },
+  "Better Setup": {
+    "type": "toggle",
+    "value": true,
+    "plugin": "BetterSetup",
+    "tooltip": "Automates more of the board setup process like giving players their starting favor and secrets"
   }
 }

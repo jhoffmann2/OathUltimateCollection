@@ -276,13 +276,13 @@ function Method.UpdateDeckData()
   end
 
   -- USED FOR DEBUGGING
-  local ttsDeckInfo = getmetatable(shared.ttsDeckInfo).data()
-  local sitesBySaveID = getmetatable(shared.sitesBySaveID).data()
-  local normalCardsBySaveID = getmetatable(shared.normalCardsBySaveID).data()
-  local cardsTable = getmetatable(shared.cardsTable).data()
-  local ruinSaveIDs = getmetatable(shared.ruinSaveIDs).data()
-  local edificesBySuit = getmetatable(shared.edificesBySuit).data()
-  local translateNameFromFAQ = getmetatable(shared.translateNameFromFAQ).data()
+  -- local ttsDeckInfo = getmetatable(shared.ttsDeckInfo).data()
+  -- local sitesBySaveID = getmetatable(shared.sitesBySaveID).data()
+  -- local normalCardsBySaveID = getmetatable(shared.normalCardsBySaveID).data()
+  -- local cardsTable = getmetatable(shared.cardsTable).data()
+  -- local ruinSaveIDs = getmetatable(shared.ruinSaveIDs).data()
+  -- local edificesBySuit = getmetatable(shared.edificesBySuit).data()
+  -- local translateNameFromFAQ = getmetatable(shared.translateNameFromFAQ).data()
 
   shared.dataIsAvailable = true
 end

@@ -1,168 +1,14 @@
 
-local favorStackOffset = Vector(-6.2, 0.1, 1.08)
-local secretStackOffset = Vector(-6.2, 0.2, -0.76)
+-- defined in PlayerBoardLib/PlayerBoard.lua
+ExternMethod("GetPlayerSupply")
+ExternMethod("GetSecretReturnPosition")
+ExternMethod("GetFavorReturnPosition")
+ExternMethod("GetXYRotation")
 
-
-function Callback.OnPlayerPiecesShown(color)
-  if (color == shared.playerColor) then
-    OnShown()
-  end
-end
-
-function onLoad(save_string)
+function onLoad()
   globalData = Shared(Global)
-
-  local save_data = {}
-  if save_string and save_string ~= '' then
-    save_data = JSON.decode(save_string)
-  end
-
-  if shared.warbandBag == nil then
-    shared.warbandBag = globalData.playerWarbandBags[shared.playerColor]
-  end
-
-  if shared.supplyMarker == nil then
-    shared.supplyMarker = globalData.playerSupplyMarkers[shared.playerColor]
-  end
-
-  if shared.supplyZones == nil then
-    ---@type tts__Object[]
-    shared.supplyZones = globalData.playerSupplyZones[shared.playerColor]
-  end
-
   owner.clearContextMenu()
   owner.addContextMenuItem("Rest", OnRest)
-  CreateRestButtons()
-
-  function GetSavedData(name, default)
-    if save_data[name] ~= nil then
-      return save_data[name]
-    end
-    return default
-  end
-  
-  function GetSavedObject(name)
-    local guid = GetSavedData(name..'GUID')
-    if guid ~= nil then
-      return getObjectFromGUID(guid)
-    end
-    return nil
-  end
-
-  shared.secretZone = GetSavedObject('secretZone')
-  shared.favorZone = GetSavedObject('favorZone')
-  
-end
-
-function onSave()
-  local save_data = {}
-  
-  function SaveData(name, val)
-    save_data[name] = val
-  end
-  
-  function SaveObject(name, val)
-    if val ~= nil then
-      save_data[name..'GUID'] = val.guid
-    else
-      save_data[name..'GUID'] = nil
-    end
-  end
-
-  SaveObject('secretZone', shared.secretZone)
-  SaveObject('favorZone', shared.favorZone)
-  
-  return JSON.encode(save_data)
-end
-
-function OnShown()
-  SetupFavorAndSecretZones()
-end
-
-function FavorStackPosition()
-  local rotation = GetXYRotation()
-  local favorStackPosition = Vector.new(favorStackOffset)
-  Vector.rotateOver(favorStackPosition, 'y', rotation.y)
-  favorStackPosition = favorStackPosition + owner.getPosition()
-  return favorStackPosition
-end
-
-function SecretStackPosition()
-  local rotation = GetXYRotation()
-  local secretStackPosition = Vector.new(secretStackOffset)
-  Vector.rotateOver(secretStackPosition, 'y', rotation.y)
-  secretStackPosition = secretStackPosition + owner.getPosition()
-  return secretStackPosition
-end
-
-function SetupFavorAndSecretZones()
-  if shared.favorZone == nil then
-    shared.favorZone = spawnObject({
-      type = "ScriptingTrigger",
-    })
-  end
-  if shared.secretZone == nil then
-    shared.secretZone = spawnObject({
-      type = "ScriptingTrigger",
-    })
-  end
-
-  local rotation = GetXYRotation()
-  local scale = Vector(1.8, 5.10, 1.8)
-  local favorZonePosition = FavorStackPosition()
-  favorZonePosition.y = favorZonePosition.y + (scale.y / 2)
-  
-  local secretZonePosition = SecretStackPosition()
-  secretZonePosition.y = secretZonePosition.y + (scale.y / 2)
-
-  shared.favorZone.setPosition(favorZonePosition)
-  shared.favorZone.setScale(scale)
-  shared.favorZone.setRotation(rotation)
-  
-  shared.secretZone.setPosition(secretZonePosition)
-  shared.secretZone.setScale(scale)
-  shared.secretZone.setRotation(rotation)
-end
-
-function CreateRestButtons()
-  owner.clearButtons()
-  local params = {
-    label = "",
-    click_function = "OnRest",
-    function_owner = self,
-    scale = { 0.5, 1.0, 0.5 },
-    width = 300,
-    height = 100,
-    tooltip = "Click to Automate Rest Phase",
-    color = { 0.5, 0.5, 0.5, 0 }
-  }
-
-  -- exile side
-  params.position = { -1.916, 0.15, 0.6486 }
-  params.rotation = { 0.0, 0.0, 0.0 }
-  owner.createButton(params)
-
-  -- citizen side
-  params.position = { 1.916, 0, 0.6486 }
-  params.rotation = { 0.0, 0.0, 180.0 }
-  owner.createButton(params)
-  
-end
-
--- return the amount of action supply that this player has
-function GetPlayerSupply()
-  for i, zone in ipairs(shared.supplyZones) do
-    for j, object in ipairs(zone.getObjects(true)) do
-      if (object.guid == shared.supplyMarker.guid) then
-        return i - 1;
-      end
-    end
-  end
-  return 0
-end
-
-function Method.GetPlayerSupply()
-  return GetPlayerSupply()
 end
 
 function onPlayerTurn(player, previous_player)
@@ -184,35 +30,6 @@ function OnRest()
   ResetSupply()
 end
 
-function GetSecretReturnPosition(count)
-  local secretHeight = 0.5
-  local output = Vector(SecretStackPosition())
-  for _, object in ipairs(shared.secretZone.getObjects(true)) do
-    output.y = math.max(output.y, object.getPosition().y + object.getScale().y / 2)
-  end
-  output.y = output.y + (count * secretHeight)
-  return output
-end
-
-function GetFavorReturnPosition(suit, count)
-  local favorHeight = 0.2
-  local zone = globalData.suitFavorZones[suit]
-  local output = Vector(zone.getPosition())
-  output.y = FavorStackPosition().y
-  for _, object in ipairs(zone.getObjects(true)) do
-    output.y = math.max(output.y, object.getPosition().y + object.getScale().y / 2)
-  end
-  output.y = output.y + (count * favorHeight)
-  return output
-end
-
-function GetXYRotation()
-  local output = owner.getRotation()
-  output.z = 0
-  return output
-end
-
--- TODO
 function ReturnFavor()
   local foundFavorCounts = { 
     ["Discord"] = 0,

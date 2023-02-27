@@ -116,6 +116,8 @@ function onLoad(save_state)
                                 ["White"] = { 0.63, 0.63, 0.63, 1.00 } }
   shared.favorBagGuid = "cfb9e0"
   shared.favorBag = nil
+  shared.secretBagGuid = "750205"
+  shared.secretBag = nil
   shared.numMarkers = 2
   shared.markerGuids = { "c1f67a", "a7e6d2" }
   shared.markerPositions = { { -20.86, 1.06, -1.83 },
@@ -513,6 +515,11 @@ function onLoad(save_state)
     shared.favorBag = getObjectFromGUID(shared.favorBagGuid)
     if (nil == shared.favorBag) then
       printToAll("Error finding favor bag.", { 1, 0, 0 })
+    end
+
+    shared.secretBag = getObjectFromGUID(shared.secretBagGuid)
+    if (nil == shared.secretBag) then
+      printToAll("Error finding secret bag.", { 1, 0, 0 })
     end
 
     --
