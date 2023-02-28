@@ -135,5 +135,11 @@
     "value": true,
     "plugin": "BetterSetup",
     "tooltip": "Automates more of the board setup process like giving players their starting favor and secrets"
+  },
+  "People's Favor Reminder": {
+    "type": "toggle",
+    "value": true,
+    "plugin": "PeoplesFavorReminder",
+    "tooltip": "Remind the owner of the people's favor to resolve it on their turn"
   }
 }
