@@ -9,12 +9,18 @@ function Callback.OnGameStart()
   
   -- put a purple warband at all sites with a suited card
   local purpleWarbandBag = shared.playerWarbandBags['Purple']
-  for siteIndex = 1, 8 do
+  for siteIndex = 2, 8 do
     if SiteHasSuitedCard(siteIndex) then
       local position = shared.mapSiteCardZones[siteIndex].getPosition()
       purpleWarbandBag.takeObject({ position = position, rotation = rotation })
     end
   end
+  -- top cradle has two warbands regardless of suited cards
+  local sitePosition = shared.mapSiteCardZones[1].getPosition()
+  local leftWarbandPosition = sitePosition - Vector(0.67,0,0)
+  local rightWarbandPosition = sitePosition + Vector(0.67,0,0)
+  purpleWarbandBag.takeObject({ position = leftWarbandPosition, rotation = rotation })
+  purpleWarbandBag.takeObject({ position = rightWarbandPosition, rotation = rotation })
   
   -- put a favor on PF
   local peoplesFavorPosition = shared.peoplesFavor.getPosition() + Vector(0,0.32,0)
